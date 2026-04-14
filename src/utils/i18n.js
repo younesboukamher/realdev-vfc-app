@@ -1,0 +1,55 @@
+export const I18N = {
+  fr: {
+    app_title:'RealDev Vilvoorde',app_sub:'1ère Division Nationale',
+    login_title:'Se connecter',btn_enter:'ENTRER',
+    role_coach:'COACH',role_physio:'PHYSIO',role_gk:'GK',role_player:'JOUEUR',role_admin:'ADMIN',
+    role_coach_desc:'Accès complet',role_physio_desc:'Blessures + charge',
+    role_gk_desc:'Gardiens',role_player_desc:'Mes données',
+    nav_dashboard:'Dashboard',nav_presences:'Présences',nav_matchs:'Matchs',
+    nav_blessures:'Blessures',nav_planning:'Planning',nav_more:'Plus',nav_me:'Mon profil',
+    dash_sub:'Saison 2025–26 · 1ère Division Nationale',
+    kpi_dispo:'Disponibles',kpi_blesses:'Blessés',kpi_presence:'Présence',kpi_bilan:'Bilan',
+    next_match:'PROCHAIN MATCH',alerts:'Alertes',last_results:'Derniers résultats',
+    tab_results:'Résultats',tab_add:'+ Encoder',tab_scouting:'Scouting',
+    tab_pointer:'Pointer',tab_history:'Historique',tab_stats:'Stats',
+    tab_active:'Actives',tab_declare:'Déclarer',
+    btn_save:'ENREGISTRER',btn_cancel:'ANNULER',btn_edit:'MODIFIER',btn_healed:'GUÉRI',
+    player:'Joueur',date:'Date',type:'Type',notes:'Notes',
+    journee:'Journée',opponent:'Adversaire',our_score:'Nous',their_score:'Eux',scorers:'Buteurs',
+    injury_type:'Type de blessure',gravity:'Gravité',return_date:'Retour estimé',
+    offline_banner:'⚠ Mode hors-ligne — modifications indisponibles',
+    loading:'Chargement...',error_login:'Identifiants incorrects',
+    saved:'✓ Enregistré',updated:'✓ Mis à jour',deleted:'✓ Supprimé',
+    new_match:'NOUVEAU MATCH',declare_injury:'DÉCLARER UNE BLESSURE',
+    pres_sub:'P=Présent · A=Absent · B=Blessé · E=Excusé',
+  },
+  nl: {
+    app_title:'RealDev Vilvoorde',app_sub:'1ste Nationale Divisie',
+    login_title:'Inloggen',btn_enter:'INLOGGEN',
+    role_coach:'COACH',role_physio:'PHYSIO',role_gk:'GK',role_player:'SPELER',role_admin:'ADMIN',
+    role_coach_desc:'Volledige toegang',role_physio_desc:'Blessures + belasting',
+    role_gk_desc:'Keepers',role_player_desc:'Mijn gegevens',
+    nav_dashboard:'Dashboard',nav_presences:'Aanwezigheid',nav_matchs:'Wedstrijden',
+    nav_blessures:'Blessures',nav_planning:'Planning',nav_more:'Meer',nav_me:'Mijn profiel',
+    dash_sub:'Seizoen 2025–26 · 1ste Nationale',
+    kpi_dispo:'Beschikbaar',kpi_blesses:'Geblesseerd',kpi_presence:'Aanwezigheid',kpi_bilan:'Balans',
+    next_match:'VOLGENDE WEDSTRIJD',alerts:'Meldingen',last_results:'Laatste resultaten',
+    tab_results:'Resultaten',tab_add:'+ Invoeren',tab_scouting:'Scouting',
+    tab_pointer:'Noteren',tab_history:'Geschiedenis',tab_stats:'Stats',
+    tab_active:'Actief',tab_declare:'Aangeven',
+    btn_save:'OPSLAAN',btn_cancel:'ANNULEREN',btn_edit:'BEWERKEN',btn_healed:'GENEZEN',
+    player:'Speler',date:'Datum',type:'Type',notes:'Notities',
+    journee:'Speeldag',opponent:'Tegenstander',our_score:'Wij',their_score:'Zij',scorers:'Doelpuntenmakers',
+    injury_type:'Type blessure',gravity:'Ernst',return_date:'Verwachte terugkeer',
+    offline_banner:'⚠ Offline modus — wijzigingen niet beschikbaar',
+    loading:'Laden...',error_login:'Onjuiste inloggegevens',
+    saved:'✓ Opgeslagen',updated:'✓ Bijgewerkt',deleted:'✓ Verwijderd',
+    new_match:'NIEUWE WEDSTRIJD',declare_injury:'BLESSURE MELDEN',
+    pres_sub:'A=Aanwezig · AF=Afwezig · G=Geblesseerd · E=Excuus',
+  }
+};
+
+export function t(key) {
+  const lang = localStorage.getItem('rdv_lang') || 'fr';
+  return (I18N[lang] || I18N.fr)[key] || key;
+}
