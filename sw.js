@@ -1,4 +1,4 @@
-const CACHE = 'rdv-v4f5fa80'; // bumped — invalide l'ancien cache
+const CACHE = 'rdv-vc87d50c'; // bumped — invalide l'ancien cache
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {

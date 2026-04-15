@@ -1128,14 +1128,8 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 
 
 /* Fix espace vide page Stats */
-#pg-stats { 
-  display:flex; 
-  flex-direction:column;
-  min-height:0;
-}
-#pg-stats.on { display:flex; }
+/* NE PAS override display sur #pg-stats — laisser .pg/.pg.on gérer */
 #stats-kpis:empty { display:none; min-height:0; }
-.chart-wrap:empty { display:none; }
 #chart-goals:empty, #chart-assists:empty { min-height:0; padding:0; }
 
 
