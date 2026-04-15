@@ -1468,7 +1468,7 @@ const S = {
 const MSGS = {
   fr:{ login_err:'Email ou mot de passe incorrect', saved:'Enregistré ✓', updated:'Mis à jour ✓', healed:'Joueur guéri ✓', deleted:'Supprimé',
     home:'Accueil', presences:'Présences', matchs:'Matchs', medical:'Medical Room', planning:'Planning', squad:'Squad', profile:'Mon profil',
-    next_match:'Prochain match', today:'Aujourd'hui', tomorrow:'Demain', absent:'Absents', alerts:'Alertes',
+    next_match:'Prochain match', today:"Aujourd'hui", tomorrow:'Demain', absent:'Absents', alerts:'Alertes',
     recent_results:'Résultats récents', see_all:'Tout voir',
     available:'Disponible', injured:'Blessé', suspended:'Suspendu', uncertain:'Incertain',
     save_session:'Enregistrer la session', goals:'Buts', assists:'Assists', attendance:'Présence', cards:'Cartons',
@@ -1663,7 +1663,7 @@ function renderHome() {
   if (nxt) {
     const sc=S.scouting.find(s=>s.opponent_name?.toLowerCase().includes((nxt.opponent||'').split(' ')[0].toLowerCase()));
     let cnt='';
-    if (nxt.match_date) { const d=Math.round((new Date(nxt.match_date)-new Date())/86400000); cnt=d===0?'Aujourd\'hui':d===1?'Demain':d>0?`Dans ${d} jours`:''; }
+    if (nxt.match_date) { const d=Math.round((new Date(nxt.match_date)-new Date())/86400000); cnt=d===0?"Aujourd'hui":d===1?'Demain':d>0?`Dans ${d} jours`:''; }
     const absents=S.injuries.map(i=>`<span class="absent-pill">${(i.players?.name||'').split(' ')[1]||''} 🩺</span>`).join('');
     $('home-match').innerHTML=`<div class="match-hero">
       <div class="match-tag"><div class="match-tag-dot"></div>Prochain match · ${nxt.journee||''} · ${fd(nxt.match_date)}</div>

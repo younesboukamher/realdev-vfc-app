@@ -1,57 +1,51 @@
-const CACHE = 'rdv-v1';
-const STATIC = [
-  '/',
-  '/index.html',
-  'https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;1,700;1,900&display=swap',
-];
+const CACHE = 'rdv-v99f9509'; // bumped — invalide l'ancien cache
+const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
+  self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(STATIC.filter(u => !u.startsWith('http') || u.includes('fonts'))))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE).then(c =>
+      Promise.all(STATIC.map(u => fetch(u, {cache:'no-store'}).then(r => c.put(u, r)).catch(()=>{})))
+    )
   );
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+      .then(() => self.clients.matchAll().then(clients => clients.forEach(c => c.navigate(c.url))))
   );
 });
 
 self.addEventListener('fetch', e => {
-  const { request } = e;
-  const url = new URL(request.url);
+  const url = new URL(e.request.url);
+  
+  // Supabase — toujours réseau
+  if (url.hostname.includes('supabase.co')) return;
+  
+  // Fonts Google — cache long
+  if (url.hostname.includes('fonts')) {
+    e.respondWith(caches.match(e.request).then(c => c || fetch(e.request)));
+    return;
+  }
 
-  // Never cache Supabase write requests
-  if (url.hostname.includes('supabase.co') && request.method !== 'GET') return;
-
-  // Network first for Supabase reads (realtime data)
-  if (url.hostname.includes('supabase.co')) {
+  // HTML — toujours réseau en priorité (pas de cache stale)
+  if (e.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
     e.respondWith(
-      fetch(request).then(res => {
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(request, clone));
-        }
-        return res;
-      }).catch(() => caches.match(request))
+      fetch(e.request, {cache:'no-store'})
+        .then(r => { caches.open(CACHE).then(c => c.put(e.request, r.clone())); return r; })
+        .catch(() => caches.match(e.request))
     );
     return;
   }
 
-  // Cache first for static assets
+  // Autres assets — cache first
   e.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request).then(res => {
-        if (res.ok && request.method === 'GET') {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(request, clone));
-        }
-        return res;
-      });
-    })
+    caches.match(e.request).then(cached => cached || fetch(e.request).then(r => {
+      if (r.ok) caches.open(CACHE).then(c => c.put(e.request, r.clone()));
+      return r;
+    }))
   );
 });
