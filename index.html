@@ -1112,7 +1112,7 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 
 .sync-row {
   display:flex; align-items:center; justify-content:space-between;
-  padding:10px 18px 0; margin-bottom:2px;
+  padding:6px 18px 4px; margin-bottom:0;
 }
 .sync-info { font:400 11px/1 var(--font); color:var(--tx3); }
 .sync-btn {
@@ -1575,7 +1575,7 @@ function generateMicrocycle(scouting) {
       <div id="stats-kpis"></div>
 
       <!-- Onglets graphiques natifs / Looker -->
-      <div class="tabs" style="margin-top:12px;">
+      <div class="tabs" style="margin-top:4px;">
         <button class="tab-btn on" onclick="stab(this,'st-attack')">⚽ Attaque</button>
         <button class="tab-btn" onclick="stab(this,'st-assists')">🅰 Assists</button>
         <button class="tab-btn" onclick="stab(this,'st-shooting')">🎯 Tirs</button>
@@ -1854,6 +1854,8 @@ function renderAll() {
   renderHome(); renderPresences(); renderMatches();
   renderScouting(); renderMedical(); renderSquad();
   renderProtoUI(); populateSel(); applyTranslations();
+  // Rendre Stats si la page est déjà visible
+  if (document.getElementById('pg-stats')?.classList.contains('on')) renderStats();
 }
 function applyTranslations() {
   // Mettre à jour labels nav
