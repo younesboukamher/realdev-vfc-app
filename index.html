@@ -1464,7 +1464,7 @@ window.doLogin = async () => {
 window.doLogout = async () => {
   await sb.auth.signOut();
   Object.assign(S, { user:null, profile:null, role:null });
-  $('scr-login').style.display = '';
+  $('scr-login').style.display = 'flex';
   $('scr-app').style.display = 'none';
   ['nav-staff','nav-player'].forEach(id => $(id).classList.remove('show'));
   $('hud').classList.remove('show');
@@ -1479,14 +1479,14 @@ async function init(user) {
   await loadAll();
   hideLoader();
   $('scr-login').style.display = 'none';
-  $('scr-app').style.display = '';
+  $('scr-app').style.display = 'block';
   const isStaff = ['admin','coach','physio','gk'].includes(S.role);
   $('nav-staff').classList.toggle('show', isStaff);
   $('nav-player').classList.toggle('show', !isStaff);
   $('hud').classList.add('show');
   $('role-pill').textContent = S.role.toUpperCase();
   buildAll();
-  realtime();
+  if (!window.__realtimeStarted) { realtime(); window.__realtimeStarted = true; }
 }
 
 /* ── Data ──────────────────────────────── */
