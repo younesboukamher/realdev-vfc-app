@@ -1102,7 +1102,7 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .looker-open-btn:hover { text-decoration:underline; }
 
 /* Chart bars natif */
-.chart-wrap { padding:0 18px 16px; }
+.chart-wrap { padding:0 18px 12px; min-height:0; }
 .chart-title { font:700 14px/1 var(--font); color:var(--tx1); margin-bottom:14px; letter-spacing:-.3px; }
 .chart-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
 .chart-bar-name { font:500 12px/1 var(--font); color:var(--tx1); min-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1112,7 +1112,8 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 
 .sync-row {
   display:flex; align-items:center; justify-content:space-between;
-  padding:6px 18px 4px; margin-bottom:0;
+  padding:8px 18px 6px; margin-bottom:0;
+  border-bottom:1px solid var(--sep);
 }
 .sync-info { font:400 11px/1 var(--font); color:var(--tx3); }
 .sync-btn {
@@ -1123,6 +1124,20 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 }
 .sync-btn:hover { border-color:var(--brand); background:var(--brand-dim); }
 .sync-btn.syncing svg { animation:spin .8s linear infinite; }
+
+
+
+/* Fix espace vide page Stats */
+#pg-stats { 
+  display:flex; 
+  flex-direction:column;
+  min-height:0;
+}
+#pg-stats.on { display:flex; }
+#stats-kpis:empty { display:none; min-height:0; }
+.chart-wrap:empty { display:none; }
+#chart-goals:empty, #chart-assists:empty { min-height:0; padding:0; }
+
 
 /* Responsive */
 @media (max-width:360px) {
@@ -1576,7 +1591,7 @@ function generateMicrocycle(scouting) {
       <div id="stats-kpis"></div>
 
       <!-- Onglets graphiques natifs / Looker -->
-      <div class="tabs" style="margin-top:4px;">
+      <div class="tabs" style="margin-top:0;padding-top:8px;">
         <button class="tab-btn on" onclick="stab(this,'st-attack')">⚽ Attaque</button>
         <button class="tab-btn" onclick="stab(this,'st-assists')">🅰 Assists</button>
         <button class="tab-btn" onclick="stab(this,'st-shooting')">🎯 Tirs</button>
@@ -1855,8 +1870,8 @@ function renderAll() {
   renderHome(); renderPresences(); renderMatches();
   renderScouting(); renderMedical(); renderSquad();
   renderProtoUI(); populateSel(); applyTranslations();
-  // Rendre Stats si la page est déjà visible
-  if (document.getElementById('pg-stats')?.classList.contains('on')) renderStats();
+  // Toujours préremplir les stats (données statiques, coût nul)
+  renderStats();
 }
 function applyTranslations() {
   // Mettre à jour labels nav
