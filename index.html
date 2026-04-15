@@ -993,6 +993,137 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .empty-title { font:700 16px/1 var(--font); color:var(--tx2); }
 .empty-sub   { font:400 13px/1.5 var(--font); color:var(--tx3); }
 
+
+/* ══════════════════════════════════════
+   STATS — Looker Studio + graphiques natifs
+══════════════════════════════════════ */
+.stats-hero {
+  background:var(--ink2); border:1px solid var(--sep);
+  border-radius:var(--r-xl); margin:12px 18px;
+  overflow:hidden; position:relative;
+}
+.stats-hero::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:2px; background:linear-gradient(90deg,var(--brand),transparent);
+}
+.stats-kpi-row {
+  display:flex; gap:1px; background:var(--sep);
+  border-bottom:1px solid var(--sep);
+}
+.stats-kpi {
+  flex:1; background:var(--ink2); padding:14px 12px; text-align:center;
+}
+.stats-kpi-num {
+  font:800 26px/1 var(--font); color:var(--tx1); letter-spacing:-1px;
+}
+.stats-kpi-num.green { color:var(--brand); }
+.stats-kpi-num.red   { color:#EF4444; }
+.stats-kpi-lbl {
+  font:500 9px/1 var(--font); color:var(--tx3);
+  text-transform:uppercase; letter-spacing:.8px; margin-top:4px;
+}
+
+/* Tableau stats joueurs */
+.stats-table-wrap { overflow-x:auto; padding:0 18px 16px; }
+.stats-table {
+  width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap; min-width:600px;
+}
+.stats-table th {
+  font:700 9px/1 var(--font); text-transform:uppercase; letter-spacing:.8px;
+  color:var(--tx3); padding:10px 12px; background:var(--ink2);
+  border-bottom:2px solid var(--sep); text-align:right; cursor:pointer;
+  user-select:none;
+}
+.stats-table th:first-child { text-align:left; }
+.stats-table th.sorted { color:var(--brand); }
+.stats-table th:hover { color:var(--brand); }
+.stats-table td {
+  padding:10px 12px; border-bottom:1px solid var(--sep);
+  text-align:right; font:400 12px/1 var(--font); color:var(--tx2);
+}
+.stats-table td:first-child { text-align:left; font-weight:600; color:var(--tx1); }
+.stats-table tr:hover td { background:rgba(34,197,94,.03); }
+.rank-badge {
+  display:inline-flex; width:20px; height:20px; border-radius:50%;
+  align-items:center; justify-content:center;
+  font:700 9px/1 var(--font); margin-right:6px; flex-shrink:0;
+}
+.rank-1 { background:rgba(245,158,11,.2); color:var(--warn); }
+.rank-2 { background:rgba(200,200,200,.1); color:#aaa; }
+.rank-3 { background:rgba(180,120,60,.15); color:#b87333; }
+
+/* Bar sparklines */
+.bar-cell { display:flex; align-items:center; gap:6px; justify-content:flex-end; }
+.bar-mini { height:4px; background:var(--brand); border-radius:2px; min-width:2px; }
+.bar-mini.red { background:#EF4444; }
+.bar-mini.blue { background:var(--info); }
+
+/* Looker iframe */
+.looker-embed-wrap {
+  margin:0 18px 16px;
+  background:var(--ink2); border:1px solid var(--sep);
+  border-radius:var(--r-xl); overflow:hidden;
+}
+.looker-tab-bar {
+  display:flex; gap:0; border-bottom:1px solid var(--sep);
+  overflow-x:auto; scrollbar-width:none; padding:0;
+}
+.looker-tab-bar::-webkit-scrollbar { display:none; }
+.looker-tab {
+  flex-shrink:0; background:none; border:none; border-bottom:2px solid transparent;
+  color:var(--tx3); font:600 11px/1 var(--font);
+  padding:10px 16px; cursor:pointer; white-space:nowrap;
+  transition:all .15s; margin-bottom:-1px;
+}
+.looker-tab.on { color:var(--brand); border-bottom-color:var(--brand); }
+.looker-iframe-wrap { position:relative; width:100%; }
+.looker-iframe {
+  width:100%; height:500px; border:none; display:block;
+  background:var(--ink);
+}
+.looker-loading {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:12px;
+  background:var(--ink2); color:var(--tx3);
+  font:500 13px/1 var(--font);
+}
+.looker-loading-dot {
+  width:32px; height:32px; border:2px solid var(--sep2);
+  border-top-color:var(--brand); border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.looker-open-btn {
+  display:flex; align-items:center; gap:8px;
+  font:600 12px/1 var(--font); color:var(--brand);
+  background:none; border:none; cursor:pointer; padding:10px 16px;
+  text-decoration:none;
+}
+.looker-open-btn:hover { text-decoration:underline; }
+
+/* Chart bars natif */
+.chart-wrap { padding:0 18px 16px; }
+.chart-title { font:700 14px/1 var(--font); color:var(--tx1); margin-bottom:14px; letter-spacing:-.3px; }
+.chart-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.chart-bar-name { font:500 12px/1 var(--font); color:var(--tx1); min-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chart-bar-bg { flex:1; background:var(--ink3); height:20px; border-radius:4px; overflow:hidden; }
+.chart-bar-fill { height:100%; border-radius:4px; display:flex; align-items:center; padding-left:8px; transition:width .6s ease; }
+.chart-bar-val { font:700 11px/1 var(--font); color:rgba(0,0,0,.8); white-space:nowrap; }
+
+.sync-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 18px 0; margin-bottom:2px;
+}
+.sync-info { font:400 11px/1 var(--font); color:var(--tx3); }
+.sync-btn {
+  background:var(--ink3); border:1px solid var(--sep2);
+  color:var(--brand); font:600 11px/1 var(--font);
+  padding:6px 14px; border-radius:var(--r-sm); cursor:pointer;
+  transition:all .15s; display:flex; align-items:center; gap:6px;
+}
+.sync-btn:hover { border-color:var(--brand); background:var(--brand-dim); }
+.sync-btn.syncing svg { animation:spin .8s linear infinite; }
+
 /* Responsive */
 @media (max-width:360px) {
   .quick-stats { grid-template-columns:repeat(2,1fr); }
@@ -1409,6 +1540,9 @@ function generateMicrocycle(scouting) {
     <button class="nb-tab" onclick="nav('squad',this)" data-p="squad">
       <div class="nb-icon">👥</div><span class="nb-label" data-t="squad">Squad</span>
     </button>
+    <button class="nb-tab" onclick="nav('stats',this)" data-p="stats">
+      <div class="nb-icon">📊</div><span class="nb-label">Stats</span>
+    </button>
   </nav>
 
   <!-- Bottom nav — joueur -->
@@ -1426,7 +1560,100 @@ function generateMicrocycle(scouting) {
 
 </div><!-- app -->
 
-<!-- Modals -->
+
+    <!-- STATS — Looker Studio intégration -->
+    <div class="pg" id="pg-stats">
+      <div class="sync-row">
+        <span class="sync-info" id="stats-sync-info">Données saison 2025–26</span>
+        <button class="sync-btn" id="stats-sync-btn" onclick="syncStats()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Synchroniser
+        </button>
+      </div>
+
+      <!-- KPIs globaux -->
+      <div id="stats-kpis"></div>
+
+      <!-- Onglets graphiques natifs / Looker -->
+      <div class="tabs" style="margin-top:12px;">
+        <button class="tab-btn on" onclick="stab(this,'st-attack')">⚽ Attaque</button>
+        <button class="tab-btn" onclick="stab(this,'st-assists')">🅰 Assists</button>
+        <button class="tab-btn" onclick="stab(this,'st-shooting')">🎯 Tirs</button>
+        <button class="tab-btn" onclick="stab(this,'st-looker')">📊 Looker</button>
+      </div>
+
+      <!-- Buts -->
+      <div id="st-attack" class="tab-pane on">
+        <div class="chart-wrap" style="padding-top:16px;">
+          <div class="chart-title">Buts par joueur</div>
+          <div id="chart-goals"></div>
+        </div>
+      </div>
+
+      <!-- Assists -->
+      <div id="st-assists" class="tab-pane">
+        <div class="chart-wrap" style="padding-top:16px;">
+          <div class="chart-title">Assists par joueur</div>
+          <div id="chart-assists"></div>
+        </div>
+      </div>
+
+      <!-- Tirs -->
+      <div id="st-shooting" class="tab-pane">
+        <div class="chart-wrap" style="padding-top:16px;">
+          <div class="chart-title">Tirs cadrés · Précision · Efficacité</div>
+          <div class="stats-table-wrap" style="padding:0 0 16px;">
+            <table class="stats-table" id="table-shooting">
+              <thead>
+                <tr>
+                  <th onclick="sortStats('name')">#  Joueur</th>
+                  <th onclick="sortStats('goals')">Buts</th>
+                  <th onclick="sortStats('shots_on')">Tirs cadrés</th>
+                  <th onclick="sortStats('precision')">Précision</th>
+                  <th onclick="sortStats('efficiency')">Efficacité</th>
+                  <th onclick="sortStats('freq')">Fréquence</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-shooting"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Looker iframe -->
+      <div id="st-looker" class="tab-pane">
+        <div class="looker-embed-wrap" style="margin-top:12px;">
+          <div class="looker-tab-bar" id="looker-pages">
+            <button class="looker-tab on" onclick="switchLooker(this,'TlJ0C')">Attaque</button>
+            <button class="looker-tab" onclick="switchLooker(this,'p_construction')">Construction</button>
+            <button class="looker-tab" onclick="switchLooker(this,'p_buts')">Analyse Buts</button>
+            <button class="looker-tab" onclick="switchLooker(this,'p_temps')">Temps de Jeu</button>
+          </div>
+          <div class="looker-iframe-wrap">
+            <div class="looker-loading" id="looker-loading">
+              <div class="looker-loading-dot"></div>
+              <span>Chargement du rapport...</span>
+            </div>
+            <iframe
+              id="looker-iframe"
+              class="looker-iframe"
+              src="https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/TlJ0C"
+              allowfullscreen
+              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              onload="document.getElementById('looker-loading').style.display='none'"
+            ></iframe>
+          </div>
+          <div style="padding:8px 14px; display:flex; justify-content:flex-end;">
+            <a href="https://lookerstudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f" target="_blank" class="looker-open-btn">
+              ↗ Ouvrir dans Looker Studio
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  <!-- Modals -->
 <div class="overlay" id="modal-inj" onclick="if(event.target===this)close_modal('modal-inj')">
   <div class="sheet">
     <button class="sheet-close" onclick="close_modal('modal-inj')">✕</button>
@@ -1602,7 +1829,7 @@ window.addEventListener('online', ()=>document.body.classList.remove('offline'))
 window.addEventListener('offline',()=>document.body.classList.add('offline'));
 
 /* ── Navigation ── */
-const PAGE_NAMES=()=>({home:msg('home'),presences:msg('presences'),matchs:msg('matchs'),medical:msg('medical'),planning:msg('planning'),squad:msg('squad'),profile:msg('profile')});
+const PAGE_NAMES=()=>({home:msg('home'),presences:msg('presences'),matchs:msg('matchs'),medical:msg('medical'),planning:msg('planning'),squad:msg('squad'),profile:msg('profile'),stats:'Stats'});
 
 window.nav = (name, btn) => {
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
@@ -1613,6 +1840,7 @@ window.nav = (name, btn) => {
   window.scrollTo(0,0);
   if (name==='planning') renderPlanning();
   if (name==='profile') renderProfile();
+  if (name==='stats') renderStats();
 };
 
 window.stab = (el, targetId) => {
@@ -2311,6 +2539,190 @@ function populateSel(){
   const dd=$('pres-date');if(dd&&!dd.value)dd.value=new Date().toISOString().split('T')[0];
   const id=$('inj-date');if(id&&!id.value)id.value=new Date().toISOString().split('T')[0];
 }
+
+
+/* ════════ STATS — Looker Studio Data ════════ */
+
+// Données extraites du rapport Looker Studio 25/26
+// Source: datastudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f
+const LOOKER_DATA = {
+  updated: '2026-04-15',
+  report_url: 'https://lookerstudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f',
+  season: '2025-26',
+  global: { matches: 13, goals_for: 69, goals_against: 46 },
+  players: [
+    { name:'Soufiane El Fakiri', goals:15, assists:9,  shots_on:68, precision:36, efficiency:12, freq:23.32 },
+    { name:'Hamza Lagrib',       goals:9,  assists:5,  shots_on:29, precision:51, efficiency:18, freq:23.7  },
+    { name:'Abdessamad El Hafid',goals:5,  assists:10, shots_on:17, precision:44, efficiency:25, freq:43.79 },
+    { name:'Yassine Qoli',       goals:8,  assists:4,  shots_on:29, precision:22, efficiency:8,  freq:20.69 },
+    { name:'Marwan Bouchoiri',   goals:8,  assists:6,  shots_on:20, precision:46, efficiency:18, freq:22.46 },
+    { name:'Bilal Hachem',       goals:6,  assists:4,  shots_on:14, precision:23, efficiency:15, freq:36.68 },
+    { name:'Bilal El Bouhadifi', goals:5,  assists:4,  shots_on:9,  precision:29, efficiency:18, freq:18.55 },
+    { name:'Mouhsin Bouzid',     goals:4,  assists:5,  shots_on:26, precision:35, efficiency:9,  freq:68.55 },
+    { name:'Mounir Chouaa',      goals:3,  assists:2,  shots_on:13, precision:30, efficiency:5,  freq:33.71 },
+    { name:'Mathieu O.',         goals:0,  assists:0,  shots_on:0,  precision:0,  efficiency:0,  freq:0     },
+  ]
+};
+
+let _statsSort = { key:'goals', dir:-1 };
+
+// PAGE_NAMES — ajouter Stats
+const _origPAGE_NAMES = PAGE_NAMES;
+
+function renderStats() {
+  // KPIs globaux
+  const d = LOOKER_DATA;
+  const diff = d.global.goals_for - d.global.goals_against;
+  $('stats-kpis').innerHTML = `<div class="stats-kpi-row">
+    <div class="stats-kpi"><div class="stats-kpi-num">${d.global.matches}</div><div class="stats-kpi-lbl">Matchs</div></div>
+    <div class="stats-kpi"><div class="stats-kpi-num green">${d.global.goals_for}</div><div class="stats-kpi-lbl">Buts marqués</div></div>
+    <div class="stats-kpi"><div class="stats-kpi-num red">${d.global.goals_against}</div><div class="stats-kpi-lbl">Buts encaissés</div></div>
+    <div class="stats-kpi"><div class="stats-kpi-num ${diff>=0?'green':'red'}">${diff>=0?'+':''}${diff}</div><div class="stats-kpi-lbl">Différentiel</div></div>
+  </div>`;
+
+  renderChartGoals();
+  renderChartAssists();
+  renderTableShooting();
+}
+
+function renderChartGoals() {
+  const el = $('chart-goals'); if (!el) return;
+  const sorted = [...LOOKER_DATA.players].sort((a,b)=>b.goals-a.goals).filter(p=>p.goals>0);
+  const max = sorted[0]?.goals || 1;
+  el.innerHTML = sorted.map((p,i) => {
+    const w = Math.round(p.goals/max*100);
+    const colors = ['#22C55E','#4ADE80','#86EFAC','#BBF7D0','#D1FAE5'];
+    const col = colors[Math.min(i,4)];
+    return `<div class="chart-bar-row">
+      <div class="chart-bar-name">${
+        i===0?'<span class="rank-badge rank-1">🥇</span>':
+        i===1?'<span class="rank-badge rank-2">🥈</span>':
+        i===2?'<span class="rank-badge rank-3">🥉</span>':
+        `<span class="rank-badge" style="color:var(--tx3);font-size:9px;">${i+1}</span>`
+      }${p.name.split(' ').slice(-1)[0]}</div>
+      <div class="chart-bar-bg">
+        <div class="chart-bar-fill" style="width:${w}%;background:${col};">
+          <span class="chart-bar-val">${p.goals} buts</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderChartAssists() {
+  const el = $('chart-assists'); if (!el) return;
+  const sorted = [...LOOKER_DATA.players].sort((a,b)=>b.assists-a.assists).filter(p=>p.assists>0);
+  const max = sorted[0]?.assists || 1;
+  el.innerHTML = sorted.map((p,i) => {
+    const w = Math.round(p.assists/max*100);
+    const colors = ['#3B82F6','#60A5FA','#93C5FD','#BFDBFE','#DBEAFE'];
+    const col = colors[Math.min(i,4)];
+    return `<div class="chart-bar-row">
+      <div class="chart-bar-name">${
+        i===0?'<span class="rank-badge rank-1">🥇</span>':
+        i===1?'<span class="rank-badge rank-2">🥈</span>':
+        i===2?'<span class="rank-badge rank-3">🥉</span>':
+        `<span class="rank-badge" style="color:var(--tx3);font-size:9px;">${i+1}</span>`
+      }${p.name.split(' ').slice(-1)[0]}</div>
+      <div class="chart-bar-bg">
+        <div class="chart-bar-fill" style="width:${w}%;background:${col};">
+          <span class="chart-bar-val">${p.assists} assists</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTableShooting() {
+  const tbody = $('tbody-shooting'); if (!tbody) return;
+  const sorted = [...LOOKER_DATA.players].sort((a,b) => {
+    const av = a[_statsSort.key]||0, bv = b[_statsSort.key]||0;
+    return (bv-av)*_statsSort.dir;
+  });
+  const maxG = Math.max(...sorted.map(p=>p.goals),1);
+  const maxS = Math.max(...sorted.map(p=>p.shots_on),1);
+  tbody.innerHTML = sorted.map((p,i) => {
+    const gw = Math.round(p.goals/maxG*60);
+    const sw = Math.round(p.shots_on/maxS*60);
+    return `<tr>
+      <td>${i+1 <= 3 ? ['🥇','🥈','🥉'][i]+' ':''}<strong>${p.name}</strong></td>
+      <td><div class="bar-cell"><div class="bar-mini" style="width:${gw}px;"></div>${p.goals}</div></td>
+      <td><div class="bar-cell"><div class="bar-mini blue" style="width:${sw}px;"></div>${p.shots_on}</div></td>
+      <td style="color:${p.precision>=40?'var(--brand)':p.precision>=25?'var(--warn)':'var(--tx2)'}">${p.precision}%</td>
+      <td style="color:${p.efficiency>=20?'var(--brand)':p.efficiency>=12?'var(--warn)':'var(--tx2)'}">${p.efficiency}%</td>
+      <td style="color:var(--tx3)">${p.freq||'—'}</td>
+    </tr>`;
+  }).join('');
+  // Update header sort indicator
+  document.querySelectorAll('.stats-table th').forEach(th => th.classList.remove('sorted'));
+}
+
+window.sortStats = key => {
+  if (_statsSort.key === key) _statsSort.dir *= -1;
+  else { _statsSort.key = key; _statsSort.dir = -1; }
+  renderTableShooting();
+  document.querySelectorAll('#table-shooting th').forEach((th,i) => {
+    const keys=['name','goals','shots_on','precision','efficiency','freq'];
+    th.classList.toggle('sorted', keys[i] === key);
+  });
+};
+
+// Pages Looker Studio
+const LOOKER_PAGES = {
+  TlJ0C: 'TlJ0C',
+  p_construction: 'p_KQkbC',  // construction page
+  p_buts: 'p_Ahm6C',          // analyse buts
+  p_temps: 'p_nW07C',         // temps de jeu
+};
+window.switchLooker = (btn, pageKey) => {
+  document.querySelectorAll('.looker-tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  const iframe = $('looker-iframe');
+  const loading = $('looker-loading');
+  if (loading) loading.style.display='flex';
+  iframe.src = `https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/${LOOKER_PAGES[pageKey]||pageKey}`;
+};
+
+window.syncStats = async () => {
+  const btn = $('stats-sync-btn');
+  const info = $('stats-sync-info');
+  btn.classList.add('syncing');
+  btn.querySelector('span') && (btn.querySelector('span').textContent = 'Syncing...');
+  
+  // Sync avec Supabase : mettre à jour goals/assists des joueurs depuis Looker data
+  try {
+    let updated = 0;
+    for (const ps of LOOKER_DATA.players) {
+      const player = S.players.find(p => 
+        p.name.toLowerCase().includes(ps.name.split(' ').slice(-1)[0].toLowerCase()) ||
+        ps.name.toLowerCase().includes(p.name.split(' ').slice(-1)[0].toLowerCase())
+      );
+      if (player) {
+        await sb.from('players').update({
+          goals: ps.goals,
+          assists: ps.assists,
+        }).eq('id', player.id);
+        updated++;
+      }
+    }
+    
+    // Recharger les joueurs
+    const {data} = await sb.from('players').select('*').order('number');
+    S.players = data || [];
+    
+    // Mettre à jour la date de sync
+    LOOKER_DATA.updated = new Date().toISOString().split('T')[0];
+    if (info) info.textContent = `Sync ${LOOKER_DATA.updated} · ${updated} joueurs mis à jour`;
+    
+    renderStats();
+    renderSquad();
+    toast(`Stats synchronisées — ${updated} joueurs ✓`);
+  } catch(e) {
+    toast('✗ Erreur sync: ' + e.message);
+  } finally {
+    btn.classList.remove('syncing');
+  }
+};
 
 /* ── Boot ── */
 async function boot(){
