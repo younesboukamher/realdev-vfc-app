@@ -1171,8 +1171,8 @@ function generateMicrocycle(scouting) {
   </div>
   <div class="login-bottom">
     <div class="login-langs">
-      <button class="lang-btn on" onclick="setLang('fr',this)">Français</button>
-      <button class="lang-btn" onclick="setLang('nl',this)">Nederlands</button>
+      <button class="lang-btn on" data-lang="fr" onclick="setLang('fr',this)">FR</button>
+      <button class="lang-btn" data-lang="nl" onclick="setLang('nl',this)">NL</button>
     </div>
     <div class="login-card">
       <label class="field-label" id="lbl-email">Email</label>
@@ -1201,8 +1201,8 @@ function generateMicrocycle(scouting) {
     </div>
     <div class="topbar-right">
       <span class="top-badge" id="role-pill"></span>
-      <button class="top-lang" onclick="setLang('fr',this)">FR</button>
-      <button class="top-lang" onclick="setLang('nl',this)">NL</button>
+      <button class="top-lang" data-lang="fr" onclick="setLang('fr',this)">FR</button>
+      <button class="top-lang" data-lang="nl" onclick="setLang('nl',this)">NL</button>
       <button class="top-exit" onclick="doLogout()">↩</button>
     </div>
   </header>
@@ -1217,7 +1217,7 @@ function generateMicrocycle(scouting) {
       <div id="home-alerts"></div>
       <div class="sec">
         <div class="sec-title">Résultats récents</div>
-        <button class="sec-action" onclick="nav('matchs',document.querySelector('[data-p=matchs]'))">Tout voir</button>
+        <button class="sec-action" onclick="nav('matchs',document.querySelector('[data-p=matchs]'))" data-t="see_all">Tout voir</button>
       </div>
       <div id="home-results" class="result-list"></div>
       <div style="height:12px;"></div>
@@ -1392,22 +1392,22 @@ function generateMicrocycle(scouting) {
   <!-- Bottom nav — staff -->
   <nav class="navbar" id="nav-staff" style="display:none;">
     <button class="nb-tab on" onclick="nav('home',this)" data-p="home">
-      <div class="nb-icon">🏠</div><span class="nb-label">Accueil</span>
+      <div class="nb-icon">🏠</div><span class="nb-label" data-t="home">Accueil</span>
     </button>
     <button class="nb-tab" onclick="nav('presences',this)" data-p="presences">
-      <div class="nb-icon">✅</div><span class="nb-label">Présences</span>
+      <div class="nb-icon">✅</div><span class="nb-label" data-t="presences">Présences</span>
     </button>
     <button class="nb-tab" onclick="nav('matchs',this)" data-p="matchs">
-      <div class="nb-icon">⚽</div><span class="nb-label">Matchs</span>
+      <div class="nb-icon">⚽</div><span class="nb-label" data-t="matchs">Matchs</span>
     </button>
     <button class="nb-tab" onclick="nav('medical',this)" data-p="medical">
-      <div class="nb-icon">🩺</div><span class="nb-label">Medical</span>
+      <div class="nb-icon">🩺</div><span class="nb-label" data-t="medical">Medical</span>
     </button>
     <button class="nb-tab" onclick="nav('planning',this)" data-p="planning">
-      <div class="nb-icon">📋</div><span class="nb-label">Planning</span>
+      <div class="nb-icon">📋</div><span class="nb-label" data-t="planning">Planning</span>
     </button>
     <button class="nb-tab" onclick="nav('squad',this)" data-p="squad">
-      <div class="nb-icon">👥</div><span class="nb-label">Squad</span>
+      <div class="nb-icon">👥</div><span class="nb-label" data-t="squad">Squad</span>
     </button>
   </nav>
 
@@ -1466,20 +1466,38 @@ const S = {
 
 /* ── i18n ── */
 const MSGS = {
-  fr:{ login_err:'Email ou mot de passe incorrect', saved:'Enregistré ✓', updated:'Mis à jour ✓', healed:'Joueur guéri ✓', deleted:'Supprimé' },
-  nl:{ login_err:'Onjuiste inloggegevens', saved:'Opgeslagen ✓', updated:'Bijgewerkt ✓', healed:'Genezen ✓', deleted:'Verwijderd' },
+  fr:{ login_err:'Email ou mot de passe incorrect', saved:'Enregistré ✓', updated:'Mis à jour ✓', healed:'Joueur guéri ✓', deleted:'Supprimé',
+    home:'Accueil', presences:'Présences', matchs:'Matchs', medical:'Medical Room', planning:'Planning', squad:'Squad', profile:'Mon profil',
+    next_match:'Prochain match', today:'Aujourd'hui', tomorrow:'Demain', absent:'Absents', alerts:'Alertes',
+    recent_results:'Résultats récents', see_all:'Tout voir',
+    available:'Disponible', injured:'Blessé', suspended:'Suspendu', uncertain:'Incertain',
+    save_session:'Enregistrer la session', goals:'Buts', assists:'Assists', attendance:'Présence', cards:'Cartons',
+  },
+  nl:{ login_err:'Onjuiste inloggegevens', saved:'Opgeslagen ✓', updated:'Bijgewerkt ✓', healed:'Speler genezen ✓', deleted:'Verwijderd',
+    home:'Startpagina', presences:'Aanwezigheid', matchs:'Wedstrijden', medical:'Medisch', planning:'Planning', squad:'Ploeg', profile:'Mijn profiel',
+    next_match:'Volgende wedstrijd', today:'Vandaag', tomorrow:'Morgen', absent:'Afwezig', alerts:'Meldingen',
+    recent_results:'Recente resultaten', see_all:'Alles zien',
+    available:'Beschikbaar', injured:'Geblesseerd', suspended:'Geschorst', uncertain:'Twijfelachtig',
+    save_session:'Sessie opslaan', goals:'Doelpunten', assists:'Assists', attendance:'Aanwezigheid', cards:'Kaarten',
+  },
 };
 const msg = k => (MSGS[S.lang]||MSGS.fr)[k] || k;
 
 window.setLang = (lang, btn) => {
   S.lang = lang;
   localStorage.setItem('rdv_lang', lang);
-  document.querySelectorAll('.lang-btn,.top-lang').forEach(b =>
-    b.classList.toggle('on', b.textContent.trim().toLowerCase().startsWith(lang))
-  );
+  // Toggle active state sur tous les boutons de langue
+  document.querySelectorAll('.lang-btn, .top-lang').forEach(b => {
+    const bl = b.dataset.lang || b.textContent.trim().toLowerCase().slice(0,2);
+    b.classList.toggle('on', bl === lang);
+  });
   if (S.user) renderAll();
 };
 S.lang = localStorage.getItem('rdv_lang') || 'fr';
+// Appliquer langue initiale sur les boutons login
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.classList.toggle('on', b.dataset.lang === S.lang);
+});
 
 /* ── Helpers ── */
 const $ = id => document.getElementById(id);
@@ -1584,7 +1602,7 @@ window.addEventListener('online', ()=>document.body.classList.remove('offline'))
 window.addEventListener('offline',()=>document.body.classList.add('offline'));
 
 /* ── Navigation ── */
-const PAGE_NAMES={home:'Accueil',presences:'Présences',matchs:'Matchs',medical:'Medical Room',planning:'Planning',squad:'Squad',profile:'Mon profil'};
+const PAGE_NAMES=()=>({home:msg('home'),presences:msg('presences'),matchs:msg('matchs'),medical:msg('medical'),planning:msg('planning'),squad:msg('squad'),profile:msg('profile')});
 
 window.nav = (name, btn) => {
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
@@ -1607,7 +1625,20 @@ window.stab = (el, targetId) => {
 function renderAll() {
   renderHome(); renderPresences(); renderMatches();
   renderScouting(); renderMedical(); renderSquad();
-  renderProtoUI(); populateSel();
+  renderProtoUI(); populateSel(); applyTranslations();
+}
+function applyTranslations() {
+  // Mettre à jour labels nav
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const k = el.dataset.t;
+    if (MSGS[S.lang]?.[k]) el.textContent = MSGS[S.lang][k];
+  });
+  // Mettre à jour page courante dans HUD
+  const activePg = document.querySelector('.pg.on')?.id?.replace('pg-','');
+  if (activePg) $('hud-pg').textContent = PAGE_NAMES()[activePg] || activePg;
+  // Bouton save session
+  const saveBtn = document.querySelector('[onclick="savePresences()"]');
+  if (saveBtn) saveBtn.textContent = msg('save_session');
 }
 
 /* ════════ ACCUEIL ════════ */
