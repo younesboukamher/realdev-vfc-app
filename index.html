@@ -1090,7 +1090,7 @@ textarea.fi { resize:vertical; min-height:72px; }
 <!-- ════════════════════════════════════════
      APP
 ════════════════════════════════════════ -->
-<div id="scr-app">
+<div id="scr-app" style="display:none;">
 
   <!-- Top bar -->
   <header class="topbar" id="hud">
@@ -1452,10 +1452,11 @@ window.doLogin = async () => {
   btn.disabled = true; btn.textContent = 'Connexion…'; errEl.textContent = '';
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
-    if (error) throw error;
+    if (error) { errEl.textContent = t('err_login'); btn.disabled=false; btn.textContent='Se connecter'; return; }
     await init(data.user);
-  } catch {
-    errEl.textContent = t('err_login');
+  } catch(e) {
+    console.error('Login/init error:', e);
+    errEl.textContent = 'Erreur: ' + (e?.message || 'inconnue');
     btn.disabled = false; btn.textContent = 'Se connecter';
   }
 };
