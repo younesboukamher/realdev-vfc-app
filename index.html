@@ -1528,48 +1528,6 @@ function generateMicrocycle(scouting) {
       <div id="profile-content"></div>
     </div>
 
-  </div><!-- main -->
-
-  <!-- Bottom nav — staff -->
-  <nav class="navbar" id="nav-staff" style="display:none;">
-    <button class="nb-tab on" onclick="nav('home',this)" data-p="home">
-      <div class="nb-icon">🏠</div><span class="nb-label" data-t="home">Accueil</span>
-    </button>
-    <button class="nb-tab" onclick="nav('presences',this)" data-p="presences">
-      <div class="nb-icon">✅</div><span class="nb-label" data-t="presences">Présences</span>
-    </button>
-    <button class="nb-tab" onclick="nav('matchs',this)" data-p="matchs">
-      <div class="nb-icon">⚽</div><span class="nb-label" data-t="matchs">Matchs</span>
-    </button>
-    <button class="nb-tab" onclick="nav('medical',this)" data-p="medical">
-      <div class="nb-icon">🩺</div><span class="nb-label" data-t="medical">Medical</span>
-    </button>
-    <button class="nb-tab" onclick="nav('planning',this)" data-p="planning">
-      <div class="nb-icon">📋</div><span class="nb-label" data-t="planning">Planning</span>
-    </button>
-    <button class="nb-tab" onclick="nav('squad',this)" data-p="squad">
-      <div class="nb-icon">👥</div><span class="nb-label" data-t="squad">Squad</span>
-    </button>
-    <button class="nb-tab" onclick="nav('stats',this)" data-p="stats">
-      <div class="nb-icon">📊</div><span class="nb-label">Stats</span>
-    </button>
-  </nav>
-
-  <!-- Bottom nav — joueur -->
-  <nav class="navbar" id="nav-player" style="display:none;">
-    <button class="nb-tab on" onclick="nav('home',this)">
-      <div class="nb-icon">🏠</div><span class="nb-label">Accueil</span>
-    </button>
-    <button class="nb-tab" onclick="nav('matchs',this)">
-      <div class="nb-icon">⚽</div><span class="nb-label">Matchs</span>
-    </button>
-    <button class="nb-tab" onclick="nav('profile',this)">
-      <div class="nb-icon">👤</div><span class="nb-label">Mon profil</span>
-    </button>
-  </nav>
-
-</div><!-- app -->
-
 
     <!-- STATS — Looker Studio intégration -->
     <div class="pg" id="pg-stats">
@@ -1662,6 +1620,8 @@ function generateMicrocycle(scouting) {
       </div>
 
     </div>
+
+  </div><!-- main -->
 
   <!-- Modals -->
 <div class="overlay" id="modal-inj" onclick="if(event.target===this)close_modal('modal-inj')">
@@ -1848,6 +1808,7 @@ window.nav = (name, btn) => {
   btn?.classList.add('on');
   $('hud-pg').textContent=PAGE_NAMES[name]||name;
   window.scrollTo(0,0);
+  document.querySelector('.main')?.scrollTo(0,0);
   if (name==='planning') renderPlanning();
   if (name==='profile') renderProfile();
   if (name==='stats') renderStats();
