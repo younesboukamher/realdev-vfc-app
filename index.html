@@ -1370,7 +1370,7 @@ window.doLogin = async () => {
     const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
     if (error) { errEl.textContent=msg('login_err'); btn.disabled=false; btn.textContent='Se connecter'; return; }
     await boot_app(data.user);
-  } catch(e) {
+  } catch(e) { console.error('doLogin/boot_app error:', e);
     console.error(e);
     errEl.textContent = 'Erreur: '+(e?.message||'inconnue');
     btn.disabled=false; btn.textContent='Se connecter';
@@ -1397,8 +1397,8 @@ async function boot_app(user) {
   $('nav-staff').style.display=isStaff?'flex':'none';
   $('nav-player').style.display=!isStaff?'flex':'none';
   $('role-pill').textContent=S.role.toUpperCase();
-  renderAll();
-  if (!window.__rt) { window.__rt=true; rt(); }
+  try { renderAll(); } catch(e){ console.error('renderAll error:', e); }
+  if (!window.__rt) { window.__rt=true; try { rt(); } catch(e){ console.error('rt error:', e); } }
 }
 
 /* ── Data ── */
@@ -1754,7 +1754,7 @@ window.syncACFF=()=>{
 
 /* ════════ MEDICAL ════════ */
 function renderMedical(){
-  const gC=g=>({G1:'var(--brand)',G2:'var(--warn)',G3':'var(--danger)',G4:'var(--danger)'})[g]||'var(--warn)';
+  const gC=g=>({G1:'var(--brand)',G2:'var(--warn)',G3:'var(--danger)',G4:'var(--danger)'})[g]||'var(--warn)';
 
   $('inj-active-list').innerHTML=S.injuries.length
     ?S.injuries.map(inj=>{
@@ -1897,8 +1897,8 @@ window.saveInj=async()=>{
     matches_missed:$('inj-matches').value,notes:$('inj-notes').value,is_active:true};
   const editId=$('inj-edit-id').value;
   try{
-    if(editId){const{e}=await sb.from('injuries').update(payload).eq('id',editId);if(e)throw e;toast(msg('updated'));}
-    else{const{e}=await sb.from('injuries').insert(payload);if(e)throw e;await sb.from('players').update({status:'Blessé'}).eq('id',pid);toast(msg('saved'));}
+    if(editId){const{error:e}=await sb.from('injuries').update(payload).eq('id',editId);if(e)throw e;toast(msg('updated'));}
+    else{const{error:e}=await sb.from('injuries').insert(payload);if(e)throw e;await sb.from('players').update({status:'Blessé'}).eq('id',pid);toast(msg('saved'));}
     const[a,h]=await Promise.all([
       sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
       sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
@@ -2143,7 +2143,10 @@ async function boot(){
   splash_on();
   try {
     const {data:{session}}=await sb.auth.getSession();
-    if(session?.user){await boot_app(session.user);}
+    if(session?.user){
+      try { await boot_app(session.user); }
+      catch(e){ console.error('boot_app error:', e); splash_off(); $('scr-login').style.display='flex'; }
+    }
     else {
       splash_off();
       $('scr-login').style.display='flex';
