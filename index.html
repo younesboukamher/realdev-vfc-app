@@ -1984,6 +1984,8 @@ const MSGS = {
     season:'Seizoen', save:'Opslaan', cancel:'Annuleren',
     present:'Aanwezig', late:'Te laat', form:'Formulier'
 }};
+const msg = k => (MSGS[S.lang]||MSGS.fr)[k] || k;
+
 
 /* ── Helpers ── */
 const $ = id => document.getElementById(id);
