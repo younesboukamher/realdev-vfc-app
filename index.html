@@ -1133,6 +1133,169 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 #chart-goals:empty, #chart-assists:empty { min-height:0; padding:0; }
 
 
+
+/* ══════════════════════════════════════
+   ANALYTICS — Data Science Dashboard
+══════════════════════════════════════ */
+
+/* Header section */
+.ana-header {
+  padding:14px 18px 8px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--sep);
+}
+.ana-view-badge {
+  font:700 10px/1 var(--font); text-transform:uppercase; letter-spacing:.8px;
+  padding:4px 10px; border-radius:20px;
+  background:rgba(34,197,94,.15); color:var(--brand); border:1px solid rgba(34,197,94,.3);
+}
+.ana-view-badge.player { background:rgba(59,130,246,.15); color:var(--info); border-color:rgba(59,130,246,.3); }
+
+/* KPI band */
+.ana-kpi-band {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1px; background:var(--sep); border-bottom:1px solid var(--sep);
+}
+.ana-kpi {
+  background:var(--ink2); padding:12px 10px; text-align:center;
+}
+.ana-kpi-val { font:800 22px/1 var(--font); letter-spacing:-1px; }
+.ana-kpi-val.green { color:var(--brand); }
+.ana-kpi-val.red { color:var(--danger); }
+.ana-kpi-val.gold { color:var(--warn); }
+.ana-kpi-val.blue { color:var(--info); }
+.ana-kpi-lbl { font:500 9px/1 var(--font); color:var(--tx3); text-transform:uppercase; letter-spacing:.7px; margin-top:3px; }
+
+/* Insight cards */
+.insight-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; padding:12px 18px;
+}
+.insight-card {
+  background:var(--ink2); border:1px solid var(--sep);
+  border-radius:var(--r-lg); padding:12px; position:relative; overflow:hidden;
+}
+.insight-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+}
+.insight-card.green::before { background:var(--brand); }
+.insight-card.red::before { background:var(--danger); }
+.insight-card.blue::before { background:var(--info); }
+.insight-card.gold::before { background:var(--warn); }
+.insight-icon { font-size:20px; margin-bottom:6px; display:block; }
+.insight-title { font:700 11px/1.3 var(--font); color:var(--tx1); margin-bottom:4px; }
+.insight-val { font:800 20px/1 var(--font); letter-spacing:-0.5px; color:var(--tx1); }
+.insight-val.green { color:var(--brand); }
+.insight-val.red { color:var(--danger); }
+.insight-val.blue { color:var(--info); }
+.insight-val.gold { color:var(--warn); }
+.insight-sub { font:400 10px/1.4 var(--font); color:var(--tx3); margin-top:3px; }
+
+/* Player ranking table */
+.rank-table-wrap { padding:0 18px 12px; }
+.rank-table { width:100%; border-collapse:collapse; font-size:11px; }
+.rank-table th {
+  font:700 9px/1 var(--font); text-transform:uppercase; letter-spacing:.6px;
+  color:var(--tx3); padding:8px 6px; border-bottom:2px solid var(--sep);
+  text-align:right; cursor:pointer; user-select:none; white-space:nowrap;
+}
+.rank-table th:first-child { text-align:left; }
+.rank-table th.sorted { color:var(--brand); }
+.rank-table th.sorted::after { content:' ↓'; }
+.rank-table td {
+  padding:9px 6px; border-bottom:1px solid var(--sep);
+  text-align:right; color:var(--tx2); white-space:nowrap;
+}
+.rank-table td:first-child { text-align:left; color:var(--tx1); font-weight:600; }
+.rank-table tr:hover td { background:rgba(34,197,94,.03); }
+.rank-table .medal { margin-right:4px; }
+
+/* Player profile card (vue joueur) */
+.player-profile {
+  margin:12px 18px;
+  background:var(--ink2); border:1px solid var(--sep);
+  border-radius:var(--r-xl); overflow:hidden;
+}
+.player-profile-header {
+  background:linear-gradient(135deg, rgba(34,197,94,.1), transparent);
+  padding:20px; display:flex; align-items:center; gap:16px;
+  border-bottom:1px solid var(--sep);
+}
+.player-avatar {
+  width:56px; height:56px; border-radius:50%;
+  background:rgba(34,197,94,.2); border:2px solid var(--brand);
+  display:flex; align-items:center; justify-content:center;
+  font:800 20px/1 var(--font); color:var(--brand); flex-shrink:0;
+}
+.player-profile-name { font:800 18px/1 var(--font); color:var(--tx1); letter-spacing:-.4px; }
+.player-profile-sub { font:500 11px/1 var(--font); color:var(--tx3); margin-top:3px; }
+.player-rating {
+  margin-left:auto; text-align:center;
+}
+.player-rating-val { font:900 28px/1 var(--font); color:var(--brand); letter-spacing:-1px; }
+.player-rating-lbl { font:500 9px/1 var(--font); color:var(--tx3); text-transform:uppercase; letter-spacing:.7px; }
+
+/* Radar chart */
+.radar-wrap { padding:0 18px 0; }
+.radar-title { font:700 13px/1 var(--font); color:var(--tx1); margin-bottom:10px; letter-spacing:-.3px; }
+.radar-svg { display:block; margin:0 auto; }
+
+/* Progress bars metrics */
+.metric-bar { margin-bottom:12px; }
+.metric-bar-header { display:flex; justify-content:space-between; margin-bottom:4px; }
+.metric-bar-label { font:600 11px/1 var(--font); color:var(--tx2); }
+.metric-bar-val { font:700 11px/1 var(--font); color:var(--tx1); }
+.metric-bar-track { height:6px; background:var(--ink3); border-radius:3px; overflow:hidden; }
+.metric-bar-fill { height:100%; border-radius:3px; transition:width .6s ease; }
+
+/* Strengths/weaknesses */
+.sw-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 18px 12px; }
+.sw-card { background:var(--ink2); border:1px solid var(--sep); border-radius:var(--r-md); padding:10px; }
+.sw-title { font:700 10px/1 var(--font); text-transform:uppercase; letter-spacing:.7px; margin-bottom:8px; }
+.sw-title.green { color:var(--brand); }
+.sw-title.red { color:var(--danger); }
+.sw-item { font:400 11px/1.5 var(--font); color:var(--tx2); padding-left:12px; position:relative; }
+.sw-item::before { content:'•'; position:absolute; left:2px; }
+.sw-item.green::before { color:var(--brand); }
+.sw-item.red::before { color:var(--danger); }
+
+/* Benchmark comparaison */
+.bench-row { display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid var(--sep); }
+.bench-label { font:500 11px/1 var(--font); color:var(--tx3); min-width:100px; }
+.bench-player { font:700 13px/1 var(--font); color:var(--tx1); min-width:40px; text-align:right; }
+.bench-bar-wrap { flex:1; position:relative; height:6px; background:var(--ink3); border-radius:3px; }
+.bench-bar-avg { position:absolute; top:-2px; width:2px; height:10px; background:var(--sep2); z-index:2; }
+.bench-bar-player { height:100%; border-radius:3px; }
+.bench-avg-val { font:400 10px/1 var(--font); color:var(--tx3); min-width:35px; text-align:right; }
+
+/* Tabs dans analytics */
+.ana-tabs {
+  display:flex; gap:0; padding:0 18px; margin-bottom:0;
+  border-bottom:1px solid var(--sep); overflow-x:auto; scrollbar-width:none;
+}
+.ana-tabs::-webkit-scrollbar { display:none; }
+.ana-tab {
+  flex-shrink:0; background:none; border:none;
+  border-bottom:2px solid transparent; color:var(--tx3);
+  font:600 11px/1 var(--font); padding:10px 14px; cursor:pointer;
+  white-space:nowrap; transition:all .15s; margin-bottom:-1px;
+}
+.ana-tab.on { color:var(--brand); border-bottom-color:var(--brand); }
+.ana-tab.on .ana-tab-icon { opacity:1; }
+
+/* section title analytics */
+.ana-section { padding:14px 18px 6px; font:700 13px/1 var(--font); color:var(--tx1); letter-spacing:-.3px; }
+.ana-section span { font:400 11px/1 var(--font); color:var(--tx3); margin-left:6px; }
+
+/* Data Scientist tag */
+.ds-tag {
+  display:inline-flex; align-items:center; gap:4px;
+  font:600 9px/1 var(--font); text-transform:uppercase; letter-spacing:.6px;
+  padding:3px 8px; border-radius:20px;
+  background:rgba(59,130,246,.1); color:var(--info);
+  border:1px solid rgba(59,130,246,.2);
+}
+
 /* Responsive */
 @media (max-width:360px) {
   .quick-stats { grid-template-columns:repeat(2,1fr); }
@@ -1529,94 +1692,74 @@ function generateMicrocycle(scouting) {
     </div>
 
 
-    <!-- STATS — Looker Studio intégration -->
+    <!-- ANALYTICS — Data Science Dashboard -->
     <div class="pg" id="pg-stats">
-      <div class="sync-row">
-        <span class="sync-info" id="stats-sync-info">Données saison 2025–26</span>
-        <button class="sync-btn" id="stats-sync-btn" onclick="syncStats()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-          Synchroniser
-        </button>
-      </div>
 
-      <!-- KPIs globaux -->
-      <div id="stats-kpis"></div>
-
-      <!-- Onglets graphiques natifs / Looker -->
-      <div class="tabs" style="margin-top:0;padding-top:8px;">
-        <button class="tab-btn on" onclick="stab(this,'st-attack')">⚽ Attaque</button>
-        <button class="tab-btn" onclick="stab(this,'st-assists')">🅰 Assists</button>
-        <button class="tab-btn" onclick="stab(this,'st-shooting')">🎯 Tirs</button>
-        <button class="tab-btn" onclick="stab(this,'st-looker')">📊 Looker</button>
-      </div>
-
-      <!-- Buts -->
-      <div id="st-attack" class="tab-pane on">
-        <div class="chart-wrap" style="padding-top:16px;">
-          <div class="chart-title">Buts par joueur</div>
-          <div id="chart-goals"></div>
+      <!-- Header avec vue badge -->
+      <div class="ana-header">
+        <div>
+          <div style="font:700 14px/1 var(--font);color:var(--tx1)">Analytics</div>
+          <div style="font:400 10px/1 var(--font);color:var(--tx3);margin-top:3px">Saison 2025–26 · 13 matchs</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="ana-view-badge" class="ana-view-badge">👔 Vue Coach</span>
+          <button class="sync-btn" id="stats-sync-btn" onclick="syncStats()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Sync
+          </button>
         </div>
       </div>
 
-      <!-- Assists -->
-      <div id="st-assists" class="tab-pane">
-        <div class="chart-wrap" style="padding-top:16px;">
-          <div class="chart-title">Assists par joueur</div>
-          <div id="chart-assists"></div>
-        </div>
-      </div>
+      <!-- Bouton retour (vue coach → profil joueur) -->
+      <button id="ana-back-btn" onclick="backToCoachView()"
+        style="display:none;align-items:center;gap:6px;padding:8px 18px;background:none;border:none;color:var(--brand);font:600 12px/1 var(--font);cursor:pointer;">
+        ← Retour au classement
+      </button>
 
-      <!-- Tirs -->
-      <div id="st-shooting" class="tab-pane">
-        <div class="chart-wrap" style="padding-top:16px;">
-          <div class="chart-title">Tirs cadrés · Précision · Efficacité</div>
-          <div class="stats-table-wrap" style="padding:0 0 16px;">
-            <table class="stats-table" id="table-shooting">
-              <thead>
-                <tr>
-                  <th onclick="sortStats('name')">#  Joueur</th>
-                  <th onclick="sortStats('goals')">Buts</th>
-                  <th onclick="sortStats('shots_on')">Tirs cadrés</th>
-                  <th onclick="sortStats('precision')">Précision</th>
-                  <th onclick="sortStats('efficiency')">Efficacité</th>
-                  <th onclick="sortStats('freq')">Fréquence</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-shooting"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <!-- ════ VUE COACH ════ -->
+      <div id="ana-coach-view">
+        <!-- KPIs globaux -->
+        <div id="ana-kpis"></div>
 
-      <!-- Looker iframe -->
-      <div id="st-looker" class="tab-pane">
-        <div class="looker-embed-wrap" style="margin-top:12px;">
-          <div class="looker-tab-bar" id="looker-pages">
-            <button class="looker-tab on" onclick="switchLooker(this,'TlJ0C')">Attaque</button>
-            <button class="looker-tab" onclick="switchLooker(this,'p_construction')">Construction</button>
-            <button class="looker-tab" onclick="switchLooker(this,'p_buts')">Analyse Buts</button>
-            <button class="looker-tab" onclick="switchLooker(this,'p_temps')">Temps de Jeu</button>
-          </div>
-          <div class="looker-iframe-wrap">
-            <div class="looker-loading" id="looker-loading">
-              <div class="looker-loading-dot"></div>
-              <span>Chargement du rapport...</span>
+        <!-- Tabs coach -->
+        <div class="ana-tabs" id="ana-tabs-coach"></div>
+
+        <!-- Contenu tabs -->
+        <div id="coach-ranking"></div>
+        <div id="coach-insights" style="display:none"></div>
+        <div id="coach-attack" style="display:none"></div>
+        <div id="coach-discipline" style="display:none"></div>
+        <div id="coach-looker" style="display:none">
+          <div class="looker-embed-wrap" style="margin:12px 18px 16px;">
+            <div class="looker-tab-bar">
+              <button class="looker-tab on" onclick="switchLooker(this,'TlJ0C')">Attaque</button>
+              <button class="looker-tab" onclick="switchLooker(this,'p_KQkbC')">Construction</button>
+              <button class="looker-tab" onclick="switchLooker(this,'p_Ahm6C')">Buts</button>
+              <button class="looker-tab" onclick="switchLooker(this,'p_nW07C')">Temps Jeu</button>
+              <button class="looker-tab" onclick="switchLooker(this,'p_fautes')">Fautes</button>
+              <button class="looker-tab" onclick="switchLooker(this,'p_keepers')">Keepers</button>
             </div>
-            <iframe
-              id="looker-iframe"
-              class="looker-iframe"
-              src="https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/TlJ0C"
-              allowfullscreen
-              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-              onload="document.getElementById('looker-loading').style.display='none'"
-            ></iframe>
-          </div>
-          <div style="padding:8px 14px; display:flex; justify-content:flex-end;">
-            <a href="https://lookerstudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f" target="_blank" class="looker-open-btn">
-              ↗ Ouvrir dans Looker Studio
-            </a>
+            <div class="looker-iframe-wrap">
+              <div class="looker-loading" id="looker-loading">
+                <div class="looker-loading-dot"></div>
+                <span>Chargement Looker Studio...</span>
+              </div>
+              <iframe id="looker-iframe" class="looker-iframe"
+                src="https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/TlJ0C"
+                allowfullscreen
+                sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                onload="document.getElementById('looker-loading').style.display='none'"></iframe>
+            </div>
+            <div style="padding:6px 14px;display:flex;justify-content:flex-end;">
+              <a href="https://lookerstudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f" target="_blank" class="looker-open-btn">↗ Looker Studio</a>
+            </div>
           </div>
         </div>
+      </div>
+
+      <!-- ════ VUE JOUEUR ════ -->
+      <div id="ana-player-view" style="display:none">
+        <div id="ana-player-content"></div>
       </div>
 
     </div>
@@ -2553,188 +2696,524 @@ function populateSel(){
 }
 
 
-/* ════════ STATS — Looker Studio Data ════════ */
+/* ════════ ANALYTICS — Data Science + Head Coach ════════ */
 
-// Données extraites du rapport Looker Studio 25/26
-// Source: datastudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f
-const LOOKER_DATA = {
-  updated: '2026-04-15',
-  report_url: 'https://lookerstudio.google.com/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f',
-  season: '2025-26',
-  global: { matches: 13, goals_for: 69, goals_against: 46 },
-  players: [
-    { name:'Soufiane El Fakiri', goals:15, assists:9,  shots_on:68, precision:36, efficiency:12, freq:23.32 },
-    { name:'Hamza Lagrib',       goals:9,  assists:5,  shots_on:29, precision:51, efficiency:18, freq:23.7  },
-    { name:'Abdessamad El Hafid',goals:5,  assists:10, shots_on:17, precision:44, efficiency:25, freq:43.79 },
-    { name:'Yassine Qoli',       goals:8,  assists:4,  shots_on:29, precision:22, efficiency:8,  freq:20.69 },
-    { name:'Marwan Bouchoiri',   goals:8,  assists:6,  shots_on:20, precision:46, efficiency:18, freq:22.46 },
-    { name:'Bilal Hachem',       goals:6,  assists:4,  shots_on:14, precision:23, efficiency:15, freq:36.68 },
-    { name:'Bilal El Bouhadifi', goals:5,  assists:4,  shots_on:9,  precision:29, efficiency:18, freq:18.55 },
-    { name:'Mouhsin Bouzid',     goals:4,  assists:5,  shots_on:26, precision:35, efficiency:9,  freq:68.55 },
-    { name:'Mounir Chouaa',      goals:3,  assists:2,  shots_on:13, precision:30, efficiency:5,  freq:33.71 },
-    { name:'Mathieu O.',         goals:0,  assists:0,  shots_on:0,  precision:0,  efficiency:0,  freq:0     },
-  ]
+/* ─── Tri du tableau ─── */
+let _anaSort = { key:'contributions', dir:-1 };
+
+/* ─── Helpers ─── */
+const teamAvg = key => {
+  const vals = LOOKER_DATA.players.filter(p => p.shots_on > 0 || key==='rating').map(p => p[key]||0);
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
 };
 
-let _statsSort = { key:'goals', dir:-1 };
+/* ─── Radar SVG ─── */
+function radarSVG(player) {
+  const metrics = [
+    { label:'Buts/M',  val: Math.min(player.goals_per_match/1.5*100, 100) },
+    { label:'Assists', val: Math.min(player.assists_per_match/0.8*100, 100) },
+    { label:'Précision',val: Math.min(player.precision/60*100, 100) },
+    { label:'Efficacité',val: Math.min(player.efficiency/25*100, 100) },
+    { label:'xG+/-',  val: Math.min(Math.max((player.xG_diff+2)/10*100,0), 100) },
+    { label:'Discipline',val: player.discipline },
+  ];
+  const cx=110, cy=100, r=70, n=metrics.length;
+  const angle = i => (i/n)*2*Math.PI - Math.PI/2;
+  const pt = (i, pct) => {
+    const a=angle(i), d=r*pct/100;
+    return [cx+d*Math.cos(a), cy+d*Math.sin(a)];
+  };
+  // Grilles
+  let grid='', labels='', poly='';
+  [25,50,75,100].forEach(pct => {
+    const pts=[];
+    for(let i=0;i<n;i++) { const [x,y]=pt(i,pct); pts.push(x+','+y); }
+    const col = pct===100?'rgba(34,197,94,.3)':'rgba(255,255,255,.07)';
+    grid += '<polygon points="'+pts.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+(pct===100?1.5:.7)+'"/>';
+  });
+  // Axes et labels
+  for(let i=0;i<n;i++) {
+    const [x1,y1]=pt(i,100);
+    grid += '<line x1="'+cx+'" y1="'+cy+'" x2="'+x1+'" y2="'+y1+'" stroke="rgba(255,255,255,.1)" stroke-width=".7"/>';
+    const [lx,ly]=pt(i,115);
+    const anchor = lx<cx-5?'end':lx>cx+5?'start':'middle';
+    labels += '<text x="'+lx+'" y="'+(ly+3)+'" text-anchor="'+anchor+'" font-size="9" fill="rgba(255,255,255,.5)" font-family="Inter,sans-serif">'+metrics[i].label+'</text>';
+  }
+  // Polygone joueur
+  const polyPts=[];
+  for(let i=0;i<n;i++) { const [x,y]=pt(i,metrics[i].val); polyPts.push(x+','+y); }
+  poly = '<polygon points="'+polyPts.join(' ')+'" fill="rgba(34,197,94,.2)" stroke="rgba(34,197,94,.9)" stroke-width="1.5"/>';
+  for(let i=0;i<n;i++) {
+    const [x,y]=pt(i,metrics[i].val);
+    poly += '<circle cx="'+x+'" cy="'+y+'" r="3" fill="var(--brand)"/>';
+  }
+  return '<svg class="radar-svg" width="220" height="200" viewBox="0 0 220 200">'+grid+poly+labels+'</svg>';
+}
 
-// PAGE_NAMES — ajouter Stats
-const _origPAGE_NAMES = PAGE_NAMES;
+/* ─── Vue Coach : tableau global ─── */
+function renderAnalyticsCoach() {
+  const D = LOOKER_DATA;
+  const G = D.global;
+  const players = D.players;
 
+  // ── KPIs globaux ──
+  const diff = G.goals_for - G.goals_against;
+  $('ana-kpis').innerHTML = `
+    <div class="ana-kpi-band">
+      <div class="ana-kpi"><div class="ana-kpi-val green">${G.goals_for}</div><div class="ana-kpi-lbl">Buts marqués</div></div>
+      <div class="ana-kpi"><div class="ana-kpi-val red">${G.goals_against}</div><div class="ana-kpi-lbl">Buts encaissés</div></div>
+      <div class="ana-kpi"><div class="ana-kpi-val gold">${diff>0?'+':''}${diff}</div><div class="ana-kpi-lbl">Différentiel</div></div>
+      <div class="ana-kpi"><div class="ana-kpi-val blue">${G.team_efficiency}%</div><div class="ana-kpi-lbl">Efficacité</div></div>
+    </div>`;
+
+  // ── Onglets Coach ──
+  $('ana-tabs-coach').innerHTML = `
+    <button class="ana-tab on" onclick="anaTab(this,'coach-ranking')">🏆 Classement</button>
+    <button class="ana-tab" onclick="anaTab(this,'coach-insights')">💡 Insights</button>
+    <button class="ana-tab" onclick="anaTab(this,'coach-attack')">⚽ Attaque</button>
+    <button class="ana-tab" onclick="anaTab(this,'coach-discipline')">🟨 Discipline</button>
+    <button class="ana-tab" onclick="anaTab(this,'coach-looker')">📊 Looker</button>`;
+
+  renderCoachRanking();
+  renderCoachInsights();
+  renderCoachAttack();
+  renderCoachDiscipline();
+}
+
+/* ─── Classement global ─── */
+function renderCoachRanking() {
+  const players = [...LOOKER_DATA.players].sort((a,b) => {
+    const av=a[_anaSort.key]||0, bv=b[_anaSort.key]||0;
+    return (bv-av)*_anaSort.dir;
+  });
+  const medals = ['🥇','🥈','🥉'];
+  const cols = [
+    {k:'contributions', label:'G+A'},
+    {k:'goals', label:'G'},
+    {k:'assists', label:'A'},
+    {k:'precision', label:'Préc%'},
+    {k:'efficiency', label:'Eff%'},
+    {k:'xG_diff', label:'xG+/-'},
+    {k:'rating', label:'Note'},
+  ];
+  $('coach-ranking').innerHTML = `
+    <div class="ana-section">Classement Joueurs <span><span class="ds-tag">🔬 Data Science</span></span></div>
+    <div class="rank-table-wrap">
+      <table class="rank-table">
+        <thead><tr>
+          <th onclick="setAnaSort('name')" style="text-align:left">Joueur</th>
+          ${cols.map(col=>`<th onclick="setAnaSort('${col.k}')" class="${_anaSort.key===col.k?'sorted':''}">${col.label}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${players.map((p,i)=>`<tr onclick="viewPlayerAnalytics('${p.name}')" style="cursor:pointer">
+            <td><span class="medal">${medals[i]||''}</span>${p.short}</td>
+            <td style="color:var(--brand);font-weight:700">${p.contributions}</td>
+            <td>${p.goals}</td>
+            <td>${p.assists}</td>
+            <td style="color:${p.precision>=40?'var(--brand)':p.precision>=25?'var(--warn)':'var(--tx2)'}">${p.precision}%</td>
+            <td style="color:${p.efficiency>=18?'var(--brand)':p.efficiency>=12?'var(--warn)':'var(--tx2)'}">${p.efficiency}%</td>
+            <td style="color:${p.xG_diff>=4?'var(--brand)':p.xG_diff>=1?'var(--warn)':'var(--danger)'}">${p.xG_diff>0?'+':''}${p.xG_diff}</td>
+            <td style="color:var(--warn);font-weight:700">${p.rating}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:6px 18px 12px;font:400 10px/1.5 var(--font);color:var(--tx3);">
+      💡 Cliquer sur un joueur pour voir son profil détaillé · G+A = buts + assists · xG+/- = buts au-dessus de l'attendu
+    </div>`;
+}
+
+/* ─── Insights Data Scientist ─── */
+function renderCoachInsights() {
+  const D = LOOKER_DATA;
+  const G = D.global;
+  const players = D.players;
+
+  // Calculs avancés
+  const topScorer = [...players].sort((a,b)=>b.goals-a.goals)[0];
+  const topAssist = [...players].sort((a,b)=>b.assists-a.assists)[0];
+  const bestEff   = [...players].filter(p=>p.shots_on>5).sort((a,b)=>b.efficiency-a.efficiency)[0];
+  const bestxG    = [...players].sort((a,b)=>b.xG_diff-a.xG_diff)[0];
+  const riskCard  = [...players].sort((a,b)=>b.yellow-a.yellow)[0];
+  const underperf = [...players].filter(p=>p.shots_on>10).sort((a,b)=>a.xG_diff-b.xG_diff)[0];
+  const winRate   = Math.round(G.wins/G.matches*100);
+  const avgGoals  = (G.goals_for/G.matches).toFixed(1);
+  const avgConceded = (G.goals_against/G.matches).toFixed(1);
+  const topContrib = [...players].sort((a,b)=>b.involvement-a.involvement)[0];
+
+  $('coach-insights').innerHTML = `
+    <div class="ana-section">Insights <span><span class="ds-tag">🔬 Intelligence Artificielle</span></span></div>
+    <div class="insight-grid">
+      <div class="insight-card green">
+        <span class="insight-icon">⚽</span>
+        <div class="insight-title">Top Buteur</div>
+        <div class="insight-val green">${topScorer.goals} buts</div>
+        <div class="insight-sub">${topScorer.short} · ${topScorer.goals_per_match}/match</div>
+      </div>
+      <div class="insight-card blue">
+        <span class="insight-icon">🅰️</span>
+        <div class="insight-title">Top Passeur</div>
+        <div class="insight-val blue">${topAssist.assists} assists</div>
+        <div class="insight-sub">${topAssist.short} · Playmaker #1</div>
+      </div>
+      <div class="insight-card gold">
+        <span class="insight-icon">🎯</span>
+        <div class="insight-title">Meilleure Efficacité</div>
+        <div class="insight-val gold">${bestEff.efficiency}%</div>
+        <div class="insight-sub">${bestEff.short} · ${bestEff.goals}G / ${bestEff.shots_on} tirs</div>
+      </div>
+      <div class="insight-card green">
+        <span class="insight-icon">📈</span>
+        <div class="insight-title">Finisseur Exceptionnel</div>
+        <div class="insight-val green">+${bestxG.xG_diff}</div>
+        <div class="insight-sub">${bestxG.short} · xG au-dessus attendu</div>
+      </div>
+      <div class="insight-card blue">
+        <span class="insight-icon">🏆</span>
+        <div class="insight-title">Taux de Victoire</div>
+        <div class="insight-val blue">${winRate}%</div>
+        <div class="insight-sub">${G.wins}V · ${G.draws}N · ${G.losses}D sur ${G.matches} matchs</div>
+      </div>
+      <div class="insight-card green">
+        <span class="insight-icon">⚡</span>
+        <div class="insight-title">Buts/Match</div>
+        <div class="insight-val green">${avgGoals}</div>
+        <div class="insight-sub">Encaissés: ${avgConceded}/match</div>
+      </div>
+      <div class="insight-card gold">
+        <span class="insight-icon">🔑</span>
+        <div class="insight-title">Impact Maximum</div>
+        <div class="insight-val gold">${topContrib.involvement}%</div>
+        <div class="insight-sub">${topContrib.short} impliqué dans ${topContrib.involvement}% des buts</div>
+      </div>
+      <div class="insight-card red">
+        <span class="insight-icon">🟨</span>
+        <div class="insight-title">Risque Discipline</div>
+        <div class="insight-val red">${riskCard.yellow} jaunes</div>
+        <div class="insight-sub">${riskCard.short} · Attention suspension</div>
+      </div>
+    </div>
+
+    <div class="ana-section">Analyse xG <span>Buts au-dessus / en-dessous de l'attendu</span></div>
+    <div style="padding:0 18px 14px;">
+      ${[...players].filter(p=>p.shots_on>0).sort((a,b)=>b.xG_diff-a.xG_diff).map(p => {
+        const maxDiff = 8;
+        const pct = Math.round((p.xG_diff + maxDiff)/(maxDiff*2)*100);
+        const col = p.xG_diff >= 3 ? 'var(--brand)' : p.xG_diff >= 0 ? 'var(--warn)' : 'var(--danger)';
+        return `<div class="metric-bar">
+          <div class="metric-bar-header">
+            <span class="metric-bar-label">${p.short}</span>
+            <span class="metric-bar-val" style="color:${col}">${p.xG_diff>0?'+':''}${p.xG_diff} xG</span>
+          </div>
+          <div class="metric-bar-track" style="position:relative">
+            <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--sep2);z-index:2"></div>
+            <div class="metric-bar-fill" style="width:${pct}%;background:${col};margin-left:${p.xG_diff<0?pct+'%':0};"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+/* ─── Stats Attaque ─── */
+function renderCoachAttack() {
+  const players = [...LOOKER_DATA.players].filter(p=>p.shots_on>0);
+  const maxG = Math.max(...players.map(p=>p.goals));
+  const maxA = Math.max(...players.map(p=>p.assists));
+  const maxS = Math.max(...players.map(p=>p.shots_on));
+
+  const barRow = (player, val, max, col, label) => {
+    const w = Math.round(val/max*100);
+    return `<div class="chart-bar-row">
+      <div class="chart-bar-name">${player.short.split(' ').slice(-1)[0]}</div>
+      <div class="chart-bar-bg">
+        <div class="chart-bar-fill" style="width:${w}%;background:${col};">
+          <span class="chart-bar-val">${val} ${label}</span>
+        </div>
+      </div>
+    </div>`;
+  };
+
+  $('coach-attack').innerHTML = `
+    <div class="ana-section">Buts par Joueur</div>
+    <div class="chart-wrap">
+      ${[...players].sort((a,b)=>b.goals-a.goals).map(p=>barRow(p,p.goals,maxG,'var(--brand)','buts')).join('')}
+    </div>
+    <div class="ana-section">Assists par Joueur</div>
+    <div class="chart-wrap">
+      ${[...players].sort((a,b)=>b.assists-a.assists).map(p=>barRow(p,p.assists,maxA,'var(--info)','assists')).join('')}
+    </div>
+    <div class="ana-section">Volume de Tirs</div>
+    <div class="chart-wrap">
+      ${[...players].sort((a,b)=>b.shots_on-a.shots_on).map(p=>barRow(p,p.shots_on,maxS,'var(--warn)','tirs')).join('')}
+    </div>
+    <div class="ana-section">Précision vs Efficacité <span><span class="ds-tag">🔬 Corrélation</span></span></div>
+    <div style="padding:0 18px 14px;">
+      ${[...players].sort((a,b)=>b.clutch_score-a.clutch_score).map(p=>`
+        <div class="metric-bar">
+          <div class="metric-bar-header">
+            <span class="metric-bar-label">${p.short}</span>
+            <span style="font:400 10px/1 var(--font);color:var(--tx3)">Préc:${p.precision}% Eff:${p.efficiency}%</span>
+          </div>
+          <div style="display:flex;gap:4px">
+            <div class="metric-bar-track" style="flex:1">
+              <div class="metric-bar-fill" style="width:${Math.min(p.precision/60*100,100)}%;background:var(--warn)"></div>
+            </div>
+            <div class="metric-bar-track" style="flex:1">
+              <div class="metric-bar-fill" style="width:${Math.min(p.efficiency/25*100,100)}%;background:var(--brand)"></div>
+            </div>
+          </div>
+        </div>`).join('')}
+      <div style="display:flex;gap:16px;padding-top:6px;font:400 10px/1 var(--font);color:var(--tx3)">
+        <span style="color:var(--warn)">■ Précision tirs cadrés</span>
+        <span style="color:var(--brand)">■ Efficacité de conversion</span>
+      </div>
+    </div>`;
+}
+
+/* ─── Discipline ─── */
+function renderCoachDiscipline() {
+  const players = LOOKER_DATA.players;
+  const atRisk = players.filter(p => p.yellow >= 3);
+  const clean  = players.filter(p => p.yellow === 0);
+
+  $('coach-discipline').innerHTML = `
+    <div class="ana-section">Discipline <span>${LOOKER_DATA.global.total_yellow} jaunes · ${LOOKER_DATA.global.total_red} rouges</span></div>
+    <div style="padding:0 18px 14px;">
+      ${players.map(p=>{
+        const risk = p.yellow >= 4 ? 'danger' : p.yellow >= 3 ? 'warn' : 'brand';
+        const riskLabel = p.yellow >= 4 ? '🚨 HAUT' : p.yellow >= 3 ? '⚠️ MOYEN' : '✅ OK';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--sep)">
+          <div style="font:600 12px/1 var(--font);color:var(--tx1);min-width:100px">${p.short}</div>
+          <div style="display:flex;gap:4px">
+            ${Array(p.yellow).fill(0).map(()=>'<span style="font-size:14px">🟨</span>').join('')}
+            ${Array(p.red).fill(0).map(()=>'<span style="font-size:14px">🟥</span>').join('')}
+            ${p.yellow===0&&p.red===0?'<span style="font:400 11px/1 var(--font);color:var(--brand)">Aucun</span>':''}
+          </div>
+          <div style="margin-left:auto;font:700 10px/1 var(--font);color:var(--${risk})">${riskLabel}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="insight-grid" style="padding-top:0">
+      <div class="insight-card red">
+        <span class="insight-icon">⚠️</span>
+        <div class="insight-title">Joueurs à risque</div>
+        <div class="insight-val red">${atRisk.length}</div>
+        <div class="insight-sub">${atRisk.map(p=>p.short.split(' ').slice(-1)[0]).join(', ')||'Aucun'}</div>
+      </div>
+      <div class="insight-card green">
+        <span class="insight-icon">✅</span>
+        <div class="insight-title">Sans carton</div>
+        <div class="insight-val green">${clean.length}</div>
+        <div class="insight-sub">${clean.slice(0,3).map(p=>p.short.split(' ').slice(-1)[0]).join(', ')}</div>
+      </div>
+    </div>`;
+}
+
+/* ─── Vue Joueur : profil individuel ─── */
+function renderAnalyticsPlayer(playerName) {
+  const player = LOOKER_DATA.players.find(p =>
+    p.name === playerName ||
+    S.profile?.players?.name?.includes(playerName.split(' ').slice(-1)[0])
+  ) || LOOKER_DATA.players.find(p => S.profile?.players?.name?.includes(p.short.split(' ').slice(-1)[0]))
+    || LOOKER_DATA.players[0];
+
+  if (!player) { $('ana-player-content').innerHTML = '<div style="padding:20px;text-align:center;color:var(--tx3)">Profil non trouvé</div>'; return; }
+
+  const avgContrib = teamAvg('contributions');
+  const avgGoals   = teamAvg('goals_per_match');
+  const avgPrec    = teamAvg('precision');
+  const avgEff     = teamAvg('efficiency');
+
+  $('ana-player-content').innerHTML = `
+    <div class="player-profile">
+      <div class="player-profile-header">
+        <div class="player-avatar">#${player.number}</div>
+        <div>
+          <div class="player-profile-name">${player.name}</div>
+          <div class="player-profile-sub">${player.pos} · Saison 2025-26</div>
+          <div style="margin-top:6px"><span class="ds-tag">🔬 Score Impact: ${player.clutch_score}</span></div>
+        </div>
+        <div class="player-rating">
+          <div class="player-rating-val">${player.rating}</div>
+          <div class="player-rating-lbl">Note</div>
+        </div>
+      </div>
+
+      <!-- KPIs joueur -->
+      <div class="ana-kpi-band" style="grid-template-columns:repeat(4,1fr)">
+        <div class="ana-kpi"><div class="ana-kpi-val green">${player.goals}</div><div class="ana-kpi-lbl">Buts</div></div>
+        <div class="ana-kpi"><div class="ana-kpi-val blue">${player.assists}</div><div class="ana-kpi-lbl">Assists</div></div>
+        <div class="ana-kpi"><div class="ana-kpi-val gold">${player.contributions}</div><div class="ana-kpi-lbl">G+A</div></div>
+        <div class="ana-kpi"><div class="ana-kpi-val ${player.xG_diff>0?'green':'red'}">${player.xG_diff>0?'+':''}${player.xG_diff}</div><div class="ana-kpi-lbl">xG+/-</div></div>
+      </div>
+    </div>
+
+    <!-- Radar Chart -->
+    <div class="radar-wrap" style="padding:14px 18px 6px">
+      <div class="radar-title">Profil Radar <span class="ds-tag" style="margin-left:8px">🔬 Multi-dimensionnel</span></div>
+      ${radarSVG(player)}
+    </div>
+
+    <!-- Benchmarks vs équipe -->
+    <div class="ana-section">Comparaison vs Équipe</div>
+    <div style="padding:0 18px 14px">
+      ${[
+        {label:'Buts/match',   val:player.goals_per_match,   avg:avgGoals,    max:1.5,   col:'var(--brand)', fmt:v=>v.toFixed(2)},
+        {label:'Assists/match',val:player.assists_per_match, avg:teamAvg('assists_per_match'), max:0.8, col:'var(--info)', fmt:v=>v.toFixed(2)},
+        {label:'Précision',    val:player.precision,         avg:avgPrec,     max:60,    col:'var(--warn)', fmt:v=>v+'%'},
+        {label:'Efficacité',   val:player.efficiency,        avg:avgEff,      max:25,    col:'var(--brand)', fmt:v=>v+'%'},
+        {label:'xG+/-',        val:player.xG_diff,           avg:teamAvg('xG_diff'), max:8, col:'var(--brand)', fmt:v=>v>0?'+'+v:v},
+      ].map(m=>{
+        const pct = Math.min(Math.max(m.val/m.max*100,0),100);
+        const avgPct = Math.min(Math.max(m.avg/m.max*100,0),100);
+        const isAbove = m.val >= m.avg;
+        return `<div class="bench-row">
+          <div class="bench-label">${m.label}</div>
+          <div class="bench-player" style="color:${m.col}">${m.fmt(m.val)}</div>
+          <div class="bench-bar-wrap">
+            <div class="bench-bar-avg" style="left:${avgPct}%"></div>
+            <div class="bench-bar-player" style="width:${pct}%;background:${isAbove?m.col:'var(--danger)'}"></div>
+          </div>
+          <div class="bench-avg-val">${m.fmt(Math.round(m.avg*100)/100)}</div>
+        </div>`;
+      }).join('')}
+      <div style="font:400 10px/1.5 var(--font);color:var(--tx3);margin-top:6px">| = Moyenne équipe</div>
+    </div>
+
+    <!-- Forces & Faiblesses -->
+    <div class="ana-section">Forces & Axes d'amélioration</div>
+    <div class="sw-grid">
+      <div class="sw-card">
+        <div class="sw-title green">💪 Forces</div>
+        ${player.strengths.map(s=>`<div class="sw-item green">${s}</div>`).join('')}
+      </div>
+      <div class="sw-card">
+        <div class="sw-title red">📈 À améliorer</div>
+        ${player.weakness.map(w=>`<div class="sw-item red">${w}</div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Stats détaillées -->
+    <div class="ana-section">Statistiques détaillées</div>
+    <div style="padding:0 18px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${[
+        {label:'Tirs cadrés',  val:player.shots_on,   icon:'🎯'},
+        {label:'Précision',    val:player.precision+'%', icon:'📐'},
+        {label:'Efficacité',   val:player.efficiency+'%', icon:'💥'},
+        {label:'xG attendu',   val:player.xG,         icon:'📊'},
+        {label:'Cartons jaunes',val:player.yellow,    icon:'🟨'},
+        {label:'Discipline',   val:player.discipline+'%', icon:'⚖️'},
+        {label:'Implication',  val:player.involvement+'%', icon:'🔑'},
+        {label:'Note globale', val:player.rating+'/10', icon:'⭐'},
+      ].map(s=>`
+        <div style="background:var(--ink2);border:1px solid var(--sep);border-radius:var(--r-md);padding:10px">
+          <div style="font-size:16px;margin-bottom:4px">${s.icon}</div>
+          <div style="font:700 14px/1 var(--font);color:var(--tx1)">${s.val}</div>
+          <div style="font:400 10px/1 var(--font);color:var(--tx3);margin-top:2px">${s.label}</div>
+        </div>`).join('')}
+    </div>
+    <div style="height:16px"></div>`;
+}
+
+/* ─── Routeur principal renderStats ─── */
 function renderStats() {
-  // KPIs globaux
-  const d = LOOKER_DATA;
-  const diff = d.global.goals_for - d.global.goals_against;
-  $('stats-kpis').innerHTML = `<div class="stats-kpi-row">
-    <div class="stats-kpi"><div class="stats-kpi-num">${d.global.matches}</div><div class="stats-kpi-lbl">Matchs</div></div>
-    <div class="stats-kpi"><div class="stats-kpi-num green">${d.global.goals_for}</div><div class="stats-kpi-lbl">Buts marqués</div></div>
-    <div class="stats-kpi"><div class="stats-kpi-num red">${d.global.goals_against}</div><div class="stats-kpi-lbl">Buts encaissés</div></div>
-    <div class="stats-kpi"><div class="stats-kpi-num ${diff>=0?'green':'red'}">${diff>=0?'+':''}${diff}</div><div class="stats-kpi-lbl">Différentiel</div></div>
-  </div>`;
+  const isStaff = ['admin','coach','physio','gk'].includes(S.role);
 
-  renderChartGoals();
-  renderChartAssists();
-  renderTableShooting();
+  // Vue badge
+  const badge = $('ana-view-badge');
+  if (badge) {
+    badge.textContent = isStaff ? '👔 Vue Coach' : '👤 Ma Performance';
+    badge.className = 'ana-view-badge' + (isStaff ? '' : ' player');
+  }
+
+  if (isStaff) {
+    // Afficher la vue coach, cacher la vue joueur
+    const cv = $('ana-coach-view'), pv = $('ana-player-view');
+    if (cv) cv.style.display = 'block';
+    if (pv) pv.style.display = 'none';
+    renderAnalyticsCoach();
+  } else {
+    // Afficher uniquement le profil du joueur connecté
+    const cv = $('ana-coach-view'), pv = $('ana-player-view');
+    if (cv) cv.style.display = 'none';
+    if (pv) pv.style.display = 'block';
+    const playerName = S.profile?.players?.name || '';
+    renderAnalyticsPlayer(playerName);
+  }
 }
 
-function renderChartGoals() {
-  const el = $('chart-goals'); if (!el) return;
-  const sorted = [...LOOKER_DATA.players].sort((a,b)=>b.goals-a.goals).filter(p=>p.goals>0);
-  const max = sorted[0]?.goals || 1;
-  el.innerHTML = sorted.map((p,i) => {
-    const w = Math.round(p.goals/max*100);
-    const colors = ['#22C55E','#4ADE80','#86EFAC','#BBF7D0','#D1FAE5'];
-    const col = colors[Math.min(i,4)];
-    return `<div class="chart-bar-row">
-      <div class="chart-bar-name">${
-        i===0?'<span class="rank-badge rank-1">🥇</span>':
-        i===1?'<span class="rank-badge rank-2">🥈</span>':
-        i===2?'<span class="rank-badge rank-3">🥉</span>':
-        `<span class="rank-badge" style="color:var(--tx3);font-size:9px;">${i+1}</span>`
-      }${p.name.split(' ').slice(-1)[0]}</div>
-      <div class="chart-bar-bg">
-        <div class="chart-bar-fill" style="width:${w}%;background:${col};">
-          <span class="chart-bar-val">${p.goals} buts</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderChartAssists() {
-  const el = $('chart-assists'); if (!el) return;
-  const sorted = [...LOOKER_DATA.players].sort((a,b)=>b.assists-a.assists).filter(p=>p.assists>0);
-  const max = sorted[0]?.assists || 1;
-  el.innerHTML = sorted.map((p,i) => {
-    const w = Math.round(p.assists/max*100);
-    const colors = ['#3B82F6','#60A5FA','#93C5FD','#BFDBFE','#DBEAFE'];
-    const col = colors[Math.min(i,4)];
-    return `<div class="chart-bar-row">
-      <div class="chart-bar-name">${
-        i===0?'<span class="rank-badge rank-1">🥇</span>':
-        i===1?'<span class="rank-badge rank-2">🥈</span>':
-        i===2?'<span class="rank-badge rank-3">🥉</span>':
-        `<span class="rank-badge" style="color:var(--tx3);font-size:9px;">${i+1}</span>`
-      }${p.name.split(' ').slice(-1)[0]}</div>
-      <div class="chart-bar-bg">
-        <div class="chart-bar-fill" style="width:${w}%;background:${col};">
-          <span class="chart-bar-val">${p.assists} assists</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderTableShooting() {
-  const tbody = $('tbody-shooting'); if (!tbody) return;
-  const sorted = [...LOOKER_DATA.players].sort((a,b) => {
-    const av = a[_statsSort.key]||0, bv = b[_statsSort.key]||0;
-    return (bv-av)*_statsSort.dir;
-  });
-  const maxG = Math.max(...sorted.map(p=>p.goals),1);
-  const maxS = Math.max(...sorted.map(p=>p.shots_on),1);
-  tbody.innerHTML = sorted.map((p,i) => {
-    const gw = Math.round(p.goals/maxG*60);
-    const sw = Math.round(p.shots_on/maxS*60);
-    return `<tr>
-      <td>${i+1 <= 3 ? ['🥇','🥈','🥉'][i]+' ':''}<strong>${p.name}</strong></td>
-      <td><div class="bar-cell"><div class="bar-mini" style="width:${gw}px;"></div>${p.goals}</div></td>
-      <td><div class="bar-cell"><div class="bar-mini blue" style="width:${sw}px;"></div>${p.shots_on}</div></td>
-      <td style="color:${p.precision>=40?'var(--brand)':p.precision>=25?'var(--warn)':'var(--tx2)'}">${p.precision}%</td>
-      <td style="color:${p.efficiency>=20?'var(--brand)':p.efficiency>=12?'var(--warn)':'var(--tx2)'}">${p.efficiency}%</td>
-      <td style="color:var(--tx3)">${p.freq||'—'}</td>
-    </tr>`;
-  }).join('');
-  // Update header sort indicator
-  document.querySelectorAll('.stats-table th').forEach(th => th.classList.remove('sorted'));
-}
-
-window.sortStats = key => {
-  if (_statsSort.key === key) _statsSort.dir *= -1;
-  else { _statsSort.key = key; _statsSort.dir = -1; }
-  renderTableShooting();
-  document.querySelectorAll('#table-shooting th').forEach((th,i) => {
-    const keys=['name','goals','shots_on','precision','efficiency','freq'];
-    th.classList.toggle('sorted', keys[i] === key);
+/* ─── Navigation tabs coach ─── */
+window.anaTab = (el, targetId) => {
+  el.closest('.ana-tabs')?.querySelectorAll('.ana-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const views = ['coach-ranking','coach-insights','coach-attack','coach-discipline','coach-looker'];
+  views.forEach(id => {
+    const el2 = $(id);
+    if (el2) el2.style.display = id===targetId ? 'block' : 'none';
   });
 };
 
-// Pages Looker Studio
-const LOOKER_PAGES = {
-  TlJ0C: 'TlJ0C',
-  p_construction: 'p_KQkbC',  // construction page
-  p_buts: 'p_Ahm6C',          // analyse buts
-  p_temps: 'p_nW07C',         // temps de jeu
-};
-window.switchLooker = (btn, pageKey) => {
-  document.querySelectorAll('.looker-tab').forEach(t=>t.classList.remove('on'));
-  btn.classList.add('on');
-  const iframe = $('looker-iframe');
-  const loading = $('looker-loading');
-  if (loading) loading.style.display='flex';
-  iframe.src = `https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/${LOOKER_PAGES[pageKey]||pageKey}`;
+/* ─── Voir profil d'un joueur (depuis coach) ─── */
+window.viewPlayerAnalytics = (playerName) => {
+  const cv = $('ana-coach-view'), pv = $('ana-player-view');
+  if (cv) cv.style.display = 'none';
+  if (pv) pv.style.display = 'block';
+  const backBtn = $('ana-back-btn');
+  if (backBtn) backBtn.style.display = 'flex';
+  renderAnalyticsPlayer(playerName);
 };
 
+window.backToCoachView = () => {
+  const cv = $('ana-coach-view'), pv = $('ana-player-view');
+  if (cv) cv.style.display = 'block';
+  if (pv) pv.style.display = 'none';
+  const backBtn = $('ana-back-btn');
+  if (backBtn) backBtn.style.display = 'none';
+};
+
+/* ─── Tri du tableau ─── */
+window.setAnaSort = key => {
+  if (_anaSort.key === key) _anaSort.dir *= -1;
+  else { _anaSort.key = key; _anaSort.dir = -1; }
+  renderCoachRanking();
+};
+
+/* ─── Sync Supabase ─── */
 window.syncStats = async () => {
   const btn = $('stats-sync-btn');
-  const info = $('stats-sync-info');
-  btn.classList.add('syncing');
-  btn.querySelector('span') && (btn.querySelector('span').textContent = 'Syncing...');
-  
-  // Sync avec Supabase : mettre à jour goals/assists des joueurs depuis Looker data
+  if (btn) btn.classList.add('syncing');
   try {
     let updated = 0;
     for (const ps of LOOKER_DATA.players) {
-      const player = S.players.find(p => 
-        p.name.toLowerCase().includes(ps.name.split(' ').slice(-1)[0].toLowerCase()) ||
-        ps.name.toLowerCase().includes(p.name.split(' ').slice(-1)[0].toLowerCase())
+      const player = S.players.find(p =>
+        p.name?.toLowerCase().includes(ps.short.split(' ').slice(-1)[0].toLowerCase())
       );
       if (player) {
-        await sb.from('players').update({
-          goals: ps.goals,
-          assists: ps.assists,
-        }).eq('id', player.id);
+        await sb.from('players').update({ goals:ps.goals, assists:ps.assists }).eq('id',player.id);
         updated++;
       }
     }
-    
-    // Recharger les joueurs
     const {data} = await sb.from('players').select('*').order('number');
     S.players = data || [];
-    
-    // Mettre à jour la date de sync
-    LOOKER_DATA.updated = new Date().toISOString().split('T')[0];
-    if (info) info.textContent = `Sync ${LOOKER_DATA.updated} · ${updated} joueurs mis à jour`;
-    
+    const info = $('stats-sync-info');
+    if (info) info.textContent = `Sync ${new Date().toLocaleDateString('fr-BE')} · ${updated} joueurs`;
+    toast(`Stats synchronisées · ${updated} joueurs ✓`);
     renderStats();
-    renderSquad();
-    toast(`Stats synchronisées — ${updated} joueurs ✓`);
-  } catch(e) {
-    toast('✗ Erreur sync: ' + e.message);
-  } finally {
-    btn.classList.remove('syncing');
-  }
+  } catch(e) { toast('✗ Erreur sync'); }
+  finally { if(btn) btn.classList.remove('syncing'); }
 };
+
+/* BACKWARD COMPAT — anciens appels */
+window.sortStats = window.setAnaSort;
+window.switchLooker = (btn, pageKey) => {
+  document.querySelectorAll('.looker-tab').forEach(t=>t.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const iframe = $('looker-iframe');
+  const loading = $('looker-loading');
+  if (loading) loading.style.display='flex';
+  if (iframe) iframe.src = `https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/${pageKey}`;
+};
+
 
 /* ── Boot ── */
 async function boot(){
