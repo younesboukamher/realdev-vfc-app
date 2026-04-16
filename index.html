@@ -2198,7 +2198,7 @@ function renderPresences() {
       ).join('');
       return `<div class="roster-line">
         ${(()=>{const lp=LOOKER_DATA.players.find(x=>x.name===p.name||p.name?.includes(x.short?.split(' ').slice(-1)[0]));
-          return lp?.photo?'<img style="width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:center top;border:1.5px solid var(--sep2);flex-shrink:0" src="'+lp.photo+'" onerror="this.style.display=\'none\'">':'<div class="av '+avClass(p.position)+' av-sm">'+initials(p.name)+'</div>';})()}
+          return lp?.photo?'<img style="width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:center top;border:1.5px solid var(--sep2);flex-shrink:0" src="'+lp.photo+'">':'<div class="av '+avClass(p.position)+' av-sm">'+initials(p.name)+'</div>';})()}
         <div class="roster-info">
           <div class="roster-name">${p.name}</div>
           <div class="roster-pos pos-${posClass(p.position)}">${p.position}</div>
@@ -2738,7 +2738,7 @@ function renderProfile(){
                 const lp = LOOKER_DATA.players.find(lp2 => lp2.name.toLowerCase().includes(player.name?.split(' ').slice(-1)[0]?.toLowerCase() || ''));
                 return lp?.photo ? 
                   `<img class="squad-avatar" src="${lp.photo}" 
-                    onerror="this.style.display='none'"
+                   
                     alt="${player.name}">` :
                   `<div class="profile-av-lg ${avClass(player.position)}">${initials(player.name)}</div>`;
               })()}
@@ -2907,7 +2907,7 @@ function playerAvatarHTML(player, size='md') {
   const cls = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : '';
   if (player?.photo) {
     return `<img class="player-avatar-img ${cls}" src="${player.photo}" 
-      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+     
       alt="${player.short}">
     <div class="player-avatar-initials ${cls}" style="display:none">#${player.number}</div>`;
   }
@@ -2919,7 +2919,7 @@ function rankAvatarHTML(player) {
     const num = player.number||'?';
     return `<img class="rank-avatar" src="${player.photo}"
       onload="this.style.opacity=1"
-      onerror="this.style.display='none'"
+     
       style="opacity:0;transition:opacity .3s"
       alt="${player.short}">`;
   }
@@ -3038,7 +3038,7 @@ function renderCoachRanking() {
           ${players.map((p,i)=>`<tr onclick="viewPlayerAnalytics('${p.name}')" style="cursor:pointer">
             <td>
               <div class="rank-player-cell">
-                ${p.photo ? '<img class="rank-avatar" src="'+p.photo+'" onerror="this.style.display=\'none\'">': '<div class="rank-avatar-init">#'+p.number+'</div>'}
+                ${p.photo ? '<img class="rank-avatar" src="'+p.photo+'">': '<div class="rank-avatar-init">#'+p.number+'</div>'}
                 <span><span class="medal">${medals[i]||''}</span>${p.short}</span>
               </div>
             </td>
@@ -3297,7 +3297,7 @@ function renderAnalyticsPlayer(playerName) {
     <div class="player-profile">
       <div class="player-profile-header">
         <div style="flex-shrink:0">
-          ${player.photo ? '<img class="player-avatar-img lg" src="'+player.photo+'" onerror="this.style.display=\'none\'">': '<div class="player-avatar-initials lg">#'+player.number+'</div>'}
+          ${player.photo ? '<img class="player-avatar-img lg" src="'+player.photo+'">': '<div class="player-avatar-initials lg">#'+player.number+'</div>'}
         </div>
         <div>
           <div class="player-profile-name">${player.name}</div>
