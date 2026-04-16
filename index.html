@@ -3297,20 +3297,7 @@ function renderAnalyticsPlayer(playerName) {
           <div style="font:400 10px/1 var(--font);color:var(--tx3);margin-top:2px">${s.label}</div>
         </div>`).join('')}
     </div>
-    <div style="height:4px"></div>
-
-    <!-- Onglets dans profil joueur -->
-    <div class="ana-tabs" style="margin:0 18px 0">
-      <button class="ana-tab on" onclick="playerTab(this,'pt-stats','${player.name}')">📊 Stats</button>
-      <button class="ana-tab" onclick="playerTab(this,'pt-progression','${player.name}')">📈 Évolution</button>
-    </div>
-    
-    <div id="pt-stats"></div>
-    <div id="pt-progression" style="display:none"></div>
     <div style="height:16px"></div>`;
-  
-  // Charger stats tab (contenu déjà dans ana-player-content)
-  // Charger progression à la demande
 }
 
 /* ─── Routeur principal renderStats ─── */
@@ -3700,20 +3687,7 @@ function renderTeamProgression() {
       ${renderEvolutionFor(LOOKER_DATA.players.filter(p=>p.shots_on>0)[0]?.name || 'Soufiane El Fakiri')}
     </div>
     
-    <div style="height:4px"></div>
-
-    <!-- Onglets dans profil joueur -->
-    <div class="ana-tabs" style="margin:0 18px 0">
-      <button class="ana-tab on" onclick="playerTab(this,'pt-stats','${player.name}')">📊 Stats</button>
-      <button class="ana-tab" onclick="playerTab(this,'pt-progression','${player.name}')">📈 Évolution</button>
-    </div>
-    
-    <div id="pt-stats"></div>
-    <div id="pt-progression" style="display:none"></div>
     <div style="height:16px"></div>`;
-  
-  // Charger stats tab (contenu déjà dans ana-player-content)
-  // Charger progression à la demande
 }
 
 function renderEvolutionFor(playerName) {
