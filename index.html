@@ -1985,6 +1985,70 @@ const MSGS = {
     present:'Aanwezig', late:'Te laat', form:'Formulier'
 }};
 
+/* ── Helpers ── */
+const $ = id => document.getElementById(id);
+const splash_on  = () => $('splash').classList.add('on');
+const splash_off = () => $('splash').classList.remove('on');
+
+function toast(txt, ms=2500) {
+  const el=$('toast'); el.textContent=txt; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), ms);
+}
+function fd(d) {
+  if (!d) return '—';
+  const [y,m,day]=d.split('-');
+  return day?`${day}/${m}/${y?.slice(2)}`:d;
+}
+const posClass = p => ({GK:'gk',FIXO:'fix',ALA:'ala',PIVOT:'piv'})[p]||'fix';
+const posColor = p => ({GK:'var(--warn)',FIXO:'var(--info)',ALA:'var(--brand)',PIVOT:'var(--danger)'})[p]||'var(--tx3)';
+const avClass  = p => ({GK:'av-gk',FIXO:'av-fix',ALA:'av-ala',PIVOT:'av-piv'})[p]||'av-fix';
+const initials = n => { const p=n.split(' '); return (p[0]?.[0]||'')+(p[1]?.[0]||''); };
+
+window.open_modal = id => { $(id).classList.add('on'); document.body.style.overflow='hidden'; };
+window.close_modal= id => { $(id).classList.remove('on'); document.body.style.overflow=''; };
+
+/* ── Auth ── */
+window.doLogin = async () => {
+  const email=$('login-email').value.trim(), pwd=$('login-pwd').value;
+  const errEl=$('login-err'), btn=$('btn-login');
+  if (!email||!pwd) { errEl.textContent='Remplissez tous les champs'; return; }
+  btn.disabled=true; btn.textContent='Connexion…'; errEl.textContent='';
+  try {
+    const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
+    if (error) { errEl.textContent=msg('login_err'); btn.disabled=false; btn.textContent='Se connecter'; return; }
+    await boot_app(data.user);
+  } catch(e) { console.error('doLogin/boot_app error:', e);
+    console.error(e);
+    errEl.textContent = 'Erreur: '+(e?.message||'inconnue');
+    btn.disabled=false; btn.textContent='Se connecter';
+  }
+};
+
+window.doLogout = async () => {
+  await sb.auth.signOut();
+  $('scr-login').style.display='flex';
+  $('app').style.display='none';
+  ['nav-staff','nav-player'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
+  $('hud').style.display='';
+};
+
+async function boot_app(user) {
+  S.user=user; splash_on();
+  const {data:prof}=await sb.from('user_profiles').select('*,players(name,position)').eq('id',user.id).maybeSingle();
+  S.profile=prof||null; S.role=prof?.role||'player';
+  await loadAll();
+  splash_off();
+  $('scr-login').style.display='none';
+  $('app').style.display='block';
+  const isStaff=['admin','coach','physio','gk'].includes(S.role);
+  const _ns=$('nav-staff'), _np=$('nav-player');
+  if(_ns) _ns.style.display=isStaff?'flex':'none';
+  if(_np) _np.style.display=!isStaff?'flex':'none';
+  $('role-pill').textContent=S.role.toUpperCase();
+  try { renderAll(); } catch(e){ console.error('renderAll error:', e); toast('Erreur chargement: '+e.message); }
+  if (!window.__rt) { window.__rt=true; try { rt(); } catch(e){ console.error('rt error:', e); } }
+}
+
 window.doLogout = async () => {
   await sb.auth.signOut();
   $('scr-login').style.display='flex';
