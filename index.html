@@ -1296,6 +1296,52 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
   border:1px solid rgba(59,130,246,.2);
 }
 
+
+/* ── Player Photo Avatar ── */
+.player-avatar-img {
+  width:56px; height:56px; border-radius:50%;
+  object-fit:cover; object-position:center top;
+  border:2px solid var(--brand);
+  background:rgba(34,197,94,.15);
+  flex-shrink:0;
+}
+.player-avatar-img.sm {
+  width:36px; height:36px; border-width:1.5px;
+}
+.player-avatar-img.lg {
+  width:72px; height:72px; border-width:2.5px;
+  box-shadow:0 0 0 3px rgba(34,197,94,.2);
+}
+.player-avatar-initials {
+  width:56px; height:56px; border-radius:50%;
+  background:rgba(34,197,94,.2); border:2px solid var(--brand);
+  display:flex; align-items:center; justify-content:center;
+  font:800 20px/1 var(--font); color:var(--brand); flex-shrink:0;
+}
+.player-avatar-initials.sm { width:36px; height:36px; font-size:13px; }
+.player-avatar-initials.lg { width:72px; height:72px; font-size:26px; box-shadow:0 0 0 3px rgba(34,197,94,.2); }
+
+/* Tableau classement — mini avatar */
+.rank-player-cell { display:flex; align-items:center; gap:8px; }
+.rank-avatar { 
+  width:32px; height:32px; border-radius:50%;
+  object-fit:cover; object-position:center top;
+  border:1.5px solid var(--sep2); flex-shrink:0;
+}
+.rank-avatar-init {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--ink3); border:1.5px solid var(--sep2);
+  display:flex; align-items:center; justify-content:center;
+  font:700 11px/1 var(--font); color:var(--tx3); flex-shrink:0;
+}
+
+/* Squad page avatar */
+.squad-avatar {
+  width:44px; height:44px; border-radius:50%;
+  object-fit:cover; object-position:center top;
+  border:2px solid var(--sep2);
+}
+
 /* Responsive */
 @media (max-width:360px) {
   .quick-stats { grid-template-columns:repeat(2,1fr); }
@@ -1837,70 +1883,70 @@ var LOOKER_DATA = {
     points:27
   },
   players: [
-    { name:'Soufiane El Fakiri', short:'El Fakiri', pos:'ALA', number:20,
+    { name:'Soufiane El Fakiri', short:'El Fakiri', photo:'https://www.futsal-realdev.com/web/image/14101-fa635eb9/20.svg', pos:'ALA', number:20,
       goals:15, assists:9, shots_on:68, precision:36, efficiency:12, freq:23.32,
       yellow:0, red:0, goals_per_match:1.15, assists_per_match:0.69,
       contributions:24, involvement:34.8, clutch_score:58.2,
       xG:8.8, xG_diff:6.2, shooting_volume:5.2, discipline:100,
       strengths:['Volume de tirs','Finition','Vitesse'], weakness:['Efficacite tirs'],
       rating:9.1 },
-    { name:'Hamza Lagrib', short:'Lagrib', pos:'ALA', number:14,
+    { name:'Hamza Lagrib', short:'Lagrib', photo:'https://www.futsal-realdev.com/web/image/14103-521b27c1/17.svg', pos:'ALA', number:14,
       goals:9, assists:5, shots_on:29, precision:51, efficiency:18, freq:23.7,
       yellow:0, red:0, goals_per_match:0.69, assists_per_match:0.38,
       contributions:14, involvement:20.3, clutch_score:40.2,
       xG:3.8, xG_diff:5.2, shooting_volume:2.2, discipline:100,
       strengths:['Precision tirs','Finition propre'], weakness:['Volume de jeu'],
       rating:8.2 },
-    { name:'Abdessamad El Hafid', short:'El Hafid', pos:'ALA', number:19,
+    { name:'Abdessamad El Hafid', short:'El Hafid', photo:'https://www.futsal-realdev.com/web/image/14098-09700964/19.svg', pos:'ALA', number:19,
       goals:5, assists:10, shots_on:17, precision:44, efficiency:25, freq:43.79,
       yellow:1, red:0, goals_per_match:0.38, assists_per_match:0.77,
       contributions:15, involvement:21.7, clutch_score:36.3,
       xG:2.2, xG_diff:2.8, shooting_volume:1.3, discipline:90,
       strengths:['Meilleur passeur','Vision du jeu'], weakness:['Volume tirs'],
       rating:8.5 },
-    { name:'Marwan Bouchoiri', short:'Bouchoiri', pos:'PIVOT', number:23,
+    { name:'Marwan Bouchoiri', short:'Bouchoiri', photo:'https://www.futsal-realdev.com/web/image/14097-b0e3feb5/23.svg', pos:'PIVOT', number:23,
       goals:8, assists:6, shots_on:20, precision:46, efficiency:18, freq:22.46,
       yellow:4, red:0, goals_per_match:0.62, assists_per_match:0.46,
       contributions:14, involvement:20.3, clutch_score:38.2,
       xG:2.6, xG_diff:5.4, shooting_volume:1.5, discipline:60,
       strengths:['Efficace au pivot','Passes decisives'], weakness:['Discipline'],
       rating:7.8 },
-    { name:'Yassine Qoli', short:'Qoli', pos:'ALA', number:21,
+    { name:'Yassine Qoli', short:'Qoli', photo:'https://www.futsal-realdev.com/web/image/14102-feb5389a/21.svg', pos:'ALA', number:21,
       goals:8, assists:4, shots_on:29, precision:22, efficiency:8, freq:20.69,
       yellow:3, red:0, goals_per_match:0.62, assists_per_match:0.31,
       contributions:12, involvement:17.4, clutch_score:30.4,
       xG:3.8, xG_diff:4.2, shooting_volume:2.2, discipline:70,
       strengths:['Pressing haut','Buts saison'], weakness:['Precision','Cartons'],
       rating:7.2 },
-    { name:'Bilal Hachem', short:'Hachem', pos:'FIXO', number:17,
+    { name:'Bilal Hachem', short:'Hachem', photo:'https://www.futsal-realdev.com/web/image/14103-521b27c1/17.svg', pos:'FIXO', number:17,
       goals:6, assists:4, shots_on:14, precision:23, efficiency:15, freq:36.68,
       yellow:2, red:0, goals_per_match:0.46, assists_per_match:0.31,
       contributions:10, involvement:14.5, clutch_score:25.6,
       xG:1.8, xG_diff:4.2, shooting_volume:1.1, discipline:80,
       strengths:['Defensif solide','Transition'], weakness:['Volume offensif'],
       rating:7.0 },
-    { name:'Bilal El Bouhadifi', short:'El Bouhadifi', pos:'FIXO', number:18,
+    { name:'Bilal El Bouhadifi', short:'El Bouhadifi', photo:'https://www.futsal-realdev.com/web/image/14095-3cbceea2/18.svg', pos:'FIXO', number:18,
       goals:5, assists:4, shots_on:9, precision:29, efficiency:18, freq:18.55,
       yellow:1, red:0, goals_per_match:0.38, assists_per_match:0.31,
       contributions:9, involvement:13.0, clutch_score:24.3,
       xG:1.2, xG_diff:3.8, shooting_volume:0.7, discipline:90,
       strengths:['Efficace peu tirs','Discipline'], weakness:['Volume jeu'],
       rating:7.3 },
-    { name:'Mouhsin Bouzid', short:'Bouzid', pos:'ALA', number:22,
+    { name:'Mouhsin Bouzid', short:'Bouzid', photo:'https://www.futsal-realdev.com/web/image/14105-3ae797be/Bilal%2520Hachem.svg', pos:'ALA', number:22,
       goals:4, assists:5, shots_on:26, precision:35, efficiency:9, freq:68.55,
       yellow:0, red:0, goals_per_match:0.31, assists_per_match:0.38,
       contributions:9, involvement:13.0, clutch_score:24.5,
       xG:3.4, xG_diff:0.6, shooting_volume:2.0, discipline:100,
       strengths:['Volume tirs','Passeur'], weakness:['Finalisation'],
       rating:6.8 },
-    { name:'Mounir Chouaa', short:'Chouaa', pos:'PIVOT', number:22,
+    { name:'Mounir Chouaa', short:'Chouaa', photo:'https://www.futsal-realdev.com/web/image/14100-f12a2c39/22.svg', pos:'PIVOT', number:22,
       goals:3, assists:2, shots_on:13, precision:30, efficiency:5, freq:33.71,
       yellow:0, red:0, goals_per_match:0.23, assists_per_match:0.15,
       contributions:5, involvement:7.2, clutch_score:16.5,
       xG:1.7, xG_diff:1.3, shooting_volume:1.0, discipline:100,
       strengths:['Technique'], weakness:['Efficacite','Volume'],
       rating:6.2 },
-    { name:'Mathieu O.', short:'Mathieu', pos:'FIXO', number:15,
+    { name:'Mathieu O.', short:'Mathieu', photo:'https://www.futsal-realdev.com/web/image/14099-ee0bfcda/15.svg', pos:'FIXO', number:15,
       goals:0, assists:0, shots_on:0, precision:0, efficiency:0, freq:0,
       yellow:0, red:0, goals_per_match:0, assists_per_match:0,
       contributions:0, involvement:0, clutch_score:0,
@@ -2750,7 +2796,14 @@ function renderProfile(){
   const pct=myP.length?Math.round(myP.filter(p=>p.status==='P').length/myP.length*100):0;
   el.innerHTML=`
     <div class="profile-hero">
-      <div class="profile-av-lg ${avClass(player.position)}">${initials(player.name)}</div>
+      ${(() => {
+                const lp = LOOKER_DATA.players.find(lp2 => lp2.name.toLowerCase().includes(player.name?.split(' ').slice(-1)[0]?.toLowerCase() || ''));
+                return lp?.photo ? 
+                  `<img class="squad-avatar" src="${lp.photo}" 
+                    onerror="this.outerHTML='<div class=\"profile-av-lg ${avClass(player.position)}\">${initials(player.name)}</div>'"
+                    alt="${player.name}">` :
+                  `<div class="profile-av-lg ${avClass(player.position)}">${initials(player.name)}</div>`;
+              })()}
       <div>
         <div class="profile-name">${player.name}</div>
         <div class="profile-pos pos-${posClass(player.position)}">${player.position}</div>
@@ -2884,6 +2937,28 @@ var PLAYER_KEY = {
 
 let _anaSort = { key:'contributions', dir:-1 };
 
+
+/* ─── Avatar helper ─── */
+function playerAvatarHTML(player, size='md') {
+  const cls = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : '';
+  if (player?.photo) {
+    return `<img class="player-avatar-img ${cls}" src="${player.photo}" 
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+      alt="${player.short}">
+    <div class="player-avatar-initials ${cls}" style="display:none">#${player.number}</div>`;
+  }
+  return `<div class="player-avatar-initials ${cls}">#${player?.number||'?'}</div>`;
+}
+
+function rankAvatarHTML(player) {
+  if (player?.photo) {
+    return `<img class="rank-avatar" src="${player.photo}"
+      onerror="this.outerHTML='<div class=\"rank-avatar-init\">#${player.number}</div>'"
+      alt="${player.short}">`;
+  }
+  return `<div class="rank-avatar-init">#${player?.number||'?'}</div>`;
+}
+
 /* ─── Helpers ─── */
 const teamAvg = key => {
   const vals = LOOKER_DATA.players.filter(p => p.shots_on > 0 || key==='rating').map(p => p[key]||0);
@@ -2991,7 +3066,12 @@ function renderCoachRanking() {
         </tr></thead>
         <tbody>
           ${players.map((p,i)=>`<tr onclick="viewPlayerAnalytics('${p.name}')" style="cursor:pointer">
-            <td><span class="medal">${medals[i]||''}</span>${p.short}</td>
+            <td>
+              <div class="rank-player-cell">
+                ${rankAvatarHTML(p)}
+                <span><span class="medal">${medals[i]||''}</span>${p.short}</span>
+              </div>
+            </td>
             <td style="color:var(--brand);font-weight:700">${p.contributions}</td>
             <td>${p.goals}</td>
             <td>${p.assists}</td>
@@ -3212,7 +3292,15 @@ function renderAnalyticsPlayer(playerName) {
   $('ana-player-content').innerHTML = `
     <div class="player-profile">
       <div class="player-profile-header">
-        <div class="player-avatar">#${player.number}</div>
+        <div style="flex-shrink:0">
+          ${player.photo ? 
+            `<img class="player-avatar-img lg" src="${player.photo}" 
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" 
+              alt="${player.short}">
+             <div class="player-avatar-initials lg" style="display:none">#${player.number}</div>` :
+            `<div class="player-avatar-initials lg">#${player.number}</div>`
+          }
+        </div>
         <div>
           <div class="player-profile-name">${player.name}</div>
           <div class="player-profile-sub">${player.pos} · Saison 2025-26</div>
