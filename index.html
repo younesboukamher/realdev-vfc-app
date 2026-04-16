@@ -2033,31 +2033,6 @@ window.doLogout = async () => {
 };
 
 async function boot_app(user) {
-  S.user=user; splash_on();
-  const {data:prof}=await sb.from('user_profiles').select('*,players(name,position)').eq('id',user.id).maybeSingle();
-  S.profile=prof||null; S.role=prof?.role||'player';
-  await loadAll();
-  splash_off();
-  $('scr-login').style.display='none';
-  $('app').style.display='block';
-  const isStaff=['admin','coach','physio','gk'].includes(S.role);
-  const _ns=$('nav-staff'), _np=$('nav-player');
-  if(_ns) _ns.style.display=isStaff?'flex':'none';
-  if(_np) _np.style.display=!isStaff?'flex':'none';
-  $('role-pill').textContent=S.role.toUpperCase();
-  try { renderAll(); } catch(e){ console.error('renderAll error:', e); toast('Erreur chargement: '+e.message); }
-  if (!window.__rt) { window.__rt=true; try { rt(); } catch(e){ console.error('rt error:', e); } }
-}
-
-window.doLogout = async () => {
-  await sb.auth.signOut();
-  $('scr-login').style.display='flex';
-  $('app').style.display='none';
-  ['nav-staff','nav-player'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
-  $('hud').style.display='';
-};
-
-async function boot_app(user) {
   S.user=user;
   S.season = ($('login-season')?.value) || '2025-2026';
   splash_on();
