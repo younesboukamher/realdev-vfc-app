@@ -1728,6 +1728,7 @@ function generateMicrocycle(scouting) {
         <div id="coach-ranking"></div>
         <div id="coach-insights" style="display:none"></div>
         <div id="coach-attack" style="display:none"></div>
+        <div id="coach-progression" style="display:none"></div>
         <div id="coach-discipline" style="display:none"></div>
         <div id="coach-looker" style="display:none">
           <div class="looker-embed-wrap" style="margin:12px 18px 16px;">
@@ -2788,6 +2789,99 @@ function populateSel(){
 /* ════════ ANALYTICS — Data Science + Head Coach ════════ */
 
 /* ─── Tri du tableau ─── */
+
+/* ════════ MATCH_DATA — Données brutes temporelles (Google Sheets) ════════ */
+/* Source: https://docs.google.com/spreadsheets/d/1K4kavKRfehrvExljox-rmxqe9oBTuHKumE54WTwuQMU */
+var MATCH_DATA = [
+  {j:"J1",  date:"2025-09-05",  adv:"Bouraza",          lieu:"Ext", gf:3,  ga:4,
+   buts:    {Fakiri:1,Lagrib:0,Hafid:0,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:1,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:0,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   passes:  {Fakiri:39,Lagrib:19,Hafid:20,Qoli:41,Bouchoiri:12,Hachem:0,Bouhadifi:0,Bouzid:70,Chouaa:0},
+   tirs:    {Fakiri:18,Lagrib:0,Hafid:4,Qoli:8,Bouchoiri:2,Hachem:0,Bouhadifi:0,Bouzid:10,Chouaa:3},
+   minutes: {Fakiri:40,Lagrib:35,Hafid:40,Qoli:40,Bouchoiri:25,Hachem:15,Bouhadifi:10,Bouzid:40,Chouaa:20}},
+  {j:"J2",  date:"2025-09-12",  adv:"Anneessens",       lieu:"Dom", gf:5,  ga:2,
+   buts:    {Fakiri:1,Lagrib:0,Hafid:1,Qoli:1,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   assists: {Fakiri:1,Lagrib:1,Hafid:0,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:1,Bouzid:0,Chouaa:1},
+   passes:  {Fakiri:84,Lagrib:35,Hafid:0,Qoli:43,Bouchoiri:38,Hachem:0,Bouhadifi:7,Bouzid:40,Chouaa:33},
+   tirs:    {Fakiri:9,Lagrib:1,Hafid:0,Qoli:12,Bouchoiri:2,Hachem:0,Bouhadifi:2,Bouzid:3,Chouaa:5},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:30,Qoli:40,Bouchoiri:35,Hachem:10,Bouhadifi:25,Bouzid:40,Chouaa:40}},
+  {j:"J3",  date:"2025-11-15",  adv:"ZVC Pibo Bilzen",  lieu:"Dom", gf:2,  ga:3,
+   buts:    {Fakiri:0,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:1,Lagrib:0,Hafid:0,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   passes:  {Fakiri:50,Lagrib:30,Hafid:25,Qoli:35,Bouchoiri:20,Hachem:15,Bouhadifi:10,Bouzid:30,Chouaa:20},
+   tirs:    {Fakiri:5,Lagrib:2,Hafid:2,Qoli:3,Bouchoiri:1,Hachem:1,Bouhadifi:0,Bouzid:2,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:35,Hafid:35,Qoli:38,Bouchoiri:30,Hachem:20,Bouhadifi:15,Bouzid:38,Chouaa:25}},
+  {j:"J4",  date:"2025-12-12",  adv:"Futsal RWDM",      lieu:"Ext", gf:10, ga:4,
+   buts:    {Fakiri:3,Lagrib:1,Hafid:0,Qoli:1,Bouchoiri:2,Hachem:1,Bouhadifi:0,Bouzid:0,Chouaa:1},
+   assists: {Fakiri:1,Lagrib:0,Hafid:2,Qoli:1,Bouchoiri:0,Hachem:1,Bouhadifi:1,Bouzid:1,Chouaa:0},
+   passes:  {Fakiri:70,Lagrib:45,Hafid:35,Qoli:55,Bouchoiri:40,Hachem:20,Bouhadifi:15,Bouzid:50,Chouaa:30},
+   tirs:    {Fakiri:9,Lagrib:4,Hafid:3,Qoli:5,Bouchoiri:3,Hachem:2,Bouhadifi:1,Bouzid:4,Chouaa:2},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:40,Qoli:40,Bouchoiri:40,Hachem:30,Bouhadifi:20,Bouzid:40,Chouaa:35}},
+  {j:"J5",  date:"2026-01-18",  adv:"FAL Soumagne",     lieu:"Ext", gf:6,  ga:7,
+   buts:    {Fakiri:2,Lagrib:1,Hafid:0,Qoli:0,Bouchoiri:0,Hachem:1,Bouhadifi:1,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:0,Lagrib:1,Hafid:1,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   passes:  {Fakiri:60,Lagrib:40,Hafid:30,Qoli:35,Bouchoiri:25,Hachem:20,Bouhadifi:10,Bouzid:45,Chouaa:15},
+   tirs:    {Fakiri:7,Lagrib:3,Hafid:2,Qoli:3,Bouchoiri:2,Hachem:1,Bouhadifi:1,Bouzid:3,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:38,Hafid:35,Qoli:38,Bouchoiri:30,Hachem:25,Bouhadifi:20,Bouzid:38,Chouaa:20}},
+  {j:"J6",  date:"2026-01-25",  adv:"RE Herentals",     lieu:"Dom", gf:3,  ga:2,
+   buts:    {Fakiri:1,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:0,Hachem:1,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:1,Lagrib:1,Hafid:0,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   passes:  {Fakiri:55,Lagrib:35,Hafid:28,Qoli:30,Bouchoiri:22,Hachem:18,Bouhadifi:8,Bouzid:32,Chouaa:12},
+   tirs:    {Fakiri:5,Lagrib:2,Hafid:2,Qoli:2,Bouchoiri:1,Hachem:1,Bouhadifi:0,Bouzid:2,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:38,Qoli:38,Bouchoiri:32,Hachem:25,Bouhadifi:15,Bouzid:35,Chouaa:20}},
+  {j:"J7",  date:"2026-02-08",  adv:"FT Antwerpen",     lieu:"Ext", gf:1,  ga:3,
+   buts:    {Fakiri:1,Lagrib:0,Hafid:0,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:0,Lagrib:0,Hafid:0,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   passes:  {Fakiri:40,Lagrib:25,Hafid:20,Qoli:22,Bouchoiri:15,Hachem:10,Bouhadifi:8,Bouzid:20,Chouaa:10},
+   tirs:    {Fakiri:4,Lagrib:1,Hafid:1,Qoli:1,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   minutes: {Fakiri:40,Lagrib:38,Hafid:35,Qoli:35,Bouchoiri:28,Hachem:20,Bouhadifi:15,Bouzid:32,Chouaa:15}},
+  {j:"J8",  date:"2026-02-23",  adv:"FST Charleroi",    lieu:"Dom", gf:4,  ga:6,
+   buts:    {Fakiri:1,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:0,Hachem:1,Bouhadifi:1,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:0,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:1},
+   passes:  {Fakiri:50,Lagrib:30,Hafid:25,Qoli:28,Bouchoiri:18,Hachem:15,Bouhadifi:7,Bouzid:28,Chouaa:12},
+   tirs:    {Fakiri:5,Lagrib:2,Hafid:2,Qoli:2,Bouchoiri:1,Hachem:1,Bouhadifi:1,Bouzid:2,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:38,Hafid:38,Qoli:36,Bouchoiri:30,Hachem:22,Bouhadifi:18,Bouzid:36,Chouaa:22}},
+  {j:"J10", date:"2026-02-28",  adv:"Eisden Dorp",      lieu:"Dom", gf:6,  ga:3,
+   buts:    {Fakiri:1,Lagrib:1,Hafid:0,Qoli:2,Bouchoiri:0,Hachem:1,Bouhadifi:0,Bouzid:0,Chouaa:1},
+   assists: {Fakiri:2,Lagrib:0,Hafid:0,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:1,Bouzid:0,Chouaa:0},
+   passes:  {Fakiri:65,Lagrib:40,Hafid:30,Qoli:45,Bouchoiri:25,Hachem:20,Bouhadifi:10,Bouzid:35,Chouaa:18},
+   tirs:    {Fakiri:6,Lagrib:3,Hafid:2,Qoli:4,Bouchoiri:2,Hachem:1,Bouhadifi:1,Bouzid:2,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:38,Qoli:40,Bouchoiri:35,Hachem:25,Bouhadifi:18,Bouzid:38,Chouaa:25}},
+  {j:"J11", date:"2026-03-08",  adv:"Los Leones Hasselt","lieu":"Ext",gf:5, ga:4,
+   buts:    {Fakiri:2,Lagrib:2,Hafid:0,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:1,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:0,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   passes:  {Fakiri:58,Lagrib:42,Hafid:28,Qoli:32,Bouchoiri:20,Hachem:15,Bouhadifi:8,Bouzid:30,Chouaa:15},
+   tirs:    {Fakiri:6,Lagrib:4,Hafid:1,Qoli:3,Bouchoiri:1,Hachem:1,Bouhadifi:1,Bouzid:2,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:38,Qoli:38,Bouchoiri:32,Hachem:22,Bouhadifi:20,Bouzid:38,Chouaa:22}},
+  {j:"J12", date:"2026-03-15",  adv:"B-M Bruxelles",    lieu:"Ext", gf:5,  ga:3,
+   buts:    {Fakiri:0,Lagrib:2,Hafid:1,Qoli:1,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   assists: {Fakiri:1,Lagrib:1,Hafid:1,Qoli:0,Bouchoiri:0,Hachem:0,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   passes:  {Fakiri:55,Lagrib:45,Hafid:30,Qoli:35,Bouchoiri:22,Hachem:15,Bouhadifi:8,Bouzid:32,Chouaa:15},
+   tirs:    {Fakiri:4,Lagrib:5,Hafid:2,Qoli:3,Bouchoiri:1,Hachem:1,Bouhadifi:0,Bouzid:2,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:38,Qoli:38,Bouchoiri:32,Hachem:22,Bouhadifi:18,Bouzid:38,Chouaa:22}},
+  {j:"J14", date:"2026-03-29",  adv:"Futsal RWDM",      lieu:"Ext", gf:4,  ga:4,
+   buts:    {Fakiri:1,Lagrib:0,Hafid:0,Qoli:2,Bouchoiri:0,Hachem:1,Bouhadifi:0,Bouzid:1,Chouaa:0},
+   assists: {Fakiri:1,Lagrib:0,Hafid:1,Qoli:0,Bouchoiri:1,Hachem:0,Bouhadifi:0,Bouzid:0,Chouaa:0},
+   passes:  {Fakiri:52,Lagrib:38,Hafid:28,Qoli:42,Bouchoiri:20,Hachem:18,Bouhadifi:7,Bouzid:30,Chouaa:12},
+   tirs:    {Fakiri:5,Lagrib:2,Hafid:1,Qoli:4,Bouchoiri:1,Hachem:1,Bouhadifi:0,Bouzid:3,Chouaa:1},
+   minutes: {Fakiri:40,Lagrib:38,Hafid:36,Qoli:40,Bouchoiri:30,Hachem:24,Bouhadifi:16,Bouzid:36,Chouaa:18}},
+  {j:"J15", date:"2026-04-03",  adv:"FAL Soumagne",     lieu:"Dom", gf:8,  ga:7,
+   buts:    {Fakiri:1,Lagrib:1,Hafid:0,Qoli:1,Bouchoiri:3,Hachem:0,Bouhadifi:1,Bouzid:1,Chouaa:1},
+   assists: {Fakiri:1,Lagrib:1,Hafid:2,Qoli:1,Bouchoiri:0,Hachem:2,Bouhadifi:1,Bouzid:0,Chouaa:0},
+   passes:  {Fakiri:68,Lagrib:48,Hafid:32,Qoli:50,Bouchoiri:28,Hachem:22,Bouhadifi:10,Bouzid:38,Chouaa:20},
+   tirs:    {Fakiri:8,Lagrib:4,Hafid:2,Qoli:5,Bouchoiri:4,Hachem:1,Bouhadifi:1,Bouzid:3,Chouaa:2},
+   minutes: {Fakiri:40,Lagrib:40,Hafid:40,Qoli:40,Bouchoiri:40,Hachem:30,Bouhadifi:22,Bouzid:40,Chouaa:30}},
+];
+
+/* Mapping short name → key dans MATCH_DATA */
+var PLAYER_KEY = {
+  "Soufiane El Fakiri":"Fakiri","Hamza Lagrib":"Lagrib",
+  "Abdessamad El Hafid":"Hafid","Yassine Qoli":"Qoli",
+  "Marwan Bouchoiri":"Bouchoiri","Bilal Hachem":"Hachem",
+  "Bilal El Bouhadifi":"Bouhadifi","Mouhsin Bouzid":"Bouzid",
+  "Mounir Chouaa":"Chouaa","Mathieu O.":"Mathieu",
+};
+
 let _anaSort = { key:'contributions', dir:-1 };
 
 /* ─── Helpers ─── */
@@ -2860,6 +2954,7 @@ function renderAnalyticsCoach() {
     <button class="ana-tab on" onclick="anaTab(this,'coach-ranking')">🏆 Classement</button>
     <button class="ana-tab" onclick="anaTab(this,'coach-insights')">💡 Insights</button>
     <button class="ana-tab" onclick="anaTab(this,'coach-attack')">⚽ Attaque</button>
+    <button class="ana-tab" onclick="anaTab(this,'coach-progression')">📈 Évolution</button>
     <button class="ana-tab" onclick="anaTab(this,'coach-discipline')">🟨 Discipline</button>
     <button class="ana-tab" onclick="anaTab(this,'coach-looker')">📊 Looker</button>`;
 
@@ -2867,6 +2962,7 @@ function renderAnalyticsCoach() {
   renderCoachInsights();
   renderCoachAttack();
   renderCoachDiscipline();
+  renderTeamProgression();
 }
 
 /* ─── Classement global ─── */
@@ -3201,7 +3297,20 @@ function renderAnalyticsPlayer(playerName) {
           <div style="font:400 10px/1 var(--font);color:var(--tx3);margin-top:2px">${s.label}</div>
         </div>`).join('')}
     </div>
+    <div style="height:4px"></div>
+
+    <!-- Onglets dans profil joueur -->
+    <div class="ana-tabs" style="margin:0 18px 0">
+      <button class="ana-tab on" onclick="playerTab(this,'pt-stats','${player.name}')">📊 Stats</button>
+      <button class="ana-tab" onclick="playerTab(this,'pt-progression','${player.name}')">📈 Évolution</button>
+    </div>
+    
+    <div id="pt-stats"></div>
+    <div id="pt-progression" style="display:none"></div>
     <div style="height:16px"></div>`;
+  
+  // Charger stats tab (contenu déjà dans ana-player-content)
+  // Charger progression à la demande
 }
 
 /* ─── Routeur principal renderStats ─── */
@@ -3235,7 +3344,7 @@ function renderStats() {
 window.anaTab = (el, targetId) => {
   el.closest('.ana-tabs')?.querySelectorAll('.ana-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
-  const views = ['coach-ranking','coach-insights','coach-attack','coach-discipline','coach-looker'];
+  const views = ['coach-ranking','coach-insights','coach-attack','coach-progression','coach-discipline','coach-looker'];
   views.forEach(id => {
     const el2 = $(id);
     if (el2) el2.style.display = id===targetId ? 'block' : 'none';
@@ -3303,6 +3412,348 @@ window.switchLooker = (btn, pageKey) => {
   if (iframe) iframe.src = `https://datastudio.google.com/embed/reporting/f694a9e1-e406-4ba5-921b-66e75bcb9c2f/page/${pageKey}`;
 };
 
+
+
+/* ═══ HELPERS TEMPORELS ═══ */
+function getPlayerKey(playerName) {
+  return PLAYER_KEY[playerName] || playerName.split(' ').slice(-1)[0];
+}
+
+function getPlayerTimeSeries(key, metric) {
+  // metric = 'buts' | 'assists' | 'passes' | 'tirs' | 'minutes'
+  return MATCH_DATA.map(m => ({
+    j: m.j, date: m.date, adv: m.adv, lieu: m.lieu,
+    gf: m.gf, ga: m.ga,
+    val: (m[metric]||{})[key] || 0
+  }));
+}
+
+function getFormRecente(key, n=5) {
+  const last = MATCH_DATA.slice(-n);
+  return {
+    buts: last.reduce((s,m)=>s+(m.buts[key]||0),0),
+    assists: last.reduce((s,m)=>s+(m.assists[key]||0),0),
+    matches: n,
+    wins: last.filter(m=>m.gf>m.ga).length,
+    draws: last.filter(m=>m.gf===m.ga).length,
+    losses: last.filter(m=>m.gf<m.ga).length,
+  };
+}
+
+function getDomExt(key) {
+  const home = MATCH_DATA.filter(m=>m.lieu==='Dom');
+  const away = MATCH_DATA.filter(m=>m.lieu==='Ext');
+  return {
+    home_buts: home.reduce((s,m)=>s+(m.buts[key]||0),0),
+    away_buts: away.reduce((s,m)=>s+(m.buts[key]||0),0),
+    home_games: home.length, away_games: away.length,
+    home_assists: home.reduce((s,m)=>s+(m.assists[key]||0),0),
+    away_assists: away.reduce((s,m)=>s+(m.assists[key]||0),0),
+  };
+}
+
+function getTrend(key) {
+  const mid = Math.floor(MATCH_DATA.length/2);
+  const first = MATCH_DATA.slice(0,mid);
+  const second = MATCH_DATA.slice(mid);
+  const g1 = first.reduce((s,m)=>s+(m.buts[key]||0),0);
+  const g2 = second.reduce((s,m)=>s+(m.buts[key]||0),0);
+  return { first_half: g1, second_half: g2, trend: g2>g1?'up':g2<g1?'down':'flat' };
+}
+
+/* ═══ SVG LINE CHART — évolution buts cumulés ═══ */
+function evolutionChartSVG(playerKey, color='#22C55E') {
+  const series = getPlayerTimeSeries(playerKey, 'buts');
+  const assists = getPlayerTimeSeries(playerKey, 'assists');
+  
+  // Buts cumulés
+  let cumG=0, cumA=0;
+  const points = series.map((d,i) => {
+    cumG += d.val;
+    cumA += assists[i].val;
+    return { j:d.j, cumG, cumA, g:d.val, a:assists[i].val, adv:d.adv, gf:d.gf, ga:d.ga };
+  });
+  
+  const W=320, H=120, padL=28, padB=20, padT=10, padR=10;
+  const maxY = Math.max(...points.map(p=>p.cumG), 3);
+  const n = points.length;
+  
+  const px = i => padL + (i/(n-1))*(W-padL-padR);
+  const pyG = v => padT + (H-padT-padB)*(1-v/maxY);
+  const pyA = v => padT + (H-padT-padB)*(1-v/maxY);
+  
+  // Y axis labels
+  const yLabels = [0, Math.round(maxY/2), maxY].map(v =>
+    `<text x="${padL-4}" y="${pyG(v)+3}" text-anchor="end" font-size="8" fill="rgba(255,255,255,.4)">${v}</text>`
+  ).join('');
+  
+  // Grid lines
+  const grid = [0, Math.round(maxY/2), maxY].map(v =>
+    `<line x1="${padL}" y1="${pyG(v)}" x2="${W-padR}" y2="${pyG(v)}" stroke="rgba(255,255,255,.05)" stroke-width="1"/>`
+  ).join('');
+  
+  // Buts line
+  const goalsPath = points.map((p,i) => `${i===0?'M':'L'}${px(i)},${pyG(p.cumG)}`).join(' ');
+  // Assists line (dashed)
+  const assistsPath = points.map((p,i) => `${i===0?'M':'L'}${px(i)},${pyA(p.cumA)}`).join(' ');
+  
+  // Dots + labels journée
+  const dots = points.map((p,i) => `
+    <circle cx="${px(i)}" cy="${pyG(p.cumG)}" r="3" fill="${color}" stroke="var(--ink)" stroke-width="1.5"/>
+    <text x="${px(i)}" y="${H-4}" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.35)">${p.j}</text>
+    ${p.g>0?`<text x="${px(i)}" y="${pyG(p.cumG)-6}" text-anchor="middle" font-size="8" fill="${color}" font-weight="700">+${p.g}</text>`:''}
+  `).join('');
+  
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto">
+    ${grid}${yLabels}
+    <path d="${assistsPath}" fill="none" stroke="rgba(59,130,246,.5)" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <path d="${goalsPath}" fill="none" stroke="${color}" stroke-width="2"/>
+    ${dots}
+  </svg>`;
+}
+
+/* ═══ MINI BAR CHART — buts par match ═══ */
+function perMatchBarSVG(playerKey, color='#22C55E') {
+  const series = getPlayerTimeSeries(playerKey, 'buts');
+  const maxV = Math.max(...series.map(d=>d.val), 1);
+  const W=320, H=60, n=series.length, barW=Math.floor((W-20)/n)-2;
+  
+  const bars = series.map((d,i) => {
+    const x = 10 + i*(barW+2);
+    const h = Math.max(d.val/maxV*40, d.val>0?4:0);
+    const y = 50-h;
+    const col = d.gf>d.ga ? color : d.gf===d.ga ? '#F59E0B' : '#EF4444';
+    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="1" fill="${d.val>0?color:'rgba(255,255,255,.08)'}"/>
+    ${d.val>0?`<text x="${x+barW/2}" y="${y-2}" text-anchor="middle" font-size="7" fill="${color}" font-weight="700">${d.val}</text>`:''}
+    <text x="${x+barW/2}" y="58" text-anchor="middle" font-size="6" fill="rgba(255,255,255,.3)">${d.j.replace('J','')}</text>`;
+  }).join('');
+  
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto">${bars}</svg>`;
+}
+
+/* ═══ Nouveau onglet Progression dans profil joueur ═══ */
+function renderPlayerProgression(playerName) {
+  const key = getPlayerKey(playerName);
+  const form = getFormRecente(key);
+  const domext = getDomExt(key);
+  const trend = getTrend(key);
+  const trendIcon = trend.trend==='up'?'📈':trend.trend==='down'?'📉':'→';
+  const trendColor = trend.trend==='up'?'var(--brand)':trend.trend==='down'?'var(--danger)':'var(--warn)';
+  const totalMins = MATCH_DATA.reduce((s,m)=>s+(m.minutes?.[key]||0),0);
+  const totalPasses = MATCH_DATA.reduce((s,m)=>s+(m.passes?.[key]||0),0);
+  
+  return `
+    <!-- Forme récente -->
+    <div class="ana-section">Forme récente <span>5 derniers matchs</span></div>
+    <div class="ana-kpi-band" style="grid-template-columns:repeat(4,1fr);margin:0 18px 12px;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--sep);">
+      <div class="ana-kpi"><div class="ana-kpi-val green">${form.buts}</div><div class="ana-kpi-lbl">Buts</div></div>
+      <div class="ana-kpi"><div class="ana-kpi-val blue">${form.assists}</div><div class="ana-kpi-lbl">Assists</div></div>
+      <div class="ana-kpi"><div class="ana-kpi-val gold">${form.wins}V${form.draws}N${form.losses}D</div><div class="ana-kpi-lbl">Résultats</div></div>
+      <div class="ana-kpi"><div class="ana-kpi-val" style="color:${trendColor}">${trendIcon}</div><div class="ana-kpi-lbl">Tendance</div></div>
+    </div>
+
+    <!-- Évolution cumulée -->
+    <div class="ana-section">Évolution des buts saison <span><span class="ds-tag">🔬 Temporel</span></span></div>
+    <div style="padding:4px 18px 12px;background:var(--ink2);margin:0 18px 12px;border-radius:var(--r-lg);border:1px solid var(--sep);">
+      <div style="display:flex;gap:16px;padding:8px 0 6px;font:400 10px/1 var(--font);color:var(--tx3)">
+        <span style="color:var(--brand)">— Buts cumulés</span>
+        <span style="color:rgba(59,130,246,.7)">-- Assists cumulés</span>
+        <span style="margin-left:auto">+X = buts ce match</span>
+      </div>
+      ${evolutionChartSVG(key)}
+    </div>
+
+    <!-- Buts par match (barres) -->
+    <div class="ana-section">Buts par match</div>
+    <div style="padding:4px 18px 12px;background:var(--ink2);margin:0 18px 12px;border-radius:var(--r-lg);border:1px solid var(--sep);">
+      ${perMatchBarSVG(key)}
+    </div>
+
+    <!-- Tendance saison -->
+    <div class="ana-section">Tendance saison <span>1ère vs 2ème partie</span></div>
+    <div class="insight-grid" style="padding-top:0">
+      <div class="insight-card ${trend.trend==='up'?'green':trend.trend==='down'?'red':'gold'}">
+        <span class="insight-icon">${trendIcon}</span>
+        <div class="insight-title">Tendance globale</div>
+        <div class="insight-val" style="color:${trendColor}">${trend.first_half}G → ${trend.second_half}G</div>
+        <div class="insight-sub">1ère moitié vs 2ème moitié</div>
+      </div>
+      <div class="insight-card blue">
+        <span class="insight-icon">⏱️</span>
+        <div class="insight-title">Temps de jeu total</div>
+        <div class="insight-val blue">${totalMins}'</div>
+        <div class="insight-sub">${Math.round(totalMins/13)}' par match en moy.</div>
+      </div>
+    </div>
+
+    <!-- Dom vs Ext -->
+    <div class="ana-section">Domicile vs Extérieur</div>
+    <div class="insight-grid" style="padding-top:0">
+      <div class="insight-card green">
+        <span class="insight-icon">🏠</span>
+        <div class="insight-title">Domicile (${domext.home_games} matchs)</div>
+        <div class="insight-val green">${domext.home_buts}G · ${domext.home_assists}A</div>
+        <div class="insight-sub">${(domext.home_buts/domext.home_games).toFixed(1)} buts/match</div>
+      </div>
+      <div class="insight-card blue">
+        <span class="insight-icon">✈️</span>
+        <div class="insight-title">Extérieur (${domext.away_games} matchs)</div>
+        <div class="insight-val blue">${domext.away_buts}G · ${domext.away_assists}A</div>
+        <div class="insight-sub">${(domext.away_buts/domext.away_games).toFixed(1)} buts/match</div>
+      </div>
+    </div>
+
+    <!-- Volume passes -->
+    <div class="ana-section">Volume de jeu <span>Passes totales saison</span></div>
+    <div style="padding:0 18px 12px">
+      <div class="metric-bar">
+        <div class="metric-bar-header">
+          <span class="metric-bar-label">Passes réussies (saison)</span>
+          <span class="metric-bar-val" style="color:var(--info)">${totalPasses}</span>
+        </div>
+        <div class="metric-bar-track">
+          <div class="metric-bar-fill" style="width:${Math.min(totalPasses/800*100,100)}%;background:var(--info)"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ═══ Nouveau onglet Tendance équipe ═══ */
+function renderTeamProgression() {
+  const W=340, H=100, n=MATCH_DATA.length;
+  const padL=24, padB=20, padT=8, padR=8;
+  
+  // Courbe buts équipe par match
+  const maxY = Math.max(...MATCH_DATA.map(m=>Math.max(m.gf,m.ga)), 1);
+  const px = i => padL + (i/(n-1))*(W-padL-padR);
+  const py = v => padT + (H-padT-padB)*(1-v/maxY);
+  
+  const pathFor = MATCH_DATA.map((m,i)=>`${i===0?'M':'L'}${px(i)},${py(m.gf)}`).join(' ');
+  const pathAga = MATCH_DATA.map((m,i)=>`${i===0?'M':'L'}${px(i)},${py(m.ga)}`).join(' ');
+  
+  const grid = [0,Math.round(maxY/2),maxY].map(v=>
+    `<line x1="${padL}" y1="${py(v)}" x2="${W-padR}" y2="${py(v)}" stroke="rgba(255,255,255,.05)"/>`+
+    `<text x="${padL-3}" y="${py(v)+3}" text-anchor="end" font-size="7" fill="rgba(255,255,255,.3)">${v}</text>`
+  ).join('');
+  
+  const dots = MATCH_DATA.map((m,i) => {
+    const col = m.gf>m.ga?'var(--brand)':m.gf===m.ga?'var(--warn)':'var(--danger)';
+    return `<rect x="${px(i)-6}" y="${H-padB+3}" width="12" height="5" rx="1" fill="${col}"/>
+    <text x="${px(i)}" y="${H-3}" text-anchor="middle" font-size="6" fill="rgba(255,255,255,.3)">${m.j.replace('J','')}</text>`;
+  }).join('');
+  
+  const wins = MATCH_DATA.filter(m=>m.gf>m.ga).length;
+  const draws = MATCH_DATA.filter(m=>m.gf===m.ga).length;
+  const losses = MATCH_DATA.filter(m=>m.gf<m.ga).length;
+  const homeWinRate = Math.round(MATCH_DATA.filter(m=>m.lieu==='Dom'&&m.gf>m.ga).length / MATCH_DATA.filter(m=>m.lieu==='Dom').length * 100);
+  const awayWinRate = Math.round(MATCH_DATA.filter(m=>m.lieu==='Ext'&&m.gf>m.ga).length / MATCH_DATA.filter(m=>m.lieu==='Ext').length * 100);
+  
+  // Points cumulés
+  let pts=0;
+  const ptsLine = MATCH_DATA.map((m,i)=>{
+    pts += m.gf>m.ga?3:m.gf===m.ga?1:0;
+    return `${i===0?'M':'L'}${px(i)},${py(pts/3)}`;
+  }).join(' ');
+  
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto">
+    ${grid}
+    <path d="${pathAga}" fill="none" stroke="rgba(239,68,68,.5)" stroke-width="1.5"/>
+    <path d="${pathFor}" fill="none" stroke="rgba(34,197,94,.8)" stroke-width="2"/>
+    ${dots}
+  </svg>`;
+  
+  $('coach-progression').innerHTML = `
+    <div class="ana-section">Évolution Équipe <span><span class="ds-tag">🔬 Temporel</span></span></div>
+    <div style="padding:6px 18px 12px;background:var(--ink2);margin:0 18px 12px;border-radius:var(--r-lg);border:1px solid var(--sep);">
+      <div style="display:flex;gap:16px;padding:4px 0;font:400 10px/1 var(--font);color:var(--tx3)">
+        <span style="color:rgba(34,197,94,.8)">— Buts marqués</span>
+        <span style="color:rgba(239,68,68,.5)">— Buts encaissés</span>
+        <span>■ V/N/D</span>
+      </div>
+      ${svg}
+    </div>
+    
+    <div class="ana-section">Résultats <span>${wins}V · ${draws}N · ${losses}D</span></div>
+    <div class="insight-grid" style="padding-top:0">
+      <div class="insight-card green">
+        <span class="insight-icon">🏠</span>
+        <div class="insight-title">Taux victoire Dom</div>
+        <div class="insight-val green">${homeWinRate}%</div>
+        <div class="insight-sub">${MATCH_DATA.filter(m=>m.lieu==='Dom').length} matchs à domicile</div>
+      </div>
+      <div class="insight-card blue">
+        <span class="insight-icon">✈️</span>
+        <div class="insight-title">Taux victoire Ext</div>
+        <div class="insight-val blue">${awayWinRate}%</div>
+        <div class="insight-sub">${MATCH_DATA.filter(m=>m.lieu==='Ext').length} matchs à l'extérieur</div>
+      </div>
+    </div>
+    
+    <div class="ana-section">Évolution buts par joueur <span>Sélectionner</span></div>
+    <div style="padding:0 18px 8px;">
+      <select onchange="renderPlayerEvolution(this.value)"
+        style="width:100%;background:var(--ink2);color:var(--tx1);border:1px solid var(--sep2);border-radius:var(--r-sm);padding:8px 12px;font:600 12px/1 var(--font);">
+        ${LOOKER_DATA.players.filter(p=>p.shots_on>0).map(p=>`<option value="${p.name}">${p.name}</option>`).join('')}
+      </select>
+    </div>
+    <div id="player-evolution-chart" style="padding:6px 18px 12px;background:var(--ink2);margin:0 18px 12px;border-radius:var(--r-lg);border:1px solid var(--sep);">
+      ${renderEvolutionFor(LOOKER_DATA.players.filter(p=>p.shots_on>0)[0]?.name || 'Soufiane El Fakiri')}
+    </div>
+    
+    <div style="height:4px"></div>
+
+    <!-- Onglets dans profil joueur -->
+    <div class="ana-tabs" style="margin:0 18px 0">
+      <button class="ana-tab on" onclick="playerTab(this,'pt-stats','${player.name}')">📊 Stats</button>
+      <button class="ana-tab" onclick="playerTab(this,'pt-progression','${player.name}')">📈 Évolution</button>
+    </div>
+    
+    <div id="pt-stats"></div>
+    <div id="pt-progression" style="display:none"></div>
+    <div style="height:16px"></div>`;
+  
+  // Charger stats tab (contenu déjà dans ana-player-content)
+  // Charger progression à la demande
+}
+
+function renderEvolutionFor(playerName) {
+  const key = getPlayerKey(playerName);
+  const form = getFormRecente(key);
+  const trend = getTrend(key);
+  const trendIcon = trend.trend==='up'?'📈':trend.trend==='down'?'📉':'→';
+  const trendColor = trend.trend==='up'?'var(--brand)':trend.trend==='down'?'var(--danger)':'var(--warn)';
+  return `
+    <div style="font:700 12px/1 var(--font);color:var(--tx1);padding:4px 0 8px">${playerName}</div>
+    <div style="display:flex;gap:12px;padding-bottom:8px;font:400 10px/1 var(--font);color:var(--tx3)">
+      <span style="color:var(--brand)">Forme (5M): ${form.buts}G+${form.assists}A</span>
+      <span style="color:${trendColor}">${trendIcon} ${trend.first_half}G→${trend.second_half}G</span>
+    </div>
+    ${evolutionChartSVG(key)}
+    ${perMatchBarSVG(key)}`;
+}
+
+window.renderPlayerEvolution = (name) => {
+  const el = $('player-evolution-chart');
+  if (el) el.innerHTML = renderEvolutionFor(name);
+};
+
+
+window.playerTab = (el, targetId, playerName) => {
+  el.closest('.ana-tabs')?.querySelectorAll('.ana-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  // Toggle visibility
+  ['pt-stats','pt-progression'].forEach(id => {
+    const d = $(id); if(d) d.style.display = id===targetId?'block':'none';
+  });
+  // Charger progression à la demande
+  if (targetId === 'pt-progression') {
+    const el2 = $('pt-progression');
+    if (el2 && !el2.dataset.loaded) {
+      el2.innerHTML = renderPlayerProgression(playerName);
+      el2.dataset.loaded = '1';
+    }
+  }
+};
 
 /* ── Boot ── */
 async function boot(){
