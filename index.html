@@ -1753,7 +1753,7 @@ function generateMicrocycle(scouting) {
       <div class="ana-header">
         <div>
           <div style="font:700 14px/1 var(--font);color:var(--tx1)">Analytics</div>
-          <div style="font:400 10px/1 var(--font);color:var(--tx3);margin-top:3px" id="ana-season-label">${S.season} · 13 matchs</div>
+          <div style="font:400 10px/1 var(--font);color:var(--tx3);margin-top:3px" id="ana-season-label"></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span id="ana-view-badge" class="ana-view-badge">👔 Vue Coach</span>
@@ -3024,6 +3024,10 @@ function renderAnalyticsCoach() {
 
   // ── KPIs globaux ──
   const diff = G.goals_for - G.goals_against;
+  // Saison label
+  const seasonLbl = $('ana-season-label');
+  if(seasonLbl) seasonLbl.textContent = 'Saison '+(S.season||'2025-2026')+' · '+G.matches+' matchs';
+
   $('ana-kpis').innerHTML = `
     <div class="ana-kpi-band">
       <div class="ana-kpi"><div class="ana-kpi-val green">${G.goals_for}</div><div class="ana-kpi-lbl">Buts marqués</div></div>
