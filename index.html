@@ -1538,7 +1538,7 @@ function generateMicrocycle(scouting) {
           <option value="2026-2027">🆕 2026 – 2027</option>
         </select>
       </div>
-      <button class="btn-main" onclick="doLogin()" id="btn-login">Se connecter</button>
+      <button class="btn-main" onclick="window.doLogin()" id="btn-login">Se connecter</button>
     </div>
   </div>
 </div>
@@ -1561,7 +1561,7 @@ function generateMicrocycle(scouting) {
       <span class="top-badge" id="role-pill"></span>
       <button class="top-lang" data-lang="fr" onclick="setLang('fr',this)">FR</button>
       <button class="top-lang" data-lang="nl" onclick="setLang('nl',this)">NL</button>
-      <button class="top-exit" onclick="doLogout()">↩</button>
+      <button class="top-exit" onclick="window.doLogout()">↩</button>
     </div>
   </header>
 
@@ -1575,7 +1575,7 @@ function generateMicrocycle(scouting) {
       <div id="home-alerts"></div>
       <div class="sec">
         <div class="sec-title" data-t="recent_results">Résultats récents</div>
-        <button class="sec-action" onclick="nav('matchs',document.querySelector('[data-p=matchs]'))" data-t="see_all">Tout voir</button>
+        <button class="sec-action" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" data-t="see_all">Tout voir</button>
       </div>
       <div id="home-results" class="result-list"></div>
       <div style="height:12px;"></div>
@@ -1584,9 +1584,9 @@ function generateMicrocycle(scouting) {
     <!-- PRÉSENCES -->
     <div class="pg" id="pg-presences">
       <div class="tabs">
-        <button class="tab-btn on" onclick="stab(this,'tp-pointer')">Pointer</button>
-        <button class="tab-btn" onclick="stab(this,'tp-history')">Historique</button>
-        <button class="tab-btn" onclick="stab(this,'tp-stats')">Stats</button>
+        <button class="tab-btn on" onclick="window.stab(this,'tp-pointer')">Pointer</button>
+        <button class="tab-btn" onclick="window.stab(this,'tp-history')">Historique</button>
+        <button class="tab-btn" onclick="window.stab(this,'tp-stats')">Stats</button>
       </div>
 
       <div id="tp-pointer" class="tab-pane on">
@@ -1604,7 +1604,7 @@ function generateMicrocycle(scouting) {
         <div class="div" style="margin-top:8px;"></div>
         <div id="roster-list"></div>
         <div style="padding:14px 18px 0;">
-          <button class="btn btn-green btn-block" onclick="savePresences()">Enregistrer la session</button>
+          <button class="btn btn-green btn-block" onclick="window.savePresences()">Enregistrer la session</button>
         </div>
         <div style="height:12px;"></div>
       </div>
@@ -1621,15 +1621,15 @@ function generateMicrocycle(scouting) {
     <!-- MATCHS -->
     <div class="pg" id="pg-matchs">
       <div class="tabs">
-        <button class="tab-btn on" onclick="stab(this,'tm-results')">Résultats</button>
-        <button class="tab-btn" onclick="stab(this,'tm-add')">Encoder</button>
-        <button class="tab-btn" onclick="stab(this,'tm-scout')">Scouting</button>
+        <button class="tab-btn on" onclick="window.stab(this,'tm-results')">Résultats</button>
+        <button class="tab-btn" onclick="window.stab(this,'tm-add')">Encoder</button>
+        <button class="tab-btn" onclick="window.stab(this,'tm-scout')">Scouting</button>
       </div>
 
       <div id="tm-results" class="tab-pane on">
         <div style="padding:12px 18px; display:flex; justify-content:space-between; align-items:center;">
           <span style="font:500 12px/1 var(--font);color:var(--tx3);">Saison 2025–26</span>
-          <button class="btn btn-sm btn-outline" onclick="syncACFF()" id="btn-sync">↻ Sync ACFF</button>
+          <button class="btn btn-sm btn-outline" onclick="window.syncACFF()" id="btn-sync">↻ Sync ACFF</button>
         </div>
         <div id="sync-status"></div>
         <div id="matches-list" class="match-list"></div>
@@ -1657,7 +1657,7 @@ function generateMicrocycle(scouting) {
           <div class="fg"><label class="fl">Buteurs</label><input class="fi" id="m-scorers" placeholder="El Fakiri (x2)..."></div>
           <div class="fg"><label class="fl">Cartons</label><input class="fi" id="m-cards" placeholder="Hachem 🟨..."></div>
           <div class="fg"><label class="fl">Rapport</label><textarea class="fi" id="m-notes" placeholder="Notes tactiques..."></textarea></div>
-          <button class="btn btn-green btn-block" onclick="saveMatchForm()">Enregistrer</button>
+          <button class="btn btn-green btn-block" onclick="window.saveMatchForm()">Enregistrer</button>
           <div style="height:14px;"></div>
         </div>
       </div>
@@ -1670,9 +1670,9 @@ function generateMicrocycle(scouting) {
     <!-- MEDICAL -->
     <div class="pg" id="pg-medical">
       <div class="tabs">
-        <button class="tab-btn on" onclick="stab(this,'ti-active')">Actives</button>
-        <button class="tab-btn" onclick="stab(this,'ti-declare')">Déclarer</button>
-        <button class="tab-btn" onclick="stab(this,'ti-history')">Historique</button>
+        <button class="tab-btn on" onclick="window.stab(this,'ti-active')">Actives</button>
+        <button class="tab-btn" onclick="window.stab(this,'ti-declare')">Déclarer</button>
+        <button class="tab-btn" onclick="window.stab(this,'ti-history')">Historique</button>
       </div>
 
       <div id="ti-active" class="tab-pane on" style="padding-top:10px;"><div id="inj-active-list"></div></div>
@@ -1710,11 +1710,11 @@ function generateMicrocycle(scouting) {
           <div class="fg"><label class="fl">Matchs manqués</label><input class="fi" id="inj-matches" placeholder="J16, J17..."></div>
           <p style="font:700 12px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin-bottom:10px;">Protocole de retour</p>
           <div id="proto-list"></div>
-          <button class="btn btn-outline btn-block btn-sm" onclick="addProto()" style="margin-bottom:14px;">+ Ajouter une phase</button>
+          <button class="btn btn-outline btn-block btn-sm" onclick="window.addProto()" style="margin-bottom:14px;">+ Ajouter une phase</button>
           <div class="fg"><label class="fl">Notes staff</label><textarea class="fi" id="inj-notes" placeholder="Moral, observations..."></textarea></div>
           <div class="btn-row">
-            <button class="btn btn-outline" style="flex:1;" onclick="cancelInj()">Annuler</button>
-            <button class="btn btn-green" style="flex:2;" id="inj-save-btn" onclick="saveInj()">Enregistrer</button>
+            <button class="btn btn-outline" style="flex:1;" onclick="window.cancelInj()">Annuler</button>
+            <button class="btn btn-green" style="flex:2;" id="inj-save-btn" onclick="window.saveInj()">Enregistrer</button>
           </div>
           <div style="height:14px;"></div>
         </div>
@@ -1731,9 +1731,9 @@ function generateMicrocycle(scouting) {
     <!-- SQUAD -->
     <div class="pg" id="pg-squad">
       <div class="tabs">
-        <button class="tab-btn on" onclick="stab(this,'ts-roster')">Effectif</button>
-        <button class="tab-btn" onclick="stab(this,'ts-disc')">Cartons</button>
-        <button class="tab-btn" onclick="stab(this,'ts-goals')">Buts</button>
+        <button class="tab-btn on" onclick="window.stab(this,'ts-roster')">Effectif</button>
+        <button class="tab-btn" onclick="window.stab(this,'ts-disc')">Cartons</button>
+        <button class="tab-btn" onclick="window.stab(this,'ts-goals')">Buts</button>
       </div>
       <div id="ts-roster" class="tab-pane on"><div id="roster-eff"></div></div>
       <div id="ts-disc"   class="tab-pane"><div id="disc-list"></div></div>
@@ -1757,7 +1757,7 @@ function generateMicrocycle(scouting) {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span id="ana-view-badge" class="ana-view-badge">👔 Vue Coach</span>
-          <button class="sync-btn" id="stats-sync-btn" onclick="syncStats()">
+          <button class="sync-btn" id="stats-sync-btn" onclick="window.syncStats()">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
             Sync
           </button>
@@ -1765,7 +1765,7 @@ function generateMicrocycle(scouting) {
       </div>
 
       <!-- Bouton retour (vue coach → profil joueur) -->
-      <button id="ana-back-btn" onclick="backToCoachView()"
+      <button id="ana-back-btn" onclick="window.backToCoachView()"
         style="display:none;align-items:center;gap:6px;padding:8px 18px;background:none;border:none;color:var(--brand);font:600 12px/1 var(--font);cursor:pointer;">
         ← Retour au classement
       </button>
@@ -1800,38 +1800,38 @@ function generateMicrocycle(scouting) {
 
   <!-- Bottom nav — staff -->
   <nav class="navbar" id="nav-staff" style="display:none;">
-    <button class="nb-tab on" onclick="nav('home',this)" data-p="home">
+    <button class="nb-tab on" onclick="window.nav('home',this)" data-p="home">
       <div class="nb-icon">🏠</div><span class="nb-label" data-t="home">Accueil</span>
     </button>
-    <button class="nb-tab" onclick="nav('presences',this)" data-p="presences">
+    <button class="nb-tab" onclick="window.nav('presences',this)" data-p="presences">
       <div class="nb-icon">✅</div><span class="nb-label" data-t="presences">Présences</span>
     </button>
-    <button class="nb-tab" onclick="nav('matchs',this)" data-p="matchs">
+    <button class="nb-tab" onclick="window.nav('matchs',this)" data-p="matchs">
       <div class="nb-icon">⚽</div><span class="nb-label" data-t="matchs">Matchs</span>
     </button>
-    <button class="nb-tab" onclick="nav('medical',this)" data-p="medical">
+    <button class="nb-tab" onclick="window.nav('medical',this)" data-p="medical">
       <div class="nb-icon">🩺</div><span class="nb-label" data-t="medical">Medical</span>
     </button>
-    <button class="nb-tab" onclick="nav('planning',this)" data-p="planning">
+    <button class="nb-tab" onclick="window.nav('planning',this)" data-p="planning">
       <div class="nb-icon">📋</div><span class="nb-label" data-t="planning">Planning</span>
     </button>
-    <button class="nb-tab" onclick="nav('squad',this)" data-p="squad">
+    <button class="nb-tab" onclick="window.nav('squad',this)" data-p="squad">
       <div class="nb-icon">👥</div><span class="nb-label" data-t="squad">Squad</span>
     </button>
-    <button class="nb-tab" onclick="nav('stats',this)" data-p="stats">
+    <button class="nb-tab" onclick="window.nav('stats',this)" data-p="stats">
       <div class="nb-icon">📊</div><span class="nb-label">Stats</span>
     </button>
   </nav>
 
   <!-- Bottom nav — joueur -->
   <nav class="navbar" id="nav-player" style="display:none;">
-    <button class="nb-tab on" onclick="nav('home',this)">
+    <button class="nb-tab on" onclick="window.nav('home',this)">
       <div class="nb-icon">🏠</div><span class="nb-label">Accueil</span>
     </button>
-    <button class="nb-tab" onclick="nav('matchs',this)">
+    <button class="nb-tab" onclick="window.nav('matchs',this)">
       <div class="nb-icon">⚽</div><span class="nb-label">Matchs</span>
     </button>
-    <button class="nb-tab" onclick="nav('profile',this)">
+    <button class="nb-tab" onclick="window.nav('profile',this)">
       <div class="nb-icon">👤</div><span class="nb-label">Mon profil</span>
     </button>
   </nav>
@@ -1839,7 +1839,7 @@ function generateMicrocycle(scouting) {
   <!-- Modals -->
 <div class="overlay" id="modal-inj" onclick="if(event.target===this)close_modal('modal-inj')">
   <div class="sheet">
-    <button class="sheet-close" onclick="close_modal('modal-inj')">✕</button>
+    <button class="sheet-close" onclick="window.close_modal('modal-inj')">✕</button>
     <div class="sheet-title" id="modal-inj-title"></div>
     <div id="modal-inj-body"></div>
   </div>
@@ -1847,7 +1847,7 @@ function generateMicrocycle(scouting) {
 
 <div class="overlay" id="modal-session" onclick="if(event.target===this)close_modal('modal-session')">
   <div class="sheet">
-    <button class="sheet-close" onclick="close_modal('modal-session')">✕</button>
+    <button class="sheet-close" onclick="window.close_modal('modal-session')">✕</button>
     <div class="sheet-title">Modifier la séance</div>
     <div id="modal-session-body"></div>
   </div>
