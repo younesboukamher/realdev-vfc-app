@@ -2800,7 +2800,7 @@ function renderProfile(){
                 const lp = LOOKER_DATA.players.find(lp2 => lp2.name.toLowerCase().includes(player.name?.split(' ').slice(-1)[0]?.toLowerCase() || ''));
                 return lp?.photo ? 
                   `<img class="squad-avatar" src="${lp.photo}" 
-                    onerror="this.outerHTML='<div class=\"profile-av-lg ${avClass(player.position)}\">${initials(player.name)}</div>'"
+                    onerror="this.style.display='none'"
                     alt="${player.name}">` :
                   `<div class="profile-av-lg ${avClass(player.position)}">${initials(player.name)}</div>`;
               })()}
@@ -2952,8 +2952,11 @@ function playerAvatarHTML(player, size='md') {
 
 function rankAvatarHTML(player) {
   if (player?.photo) {
+    const num = player.number||'?';
     return `<img class="rank-avatar" src="${player.photo}"
-      onerror="this.outerHTML='<div class=\"rank-avatar-init\">#${player.number}</div>'"
+      onload="this.style.opacity=1"
+      onerror="this.style.display='none'"
+      style="opacity:0;transition:opacity .3s"
       alt="${player.short}">`;
   }
   return `<div class="rank-avatar-init">#${player?.number||'?'}</div>`;
@@ -3068,7 +3071,10 @@ function renderCoachRanking() {
           ${players.map((p,i)=>`<tr onclick="viewPlayerAnalytics('${p.name}')" style="cursor:pointer">
             <td>
               <div class="rank-player-cell">
-                ${rankAvatarHTML(p)}
+                ${p.photo ?
+                  `<img class="rank-avatar" src="${p.photo}" onerror="this.style.display='none'" alt="${p.short}">` :
+                  `<div class="rank-avatar-init">#${p.number}</div>`
+                }
                 <span><span class="medal">${medals[i]||''}</span>${p.short}</span>
               </div>
             </td>
@@ -3293,11 +3299,8 @@ function renderAnalyticsPlayer(playerName) {
     <div class="player-profile">
       <div class="player-profile-header">
         <div style="flex-shrink:0">
-          ${player.photo ? 
-            `<img class="player-avatar-img lg" src="${player.photo}" 
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" 
-              alt="${player.short}">
-             <div class="player-avatar-initials lg" style="display:none">#${player.number}</div>` :
+          ${player.photo ?
+            `<img class="player-avatar-img lg" src="${player.photo}" onerror="this.style.display='none'" alt="${player.short}">` :
             `<div class="player-avatar-initials lg">#${player.number}</div>`
           }
         </div>
