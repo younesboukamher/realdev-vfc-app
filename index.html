@@ -425,8 +425,10 @@ body.offline #offline-bar { display:block; }
 .av-fix { background:rgba(59,130,246,.15);  color:var(--info); }
 .av-ala { background:rgba(34,197,94,.15);   color:var(--brand); }
 .av-piv { background:rgba(239,68,68,.15);   color:var(--danger); }
-.av-sm  { width:32px; height:32px; border-radius:8px; font-size:11px; }
-.av-lg  { width:52px; height:52px; border-radius:16px; font-size:18px; }
+.av-xs  { width:28px; height:28px; border-radius:7px; font-size:10px; }
+.av-sm  { width:36px; height:36px; border-radius:8px; font-size:12px; }
+.av-md  { width:44px; height:44px; border-radius:12px; font-size:14px; }
+.av-lg  { width:64px; height:64px; border-radius:18px; font-size:20px; }
 
 /* ── Champs formulaire ── */
 .fl { font:600 11px/1 var(--font); color:var(--tx3); text-transform:uppercase; letter-spacing:.8px; display:block; margin-bottom:7px; }
@@ -1604,6 +1606,10 @@ function generateMicrocycle(scouting) {
             </div>
           </div>
         </div>
+        <!-- FIX FINDING #1 — Action rapide "Tous présents" (réduit 12 taps à 1) -->
+        <div style="padding:0 18px 4px;">
+          <button class="btn btn-outline btn-sm btn-block" onclick="window.setAllPresent()" style="font-weight:600">✅ Tous présents (hors blessés)</button>
+        </div>
         <div class="div" style="margin-top:8px;"></div>
         <div id="roster-list"></div>
         <div style="padding:14px 18px 0;">
@@ -2007,7 +2013,45 @@ function fd(d) {
 const posClass = p => ({GK:'gk',FIXO:'fix',ALA:'ala',PIVOT:'piv'})[p]||'fix';
 const posColor = p => ({GK:'var(--warn)',FIXO:'var(--info)',ALA:'var(--brand)',PIVOT:'var(--danger)'})[p]||'var(--tx3)';
 const avClass  = p => ({GK:'av-gk',FIXO:'av-fix',ALA:'av-ala',PIVOT:'av-piv'})[p]||'av-fix';
-const initials = n => { const p=n.split(' '); return (p[0]?.[0]||'')+(p[1]?.[0]||''); };
+const initials = n => { const p=(n||'').split(' '); return (p[0]?.[0]||'')+(p[1]?.[0]||''); };
+
+// FIX UI #1/#2/#3 — helper unifié pour afficher une photo joueur cohérente partout
+// Matching priorité : id exact > nom exact > nom de famille > fallback initiales
+// Tailles : 'xs' (28px), 'sm' (36px), 'md' (44px), 'lg' (64px)
+const AV_SIZES={xs:28,sm:36,md:44,lg:64};
+function findLookerPlayer(p){
+  if(!window.LOOKER_DATA?.players?.length||!p) return null;
+  const lp=LOOKER_DATA.players;
+  // 1. match par id direct
+  let m=lp.find(x=>x.player_id===p.id);
+  if(m) return m;
+  // 2. match nom complet exact
+  m=lp.find(x=>x.name&&p.name&&x.name.toLowerCase()===p.name.toLowerCase());
+  if(m) return m;
+  // 3. match nom de famille (dernière partie)
+  const lastName=p.name?.trim().split(' ').slice(-1)[0]?.toLowerCase();
+  if(lastName) m=lp.find(x=>x.name?.toLowerCase().includes(lastName)||x.short?.toLowerCase().includes(lastName));
+  return m||null;
+}
+function playerAvatar(p,size='sm'){
+  const px=AV_SIZES[size]||36;
+  const lp=findLookerPlayer(p);
+  if(lp?.photo){
+    return `<img class="pa-img pa-${size}" src="${lp.photo}" alt="${p.name||''}" loading="lazy" style="width:${px}px;height:${px}px;border-radius:50%;object-fit:cover;object-position:center top;border:1.5px solid var(--sep2);flex-shrink:0">`;
+  }
+  return `<div class="av ${avClass(p.position)} av-${size}">${initials(p.name||'?')}</div>`;
+}
+
+// FIX BUG #4 — setLang défini (manquait, cassait les boutons FR/NL)
+window.setLang = (lang, btn) => {
+  if (!['fr','nl'].includes(lang)) return;
+  S.lang = lang;
+  try { localStorage.setItem('rdv_lang', lang); } catch(_) {}
+  document.querySelectorAll('.lang-btn, .top-lang').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll(`[data-lang="${lang}"]`).forEach(b => b.classList.add('on'));
+  if (typeof applyTranslations === 'function') applyTranslations();
+  if (typeof renderAll === 'function') renderAll();
+};
 
 window.open_modal = id => { $(id).classList.add('on'); document.body.style.overflow='hidden'; };
 window.close_modal= id => { $(id).classList.remove('on'); document.body.style.overflow=''; };
@@ -2227,22 +2271,25 @@ function renderPresences() {
   /* Pointer */
   const listEl=$('roster-list');
   if (listEl&&S.players.length) {
-    // Init statuts
+    // FIX BUG #22 — Init statuts avec is_active (source de vérité dans la DB)
     if (!Object.keys(S.presStatus).length) {
-      S.players.forEach(p=>{S.presStatus[p.id]= S.injuries.some(i=>i.player_id===p.id&&i.status!=='healed')?'B':'P';});
-      S.injuries.forEach(i=>{S.presStatus[i.player_id]='B';});
+      S.players.forEach(p=>{
+        const injured=S.injuries.some(i=>i.player_id===p.id&&(i.is_active===true||i.status==='active'));
+        S.presStatus[p.id]=injured?'B':'P';
+      });
     }
     listEl.innerHTML=S.players.map(p=>{
       const cur=S.presStatus[p.id]||'P';
       const rpe=S.presRpe[p.id]||0;
       const statusLabels={'P':'Présent','B':'Blessé','R':'En retard'};
       const statusIcons={'P':'✅','B':'🤕','R':'⏰'};
+      // FIX BUG #1/#2 — data-status sur chaque bouton pour un ciblage fiable
       const btns=['P','B','R'].map(s=>
-        `<button class="status-btn ${cur===s?'s-'+s:''}" onclick="setStatus('${p.id}','${s}')">${statusIcons[s]} ${statusLabels[s]}</button>`
+        `<button class="status-btn ${cur===s?'s-'+s:''}" data-status="${s}" onclick="setStatus('${p.id}','${s}')">${statusIcons[s]} ${statusLabels[s]}</button>`
       ).join('');
-      return `<div class="roster-line">
-        ${(()=>{const lp=LOOKER_DATA.players.find(x=>x.name===p.name||p.name?.includes(x.short?.split(' ').slice(-1)[0]));
-          return lp?.photo?'<img style="width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:center top;border:1.5px solid var(--sep2);flex-shrink:0" src="'+lp.photo+'">':'<div class="av '+avClass(p.position)+' av-sm">'+initials(p.name)+'</div>';})()}
+      // FIX UI #1 — helper unifié playerAvatar (photo ou initiales) utilisé partout
+      return `<div class="roster-line" data-player-id="${p.id}">
+        ${playerAvatar(p,'sm')}
         <div class="roster-info">
           <div class="roster-name">${p.name}</div>
           <div class="roster-pos pos-${posClass(p.position)}">${p.position}</div>
@@ -2296,22 +2343,29 @@ function renderPresences() {
   }
 }
 
+// FIX BUG #1+#2 — mise à jour visuelle des boutons statut
+// Le bouton actif reçoit la classe s-<status> (s-P, s-B, s-R) ; les autres la perdent.
+// Le sélecteur cible la ligne via data-player-id (fiable) au lieu de textContent.
 window.setStatus=(pid,s)=>{
   S.presStatus[pid]=s;
-  document.querySelectorAll(`.status-btn`).forEach(btn=>{
-    if(btn.closest('.roster-line')?.querySelector('.av')?.textContent===initials(S.players.find(p=>p.id===pid)?.name||'')) return;
+  const line=document.querySelector(`.roster-line[data-player-id="${pid}"]`);
+  if(!line) return;
+  line.querySelectorAll('.status-btn').forEach(btn=>{
+    const btnStatus=btn.getAttribute('data-status');
+    btn.classList.remove('s-P','s-B','s-R');
+    if(btnStatus===s) btn.classList.add('s-'+s);
   });
-  // Re-render just that row
-  const line=document.querySelector(`[onclick="setStatus('${pid}','P')"]`)?.closest('.roster-line');
-  if(line){
-    line.querySelectorAll('.status-btn').forEach(btn=>{
-      btn.classList.toggle('s-P',btn.textContent==='P'&&s==='P');
-      btn.classList.toggle('s-A',btn.textContent==='A'&&s==='A');
-      btn.classList.toggle('s-B',btn.textContent==='B'&&s==='B');
-      btn.classList.toggle('s-E',btn.textContent==='E'&&s==='E');
-      if(btn.textContent!==s) { btn.classList.remove('s-P','s-A','s-B','s-E'); }
-    });
-  }
+};
+
+// FIX FINDING #1 — Action rapide "Tous Présents" pour pointer 12 joueurs en un tap
+// Les joueurs actuellement blessés (is_active=true) gardent leur statut 'B'.
+window.setAllPresent=()=>{
+  S.players.forEach(p=>{
+    const injured=S.injuries.some(i=>i.player_id===p.id&&(i.is_active===true||i.status==='active'));
+    S.presStatus[p.id]=injured?'B':'P';
+  });
+  renderPresences();
+  if(typeof toast==='function') toast('✓ Tous marqués présents');
 };
 window.adjRpe=(pid,d)=>{
   const cur=S.presRpe[pid]||0;
@@ -2713,12 +2767,23 @@ window.editDay=(mid,si)=>{
   `;
   open_modal('modal-session');
 };
-window.saveDay=(mid,si)=>{
+// FIX BUG #10 — saveDay persiste désormais via savePlan(mid)
+window.saveDay=async(mid,si)=>{
   const p=S.plans[mid];if(!p)return;
   p.sessions[si]={...p.sessions[si],label:$('ed-l').value,type:$('ed-t').value,duration:parseInt($('ed-d').value)||75,rpe_target:$('ed-r').value,focus:$('ed-f').value.split(',').map(f=>f.trim()).filter(Boolean),notes:$('ed-n').value,exercises:[0,1,2].map(i=>({name:$('ed-en'+i).value,detail:$('ed-ed'+i).value})).filter(e=>e.name)};
-  close_modal('modal-session');renderPlanning();toast(msg('updated'));
+  close_modal('modal-session');
+  await savePlan(mid);
+  renderPlanning();
+  toast(msg('updated'));
 };
-window.deleteDay=(mid,si)=>{S.plans[mid]?.sessions.splice(si,1);renderPlanning();toast(msg('deleted'));};
+// FIX BUG #11 — deleteDay persiste désormais via savePlan(mid)
+window.deleteDay=async(mid,si)=>{
+  if(!S.plans[mid]?.sessions) return;
+  S.plans[mid].sessions.splice(si,1);
+  await savePlan(mid);
+  renderPlanning();
+  toast(msg('deleted'));
+};
 
 /* ════════ SQUAD ════════ */
 function renderSquad(){
