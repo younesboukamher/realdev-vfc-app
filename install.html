@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installer l'app RealDev VFC</title>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(160deg, #0D1F3C 0%, #0a1628 60%, #091220 100%);
+      min-height: 100vh; color: #fff; padding: 24px 20px 40px;
+    }
+    .header { text-align:center; padding: 32px 0 24px; }
+    .logo { width: 80px; height: 80px; border-radius: 20px; margin: 0 auto 16px; display:block; }
+    h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+    h1 span { color: #22C55E; }
+    .subtitle { font-size: 13px; color: #94A3B8; margin-top: 6px; }
+    
+    .qr-section {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 24px; text-align: center; margin: 20px 0;
+    }
+    .qr-section img { width: 200px; height: 200px; border-radius: 12px; }
+    .qr-label { font-size: 12px; color: #64748B; margin-top: 10px; }
+    .qr-url {
+      font-size: 11px; color: #22C55E; margin-top: 6px;
+      word-break: break-all; font-family: monospace;
+    }
+    
+    .steps { margin: 8px 0; }
+    .platform {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 20px; margin: 12px 0;
+    }
+    .platform-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .platform-icon { font-size: 24px; }
+    .platform-name { font-size: 15px; font-weight: 700; }
+    .platform-sub { font-size: 11px; color: #64748B; }
+    
+    .step {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #22C55E; color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+    }
+    .step-text { font-size: 13px; line-height: 1.5; color: #CBD5E1; }
+    .step-text strong { color: #fff; }
+    .step-icon { font-size: 16px; }
+    
+    .install-btn {
+      display: block; width: 100%; padding: 16px;
+      background: #22C55E; color: #000; border: none;
+      border-radius: 14px; font-size: 16px; font-weight: 800;
+      text-decoration: none; text-align: center;
+      margin: 24px 0 12px; letter-spacing: -0.2px;
+      cursor: pointer;
+    }
+    .open-btn {
+      display: block; width: 100%; padding: 14px;
+      background: transparent; color: #22C55E;
+      border: 1.5px solid #22C55E; border-radius: 14px;
+      font-size: 15px; font-weight: 700; text-decoration: none;
+      text-align: center; cursor: pointer;
+    }
+    
+    .features {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 20px 0;
+    }
+    .feature {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 14px 12px; text-align: center;
+    }
+    .feature-icon { font-size: 20px; margin-bottom: 6px; }
+    .feature-name { font-size: 11px; font-weight: 600; color: #E2E8F0; }
+    .feature-desc { font-size: 10px; color: #64748B; margin-top: 3px; }
+    
+    .footer { text-align: center; padding: 24px 0 0; }
+    .footer p { font-size: 11px; color: #475569; line-height: 1.6; }
+    .badge {
+      display: inline-block; background: rgba(34,197,94,0.1);
+      color: #22C55E; border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 6px; padding: 3px 8px; font-size: 10px;
+      font-weight: 700; margin: 4px 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <img src="assets/icons/icon-192.png" alt="RealDev VFC" class="logo">
+    <h1>RealDev <span>Vilvoorde</span></h1>
+    <p class="subtitle">1ère Division Nationale · App Staff &amp; Joueurs</p>
+  </div>
+
+  <!-- QR Code -->
+  <div class="qr-section">
+    <img src="assets/install/qr-code.png" alt="QR Code RealDev VFC">
+    <p class="qr-label">📱 Scannez pour ouvrir l'app</p>
+    <p class="qr-url">younesboukamher.github.io/realdev-vfc-app</p>
+  </div>
+
+  <!-- Boutons rapides -->
+  <a href="https://younesboukamher.github.io/realdev-vfc-app/" class="install-btn">
+    🚀 Ouvrir l'application
+  </a>
+  
+  <!-- Features -->
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">📋</div>
+      <div class="feature-name">Présences</div>
+      <div class="feature-desc">Suivi en temps réel</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚽</div>
+      <div class="feature-name">Matchs</div>
+      <div class="feature-desc">Planning &amp; résultats</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <div class="feature-name">Analytics</div>
+      <div class="feature-desc">Stats &amp; notation DS</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🏥</div>
+      <div class="feature-name">Medical</div>
+      <div class="feature-desc">Suivi blessures</div>
+    </div>
+  </div>
+
+  <!-- Instructions iPhone -->
+  <div class="steps">
+    <div class="platform">
+      <div class="platform-header">
+        <span class="platform-icon"></span>
+        <div>
+          <div class="platform-name">iPhone / iPad</div>
+          <div class="platform-sub">Safari uniquement</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Ouvrir le lien dans <strong>Safari</strong> (pas Chrome)</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Appuyer sur le bouton <strong>Partager</strong> <span class="step-icon">⬆️</span> en bas de l'écran</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Défiler et appuyer sur <strong>"Sur l'écran d'accueil"</strong> <span class="step-icon">➕</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Appuyer sur <strong>"Ajouter"</strong> en haut à droite</div>
+      </div>
+    </div>
+
+    <!-- Instructions Android -->
+    <div class="platform">
+      <div class="platform-header">
+        <span class="platform-icon">🤖</span>
+        <div>
+          <div class="platform-name">Android</div>
+          <div class="platform-sub">Chrome / Samsung Internet</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Ouvrir le lien dans <strong>Chrome</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Une bannière <strong>"Ajouter à l'écran d'accueil"</strong> apparaît automatiquement</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Sinon : menu <strong>⋮</strong> → <strong>"Ajouter à l'écran d'accueil"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      <span class="badge">PWA</span>
+      <span class="badge">Offline</span>
+      <span class="badge">iOS &amp; Android</span>
+      <span class="badge">v1.12.0</span>
+    </p>
+    <p style="margin-top:12px">
+      RealDev Vilvoorde FC · 1ère Division Nationale URBSFA<br>
+      Staff uniquement — Accès sécurisé par email
+    </p>
+  </div>
+
+</body>
+</html>

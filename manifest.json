@@ -1,14 +1,32 @@
 {
-  "name": "RealDev Vilvoorde",
-  "short_name": "RealDev",
-  "description": "RealDev Vilvoorde FC — 1ère Division Nationale 2025-26",
+  "name": "RealDev Vilvoorde FC",
+  "short_name": "RealDev VFC",
+  "description": "Plateforme de gestion du staff — 1ère Division Nationale",
   "start_url": "/realdev-vfc-app/",
+  "scope": "/realdev-vfc-app/",
   "display": "standalone",
-  "background_color": "#111318",
-  "theme_color": "#111318",
   "orientation": "portrait",
+  "background_color": "#0D1F3C",
+  "theme_color": "#0D1F3C",
+  "lang": "fr",
+  "categories": ["sports", "productivity"],
   "icons": [
-    { "src": "assets/logo.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "assets/logo.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "assets/icons/favicon-16.png", "sizes": "16x16",   "type": "image/png" },
+    { "src": "assets/icons/favicon-32.png", "sizes": "32x32",   "type": "image/png" },
+    { "src": "assets/icons/icon-120.png",   "sizes": "120x120", "type": "image/png" },
+    { "src": "assets/icons/icon-152.png",   "sizes": "152x152", "type": "image/png" },
+    { "src": "assets/icons/icon-167.png",   "sizes": "167x167", "type": "image/png" },
+    { "src": "assets/icons/icon-180.png",   "sizes": "180x180", "type": "image/png" },
+    { "src": "assets/icons/icon-192.png",   "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/icons/icon-512.png",   "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "RealDev VFC Staff App"
+    }
   ]
 }
