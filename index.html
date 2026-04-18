@@ -1410,10 +1410,29 @@ button:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .nb-btn:focus-
 }
 
 /* Responsive */
+/* FIX BUG responsive topbar (≤640px) — FR/NL/Exit buttons must stay visible and tappable on iPhone */
+@media (max-width:640px) {
+  .topbar { padding:0 12px; gap:6px; }
+  .topbar-left { gap:8px; min-width:0; flex:1 1 auto; }
+  .topbar-left img { width:28px !important; height:28px !important; }
+  .topbar-left > div { min-width:0; overflow:hidden; }
+  .topbar-title { font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .topbar-page { font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .topbar-right { gap:4px; flex-shrink:0; flex-wrap:nowrap; }
+  .version-badge { display:none; }
+  #season-selector { max-width:96px; padding:4px 6px !important; font-size:10px !important; }
+  .top-badge { padding:3px 5px; font-size:8px; letter-spacing:.5px; }
+  .top-lang { padding:5px 8px; font-size:10px; }
+  .top-exit { width:30px; height:30px; font-size:14px; }
+}
 @media (max-width:360px) {
   .quick-stats { grid-template-columns:repeat(2,1fr); }
   .qs-num { font-size:20px; }
   .match-team-name { font-size:14px; }
+  .topbar { padding:0 8px; }
+  .top-badge { display:none; }
+  #season-selector { max-width:80px; font-size:9px !important; }
+  .topbar-title { font-size:13px; }
 }
 @media (prefers-reduced-motion:reduce) {
   *, *::before, *::after { animation:none !important; transition:none !important; }
