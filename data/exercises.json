@@ -87,7 +87,79 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.58",
       "image_url": "exercises/wu-01.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Mobilite: tour de 4 plots en jogging leger.",
+        "caption_nl": "Mobiliteit: rond 4 kegels, licht joggen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              20,
+              14
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              20,
+              14
+            ],
+            "rad": -0.15,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              20,
+              14
+            ],
+            "to": [
+              28,
+              10
+            ],
+            "rad": -0.15,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              28,
+              10
+            ],
+            "to": [
+              20,
+              6
+            ],
+            "rad": -0.15,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              20,
+              6
+            ],
+            "to": [
+              12,
+              10
+            ],
+            "rad": -0.15,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "wu-02",
@@ -127,7 +199,75 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.4",
       "image_url": "exercises/wu-02.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Conduite libre: change de direction, garde ballon proche.",
+        "caption_nl": "Vrije balcontrole: van richting veranderen, bal dichtbij.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              7
+            ],
+            "to": [
+              22,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              22,
+              13
+            ],
+            "to": [
+              12,
+              7
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            7
+          ],
+          "to": [
+            22,
+            13
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              12,
+              7
+            ],
+            "to": [
+              22,
+              13
+            ],
+            "rad": 0.18,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              22,
+              13
+            ],
+            "to": [
+              12,
+              7
+            ],
+            "rad": 0.18,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "wu-03",
@@ -167,7 +307,62 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.72",
       "image_url": "exercises/wu-03.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Passes par 2 en avancant: chacun progresse apres sa passe.",
+        "caption_nl": "Passen in paar bij voortgang: elke speler schuift op.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              8
+            ],
+            "to": [
+              22,
+              8
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              10,
+              12
+            ],
+            "to": [
+              22,
+              12
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            8
+          ],
+          "to": [
+            22,
+            12
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              16,
+              8
+            ],
+            "to": [
+              16,
+              12
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "wu-04",
@@ -207,7 +402,66 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Warm-up appendix",
       "image_url": "exercises/wu-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Echelle de coordination: pieds rapides puis sprint 3 m.",
+        "caption_nl": "Coordinatieladder: snelle voetenwerk, sprint 3 m.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ],
+        "zones": [
+          {
+            "type": "polygon",
+            "points": [
+              [
+                10,
+                9
+              ],
+              [
+                16,
+                9
+              ],
+              [
+                16,
+                11
+              ],
+              [
+                10,
+                11
+              ]
+            ],
+            "color": "yellow",
+            "label": "",
+            "pulse": false
+          }
+        ]
+      }
     },
     {
       "id": "wu-05",
@@ -247,7 +501,107 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.84",
       "image_url": "exercises/wu-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Rondo 5v2: les 5 font circuler vite, les 2 coupent.",
+        "caption_nl": "Rondo 5v2: 5 circuleren snel, 2 onderscheppen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              18,
+              5
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              26,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              18,
+              15
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "5",
+            "from": [
+              20,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              16,
+              9
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              22,
+              11
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            18,
+            5
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              18,
+              5
+            ],
+            "rad": 0.1,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              18,
+              5
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.1,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "wu-06",
@@ -287,7 +641,79 @@
       ],
       "source": "RFEF — Escuela de entrenadores de fútbol sala, bloque físico",
       "image_url": "exercises/wu-06.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Reactivite couleurs: sprint vers le plot annonce.",
+        "caption_nl": "Reactiviteit kleuren: sprint naar aangeroepen kegel.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              14,
+              6
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              14,
+              6
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              26,
+              6
+            ],
+            "rad": 0.0,
+            "color": "neutral"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              26,
+              14
+            ],
+            "rad": 0.0,
+            "color": "neutral"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              14,
+              14
+            ],
+            "rad": 0.0,
+            "color": "neutral"
+          }
+        ]
+      }
     },
     {
       "id": "wu-07",
@@ -327,7 +753,100 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.88",
       "image_url": "exercises/wu-07.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Triangulations a 3: passe, court, recois.",
+        "caption_nl": "Driehoek met 3: passen, lopen, ontvangen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              20,
+              5
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              20,
+              5
+            ],
+            "to": [
+              28,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              28,
+              10
+            ],
+            "to": [
+              12,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            20,
+            5
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              20,
+              5
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              20,
+              5
+            ],
+            "to": [
+              28,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              28,
+              10
+            ],
+            "to": [
+              12,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "wu-08",
@@ -367,7 +886,92 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.5",
       "image_url": "exercises/wu-08.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Tir progressif: course + passe + frappe.",
+        "caption_nl": "Progressief schieten: loop + pass + schot.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              28,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "P",
+            "from": [
+              22,
+              15
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            15,
+            10
+          ],
+          "to": [
+            36,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              28,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              22,
+              15
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              22,
+              15
+            ],
+            "to": [
+              36,
+              10
+            ],
+            "rad": -0.05,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "wu-09",
@@ -407,7 +1011,83 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Duel drills",
       "image_url": "exercises/wu-09.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "1v1 aller simple: attaquant affronte defenseur, finit.",
+        "caption_nl": "1v1 rechtstreeks: aanvaller tegen verdediger, afronding.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "A",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              22,
+              13
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            15,
+            10
+          ],
+          "to": [
+            36,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              30,
+              10
+            ],
+            "to": [
+              36,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "wu-10",
@@ -447,7 +1127,99 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.6 — Possession",
       "image_url": "exercises/wu-10.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Possession 5v5 zones calmes: conserver, ne pas tirer.",
+        "caption_nl": "Balbezit 5v5 rustige zones: behouden, niet schieten.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              14,
+              8
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              18,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              22,
+              8
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              26,
+              13
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              18,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              22,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            14,
+            8
+          ],
+          "to": [
+            26,
+            13
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              14,
+              8
+            ],
+            "to": [
+              22,
+              8
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              22,
+              8
+            ],
+            "to": [
+              26,
+              13
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-01",
@@ -487,7 +1259,89 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.96",
       "image_url": "exercises/te-01.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Slalom conduite: 4 plots zigzag, 2 pieds.",
+        "caption_nl": "Slalom balcontrole: 4 kegels zigzag, 2 voeten.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            26,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              14,
+              7
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              14,
+              7
+            ],
+            "to": [
+              18,
+              13
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              18,
+              13
+            ],
+            "to": [
+              22,
+              7
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              22,
+              7
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "te-02",
@@ -527,7 +1381,50 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Technique foundations",
       "image_url": "exercises/te-02.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Semelle futsal: roule-ballon sur place, alternance.",
+        "caption_nl": "Zool-techniek: bal rollen, afwisseling.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            18,
+            10
+          ],
+          "to": [
+            22,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "alt",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.25,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-03",
@@ -567,7 +1464,91 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.102",
       "image_url": "exercises/te-03.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Etoile a 5: passes croisees entre 5 positions.",
+        "caption_nl": "Ster met 5: gekruiste passes.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              20,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              13,
+              6
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              27,
+              6
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              27,
+              14
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "5",
+            "from": [
+              13,
+              14
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            20,
+            10
+          ],
+          "to": [
+            27,
+            14
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              27,
+              14
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              13,
+              6
+            ],
+            "to": [
+              27,
+              6
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-04",
@@ -607,7 +1588,71 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.110",
       "image_url": "exercises/te-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Controle oriente + remise une touche.",
+        "caption_nl": "Gerichte aanname + one-touch teruggave.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              20,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              24,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            24,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              24,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              24,
+              10
+            ],
+            "to": [
+              20,
+              10
+            ],
+            "rad": -0.15,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-05",
@@ -647,7 +1692,75 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.118",
       "image_url": "exercises/te-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Passe courte-courte-longue: 3 joueurs en ligne.",
+        "caption_nl": "Kort-kort-lang: 3 spelers op lijn.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              15,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              30,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            30,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              15,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ],
+            "rad": -0.15,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-06",
@@ -687,7 +1800,76 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.5 Skills",
       "image_url": "exercises/te-06.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Repertoire feintes: 4 gestes successifs.",
+        "caption_nl": "Schijnbewegingen: 4 technieken na elkaar.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            18,
+            10
+          ],
+          "to": [
+            22,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "alt",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              20,
+              7
+            ],
+            "rad": 0.0,
+            "color": "neutral"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              20,
+              13
+            ],
+            "rad": 0.0,
+            "color": "neutral"
+          },
+          {
+            "kind": "run",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "te-07",
@@ -727,7 +1909,75 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.122",
       "image_url": "exercises/te-07.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Prise de balle dos au but: pivot recoit, tourne.",
+        "caption_nl": "Bal aannemen met rug naar doel: pivot, draai.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "P",
+            "from": [
+              25,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              28,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            25,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "run",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              27,
+              7
+            ],
+            "rad": -0.2,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "te-08",
@@ -767,7 +2017,71 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.5",
       "image_url": "exercises/te-08.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Frappe cou de pied: conduite puis tir puissant.",
+        "caption_nl": "Wreef-schot: loop met bal, krachtig schot.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              14,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            14,
+            10
+          ],
+          "to": [
+            37,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              14,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              26,
+              10
+            ],
+            "to": [
+              37,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-09",
@@ -807,7 +2121,76 @@
       ],
       "source": "RFEF Escuela — Técnica individual U14-U16",
       "image_url": "exercises/te-09.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Conduite tete haute: obeit aux consignes visuelles.",
+        "caption_nl": "Balcontrole met hoofd omhoog: visuele commando's.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              28,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            28,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              18,
+              8
+            ],
+            "rad": -0.2,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              18,
+              8
+            ],
+            "to": [
+              22,
+              12
+            ],
+            "rad": 0.2,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              22,
+              12
+            ],
+            "to": [
+              28,
+              10
+            ],
+            "rad": -0.2,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "te-10",
@@ -847,7 +2230,88 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Flow patterns",
       "image_url": "exercises/te-10.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Passe diagonale + croisement: deux courses croisees.",
+        "caption_nl": "Diagonale pass + kruislopen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              7
+            ],
+            "to": [
+              22,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              12,
+              13
+            ],
+            "to": [
+              22,
+              7
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            7
+          ],
+          "to": [
+            22,
+            7
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              12,
+              7
+            ],
+            "to": [
+              22,
+              13
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              12,
+              13
+            ],
+            "to": [
+              22,
+              7
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              7
+            ],
+            "to": [
+              22,
+              7
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-11",
@@ -887,7 +2351,75 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.128",
       "image_url": "exercises/te-11.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Amorti aerien + passe au sol.",
+        "caption_nl": "Luchtcontrole + grondpass.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              20,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              28,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            28,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              20,
+              10
+            ],
+            "rad": -0.3,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              28,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-12",
@@ -927,7 +2459,71 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Finishing drills",
       "image_url": "exercises/te-12.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Conduite vitesse + finition: 20 m de sprint puis frappe.",
+        "caption_nl": "Snelle balcontrole + afwerking: 20 m sprint, schot.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            37,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              26,
+              10
+            ],
+            "to": [
+              37,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-13",
@@ -967,7 +2563,75 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.136",
       "image_url": "exercises/te-13.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Reprise aerienne: GK lance, volee ou tete.",
+        "caption_nl": "Schieten uit de lucht: GK gooit, volley of kop.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              3,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              25,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            3,
+            10
+          ],
+          "to": [
+            37,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              3,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ],
+            "rad": -0.35,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              37,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "te-14",
@@ -1007,7 +2671,101 @@
       ],
       "source": "RFEF Escuela — Duels individuels",
       "image_url": "exercises/te-14.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "1v1 dans carre 6x6 m: duel, proteger le ballon.",
+        "caption_nl": "1v1 in vak 6x6 m: duel, bal beschermen.",
+        "zones": [
+          {
+            "type": "polygon",
+            "points": [
+              [
+                15,
+                7
+              ],
+              [
+                25,
+                7
+              ],
+              [
+                25,
+                13
+              ],
+              [
+                15,
+                13
+              ]
+            ],
+            "color": "yellow",
+            "label": "",
+            "pulse": false
+          }
+        ],
+        "players": [
+          {
+            "team": "blue",
+            "label": "A",
+            "from": [
+              17,
+              10
+            ],
+            "to": [
+              23,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              22,
+              10
+            ],
+            "to": [
+              17,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            17,
+            10
+          ],
+          "to": [
+            23,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              17,
+              10
+            ],
+            "to": [
+              23,
+              10
+            ],
+            "rad": 0.3,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              22,
+              10
+            ],
+            "to": [
+              17,
+              10
+            ],
+            "rad": 0.3,
+            "color": "red"
+          }
+        ]
+      }
     },
     {
       "id": "te-15",
@@ -1047,7 +2805,79 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Penetration passing",
       "image_url": "exercises/te-15.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Passe dans le dos: partenaire fente dans l'espace vide.",
+        "caption_nl": "Diepe pass: medespeler in lege ruimte.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              16,
+              15
+            ],
+            "to": [
+              25,
+              5
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              20,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            25,
+            5
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              16,
+              15
+            ],
+            "to": [
+              25,
+              5
+            ],
+            "rad": -0.2,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              25,
+              5
+            ],
+            "rad": -0.2,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "ta-01",
@@ -1976,7 +3806,133 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.178",
       "image_url": "exercises/ta-06.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Bloc median 1-2-1: compacite et coulissage.",
+        "caption_nl": "Medium blok 1-2-1: compact schuiven.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              25,
+              6
+            ],
+            "to": [
+              27,
+              6
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              25,
+              14
+            ],
+            "to": [
+              27,
+              14
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              30,
+              10
+            ],
+            "to": [
+              32,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              15,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            15,
+            10
+          ],
+          "to": [
+            15,
+            7
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              25,
+              6
+            ],
+            "to": [
+              27,
+              6
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              25,
+              14
+            ],
+            "to": [
+              27,
+              14
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              30,
+              10
+            ],
+            "to": [
+              32,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "ta-07",
@@ -2227,7 +4183,107 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.8",
       "image_url": "exercises/ta-08.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "4v3 maintien superiorite: garder le ballon sans tir.",
+        "caption_nl": "4v3 meerderheid behouden: bal houden zonder schot.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              12,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              24,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              24,
+              13
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              18,
+              7
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              18,
+              13
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              24,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            7
+          ],
+          "to": [
+            24,
+            13
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              7
+            ],
+            "to": [
+              24,
+              7
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              24,
+              7
+            ],
+            "to": [
+              24,
+              13
+            ],
+            "rad": 0.1,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "ta-09",
@@ -2267,7 +4323,122 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.192",
       "image_url": "exercises/ta-09.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "3v4 defense inferiorite: reculer et fermer l'axe.",
+        "caption_nl": "3v4 in ondertal: terugtrekken en as sluiten.",
+        "players": [
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              10,
+              5
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              10,
+              15
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              15,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              15,
+              10.1
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              22,
+              6
+            ],
+            "to": [
+              20,
+              8
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              22,
+              14
+            ],
+            "to": [
+              20,
+              12
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              27,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              22,
+              6
+            ],
+            "to": [
+              20,
+              8
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              22,
+              14
+            ],
+            "to": [
+              20,
+              12
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              27,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "ta-10",
@@ -2307,7 +4478,116 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.8 Low block",
       "image_url": "exercises/ta-10.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Bloc bas 4v4+GK: zone refusee, tres compact.",
+        "caption_nl": "Laag blok 4v4+GK: zone geweigerd, zeer compact.",
+        "zones": [
+          {
+            "type": "polygon",
+            "points": [
+              [
+                28,
+                5
+              ],
+              [
+                36,
+                5
+              ],
+              [
+                36,
+                15
+              ],
+              [
+                28,
+                15
+              ]
+            ],
+            "color": "blue",
+            "label": "BLOC",
+            "pulse": true
+          }
+        ],
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              30,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              30,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              34,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              34,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              27,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            20,
+            10
+          ],
+          "to": [
+            27,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              27,
+              10
+            ],
+            "rad": 0.0,
+            "color": "red"
+          }
+        ]
+      }
     },
     {
       "id": "ta-11",
@@ -2650,7 +4930,100 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.7",
       "image_url": "exercises/ta-13.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Jeu avec pivot: passe au pivot, remise en une touche, frappe.",
+        "caption_nl": "Spel met pivot: pass naar pivot, one-touch retour, schot.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "P",
+            "from": [
+              25,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              26,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            35,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              35,
+              10
+            ],
+            "rad": -0.2,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "ta-14",
@@ -2690,7 +5063,112 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), p.212",
       "image_url": "exercises/ta-14.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Circulation 3-1 sans tir: conserver, faire bouger la defense.",
+        "caption_nl": "3-1 circulatie zonder schot: behouden, verdediging laten schuiven.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              18,
+              5
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              18,
+              15
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "P",
+            "from": [
+              28,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              16,
+              8
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              16,
+              12
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            28,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              18,
+              5
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              18,
+              5
+            ],
+            "to": [
+              28,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              28,
+              10
+            ],
+            "to": [
+              12,
+              10
+            ],
+            "rad": 0.15,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "ta-15",
@@ -3098,7 +5576,99 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), SSG library",
       "image_url": "exercises/sg-02.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "4v4 quatre mini-buts: larges attaques sur les ailes.",
+        "caption_nl": "4v4 vier mini-doelen: brede aanvallen op vleugels.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              15,
+              6
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              15,
+              14
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              22,
+              6
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              22,
+              14
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              25,
+              6
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              25,
+              14
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            15,
+            6
+          ],
+          "to": [
+            22,
+            14
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              15,
+              6
+            ],
+            "to": [
+              22,
+              14
+            ],
+            "rad": 0.15,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              22,
+              14
+            ],
+            "to": [
+              30,
+              14
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sg-03",
@@ -3286,7 +5856,104 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.10",
       "image_url": "exercises/sg-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Blitz 60 s: intensite max, finition rapide.",
+        "caption_nl": "Blitz 60 s: max intensiteit, snelle afwerking.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              15,
+              5
+            ],
+            "to": [
+              28,
+              6
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              20,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            28,
+            6
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              15,
+              5
+            ],
+            "to": [
+              28,
+              6
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              28,
+              6
+            ],
+            "rad": -0.1,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sg-05",
@@ -3326,7 +5993,83 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Time pressure",
       "image_url": "exercises/sg-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "4v4 2 touches max: tempo rapide, controle-passe.",
+        "caption_nl": "4v4 max 2 aanrakingen: snel tempo, aanname-pass.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              14,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              14,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              22,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              22,
+              13
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            14,
+            7
+          ],
+          "to": [
+            22,
+            13
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              14,
+              7
+            ],
+            "to": [
+              22,
+              7
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              22,
+              7
+            ],
+            "to": [
+              22,
+              13
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sg-06",
@@ -3674,7 +6417,78 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), ch.10 match intégré",
       "image_url": "exercises/sg-08.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "5v5 ratio a/d: surnombre offensif variable.",
+        "caption_nl": "5v5 aanval/verdediging ratio: wisselend overtal.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              8
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              14,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              20,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              24,
+              7
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              24,
+              13
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            8
+          ],
+          "to": [
+            20,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              12,
+              8
+            ],
+            "to": [
+              20,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "fi-01",
@@ -3714,7 +6528,92 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Finishing circuit",
       "image_url": "exercises/fi-01.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Atelier finition cercle: tourner, recevoir, frapper.",
+        "caption_nl": "Afwerkingsatelier cirkel: draaien, ontvangen, schieten.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "P",
+            "from": [
+              16,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            16,
+            10
+          ],
+          "to": [
+            37,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              16,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              26,
+              10
+            ],
+            "to": [
+              37,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "fi-02",
@@ -3999,7 +6898,129 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Counter",
       "image_url": "exercises/fi-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Contre-attaque 3v1: tenir large, fixer le defenseur.",
+        "caption_nl": "Counter 3v1: breed blijven, verdediger binden.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              14,
+              5
+            ],
+            "to": [
+              28,
+              4
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              14,
+              15
+            ],
+            "to": [
+              28,
+              16
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              22,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            12,
+            10
+          ],
+          "to": [
+            28,
+            4
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              25,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              14,
+              5
+            ],
+            "to": [
+              28,
+              4
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              14,
+              15
+            ],
+            "to": [
+              28,
+              16
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              28,
+              4
+            ],
+            "rad": -0.15,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "fi-05",
@@ -4039,7 +7060,54 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Angles",
       "image_url": "exercises/fi-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Tir 1er poteau: angle ferme, frappe pres du corps.",
+        "caption_nl": "1e paal schot: gesloten hoek, schot dicht langs paal.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              28,
+              5
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            28,
+            5
+          ],
+          "to": [
+            38.5,
+            6
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              28,
+              5
+            ],
+            "to": [
+              38.5,
+              6
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "fi-06",
@@ -4212,7 +7280,83 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Pressure finishing",
       "image_url": "exercises/fi-07.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Finition 1v1 sous pression: proteger le ballon, finir.",
+        "caption_nl": "Afwerking 1v1 onder druk: bal afschermen, afwerken.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "A",
+            "from": [
+              22,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              28,
+              12
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            22,
+            10
+          ],
+          "to": [
+            37,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              22,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              30,
+              10
+            ],
+            "to": [
+              37,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "fi-08",
@@ -4252,7 +7396,84 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Rebound play",
       "image_url": "exercises/fi-08.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Finition sur rebond: suivre apres la frappe, reprendre.",
+        "caption_nl": "Afwerking op rebound: volgen na schot, afronden.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              34,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              38,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            25,
+            10
+          ],
+          "to": [
+            37,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              36,
+              13
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "run",
+            "from": [
+              25,
+              10
+            ],
+            "to": [
+              34,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              34,
+              10
+            ],
+            "to": [
+              37,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sp-01",
@@ -4602,7 +7823,71 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Kick-in",
       "image_url": "exercises/sp-03.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Kick-in rapide: 4 s max, passe courte au partenaire.",
+        "caption_nl": "Snelle kick-in: max 4 s, korte pass.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "K",
+            "from": [
+              18,
+              0.5
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "R",
+            "from": [
+              15,
+              5
+            ],
+            "to": [
+              20,
+              4
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            18,
+            0.5
+          ],
+          "to": [
+            20,
+            4
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              15,
+              5
+            ],
+            "to": [
+              20,
+              4
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              18,
+              0.5
+            ],
+            "to": [
+              20,
+              4
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sp-04",
@@ -4642,7 +7927,54 @@
       ],
       "source": "FIFA Futsal Laws of the Game — Penalty kicks",
       "image_url": "exercises/sp-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Penalty (6 m) + 2e penalty (10 m): geste franc, coin.",
+        "caption_nl": "Strafschop (6 m) + 2e strafschop (10 m): scherp, hoek.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "T",
+            "from": [
+              6,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              0,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            6,
+            10
+          ],
+          "to": [
+            0,
+            6
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              6,
+              10
+            ],
+            "to": [
+              0,
+              6
+            ],
+            "rad": -0.1,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sp-05",
@@ -4682,7 +8014,54 @@
       ],
       "source": "FIFA Futsal Laws — Corner kick",
       "image_url": "exercises/sp-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Corner direct (olympique): effet, trajectoire rentrante.",
+        "caption_nl": "Directe hoekschop (olympisch): effect, naar binnen draaiend.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "K",
+            "from": [
+              39.5,
+              0.5
+            ]
+          },
+          {
+            "team": "red",
+            "label": "GK",
+            "from": [
+              39.5,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            39.5,
+            0.5
+          ],
+          "to": [
+            38,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              39.5,
+              0.5
+            ],
+            "to": [
+              38,
+              10
+            ],
+            "rad": 0.35,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "sp-06",
@@ -4873,7 +8252,65 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Individual defending",
       "image_url": "exercises/df-01.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Marquage ombre: suivre partout, sans toucher.",
+        "caption_nl": "Schaduwdekking: overal volgen, zonder contact.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "A",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              24,
+              14
+            ]
+          },
+          {
+            "team": "red",
+            "label": "D",
+            "from": [
+              14,
+              10
+            ],
+            "to": [
+              26,
+              14
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              12,
+              10
+            ],
+            "to": [
+              24,
+              14
+            ],
+            "rad": 0.18,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              14,
+              10
+            ],
+            "to": [
+              26,
+              14
+            ],
+            "rad": 0.18,
+            "color": "red"
+          }
+        ]
+      }
     },
     {
       "id": "df-02",
@@ -4913,7 +8350,75 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Tackling",
       "image_url": "exercises/df-02.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Tacle rasant + recuperation: intervention basse, sortie ballon.",
+        "caption_nl": "Liggende tackle + herovering: lage interventie, bal eruit.",
+        "players": [
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              23,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "D",
+            "from": [
+              24,
+              7
+            ],
+            "to": [
+              22,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            20,
+            10
+          ],
+          "to": [
+            22,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              23,
+              10
+            ],
+            "rad": 0.0,
+            "color": "red"
+          },
+          {
+            "kind": "run",
+            "from": [
+              24,
+              7
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "df-03",
@@ -5111,7 +8616,112 @@
       ],
       "source": "FIFA Futsal Coaching Manual (2022), Transition",
       "image_url": "exercises/df-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Repli defensif rapide: sprint retour, reprendre sa zone.",
+        "caption_nl": "Snelle defensieve terugloop: sprint terug, zone hernemen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              20,
+              7
+            ],
+            "to": [
+              30,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              20,
+              13
+            ],
+            "to": [
+              30,
+              13
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              15,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            15,
+            10
+          ],
+          "to": [
+            22,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              20,
+              7
+            ],
+            "to": [
+              30,
+              7
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              30,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              20,
+              13
+            ],
+            "to": [
+              30,
+              13
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "df-05",
@@ -5151,7 +8761,62 @@
       ],
       "source": "UEFA Futsal Coaching Manual (2020), Aerial duels",
       "image_url": "exercises/df-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Duel aerien + degagement: timing saut, tete propre.",
+        "caption_nl": "Luchtduel + wegwerken: sprongtiming, zuivere kopbal.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "D",
+            "from": [
+              24,
+              10
+            ],
+            "to": [
+              24,
+              9.5
+            ]
+          },
+          {
+            "team": "red",
+            "label": "A",
+            "from": [
+              26,
+              10
+            ],
+            "to": [
+              26,
+              9.5
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            20,
+            0
+          ],
+          "to": [
+            24,
+            9.5
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              20,
+              0
+            ],
+            "to": [
+              24,
+              9.5
+            ],
+            "rad": -0.3,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "df-06",
@@ -5191,7 +8856,115 @@
       ],
       "source": "RFEF — Coaching defensivo, comunicación",
       "image_url": "exercises/df-06.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Bloc defensif verbal: communication et glissement collectif.",
+        "caption_nl": "Defensief blok met communicatie: collectief schuiven.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              22,
+              7
+            ],
+            "to": [
+              25,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              22,
+              13
+            ],
+            "to": [
+              25,
+              13
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "3",
+            "from": [
+              28,
+              7
+            ],
+            "to": [
+              31,
+              7
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "4",
+            "from": [
+              28,
+              13
+            ],
+            "to": [
+              31,
+              13
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              22,
+              7
+            ],
+            "to": [
+              25,
+              7
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              22,
+              13
+            ],
+            "to": [
+              25,
+              13
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              28,
+              7
+            ],
+            "to": [
+              31,
+              7
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              28,
+              13
+            ],
+            "to": [
+              31,
+              13
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "gk-01",
@@ -5231,7 +9004,40 @@
       ],
       "source": "FIFA Futsal Goalkeeper Manual (2023), ch.2",
       "image_url": "exercises/gk-01.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Position de base + deplacement lateral.",
+        "caption_nl": "Basispositie + laterale verplaatsing.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              2,
+              14
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              2,
+              14
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "gk-02",
@@ -5271,7 +9077,75 @@
       ],
       "source": "FIFA Futsal Goalkeeper Manual (2023), Reflexes",
       "image_url": "exercises/gk-02.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Reflexes multi-ballons: 3 frappes successives rapprochees.",
+        "caption_nl": "Reflexen met meerdere ballen: 3 snelle schoten achter elkaar.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "T",
+            "from": [
+              10,
+              6
+            ]
+          },
+          {
+            "team": "red",
+            "label": "T",
+            "from": [
+              10,
+              14
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            6
+          ],
+          "to": [
+            2,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              6
+            ],
+            "to": [
+              2,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              10,
+              14
+            ],
+            "to": [
+              2,
+              10
+            ],
+            "rad": 0.0,
+            "color": "neutral"
+          }
+        ]
+      }
     },
     {
       "id": "gk-03",
@@ -5311,7 +9185,75 @@
       ],
       "source": "FIFA Futsal Goalkeeper Manual (2023), Distribution",
       "image_url": "exercises/gk-03.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Relance GK: main courte, pied long, precision.",
+        "caption_nl": "GK aftrap: hand kort, voet lang, precisie.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              12,
+              5
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              25,
+              15
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            2,
+            10
+          ],
+          "to": [
+            25,
+            15
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              12,
+              5
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              25,
+              15
+            ],
+            "rad": -0.3,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "gk-04",
@@ -5459,7 +9401,63 @@
       ],
       "source": "FIFA Futsal Goalkeeper Manual (2023), Diving",
       "image_url": "exercises/gk-05.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Plongeon lateral bas: se detendre, bloquer au sol.",
+        "caption_nl": "Lage zijduik: strekken, op de grond afvangen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              2,
+              6
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            15,
+            6
+          ],
+          "to": [
+            2,
+            6
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              15,
+              6
+            ],
+            "to": [
+              2,
+              6
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "run",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              2,
+              6
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "gk-06",
@@ -5499,7 +9497,92 @@
       ],
       "source": "RFEF — Fútbol sala, portero como jugador",
       "image_url": "exercises/gk-06.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "GK-joueur en construction: reception dos, ouverture.",
+        "caption_nl": "GK als speler in opbouw: rugaanname, openen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "1",
+            "from": [
+              8,
+              15
+            ],
+            "to": [
+              12,
+              15
+            ]
+          },
+          {
+            "team": "blue",
+            "label": "2",
+            "from": [
+              8,
+              5
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            8,
+            5
+          ],
+          "to": [
+            12,
+            15
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "pass",
+            "from": [
+              8,
+              5
+            ],
+            "to": [
+              2,
+              10
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          },
+          {
+            "kind": "run",
+            "from": [
+              8,
+              15
+            ],
+            "to": [
+              12,
+              15
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              12,
+              15
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "gk-07",
@@ -5539,7 +9622,71 @@
       ],
       "source": "FIFA Futsal Goalkeeper Manual (2023), Crosses",
       "image_url": "exercises/gk-07.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Sortie sur centre aerien: timing saut, poings fermes.",
+        "caption_nl": "Uitkomst op voorzet: sprongtiming, vuisten gesloten.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              4,
+              10
+            ]
+          },
+          {
+            "team": "red",
+            "label": "C",
+            "from": [
+              5,
+              18
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            5,
+            18
+          ],
+          "to": [
+            4,
+            10
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              4,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              5,
+              18
+            ],
+            "to": [
+              4,
+              10
+            ],
+            "rad": -0.3,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "gk-08",
@@ -5579,7 +9726,71 @@
       ],
       "source": "FIFA Futsal Goalkeeper Manual (2023), Conditioning",
       "image_url": "exercises/gk-08.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Circuit haute intensite: plongeon, releve, sortie, relance.",
+        "caption_nl": "Hoge intensiteit circuit: duik, opstaan, uitkomen, aftrap.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "GK",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              4,
+              13
+            ]
+          },
+          {
+            "team": "red",
+            "label": "T",
+            "from": [
+              10,
+              10
+            ]
+          }
+        ],
+        "ball": {
+          "from": [
+            10,
+            10
+          ],
+          "to": [
+            4,
+            13
+          ]
+        },
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              2,
+              10
+            ],
+            "to": [
+              4,
+              13
+            ],
+            "rad": -0.2,
+            "color": "blue"
+          },
+          {
+            "kind": "pass",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              4,
+              13
+            ],
+            "rad": 0.0,
+            "color": "yellow"
+          }
+        ]
+      }
     },
     {
       "id": "pv-01",
@@ -5619,7 +9830,53 @@
       ],
       "source": "FIFA 11+ / UEFA Medical Committee",
       "image_url": "exercises/pv-01.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Proprioception chevilles: equilibre unipodal + sauts.",
+        "caption_nl": "Enkelproprioceptie: eenbeens evenwicht + sprongen.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              20,
+              8
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "alt",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              20,
+              8
+            ],
+            "rad": 0.2,
+            "color": "blue"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              20,
+              10
+            ],
+            "to": [
+              20,
+              12
+            ],
+            "rad": -0.2,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "pv-02",
@@ -5659,7 +9916,49 @@
       ],
       "source": "FIFA 11+, Core module",
       "image_url": "exercises/pv-02.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Gainage dynamique 360 degres: planche + rotations.",
+        "caption_nl": "Dynamische core 360 graden: plank + rotaties.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              20,
+              10
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "alt",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": 0.3,
+            "color": "blue"
+          },
+          {
+            "kind": "alt",
+            "from": [
+              22,
+              10
+            ],
+            "to": [
+              18,
+              10
+            ],
+            "rad": -0.3,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "pv-03",
@@ -5699,7 +9998,40 @@
       ],
       "source": "FIFA 11+ / Nordic hamstring exercise",
       "image_url": "exercises/pv-03.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Nordic hamstring + activation: lent excentrique.",
+        "caption_nl": "Nordic hamstring + activatie: langzaam excentrisch.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              18,
+              10
+            ],
+            "to": [
+              22,
+              10
+            ],
+            "rad": -0.15,
+            "color": "blue"
+          }
+        ]
+      }
     },
     {
       "id": "pv-04",
@@ -5739,7 +10071,66 @@
       ],
       "source": "FIFA 11+ / UEFA pre-match activation",
       "image_url": "exercises/pv-04.png",
-      "animation": null
+      "animation": {
+        "duration_ms": 5000,
+        "caption_fr": "Activation neuromusc pre-match: courses progressives.",
+        "caption_nl": "Neuromusculaire activatie voor match: progressieve loopjes.",
+        "players": [
+          {
+            "team": "blue",
+            "label": "J",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              26,
+              10
+            ]
+          }
+        ],
+        "arrows": [
+          {
+            "kind": "run",
+            "from": [
+              10,
+              10
+            ],
+            "to": [
+              16,
+              8
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              16,
+              8
+            ],
+            "to": [
+              20,
+              12
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          },
+          {
+            "kind": "run",
+            "from": [
+              20,
+              12
+            ],
+            "to": [
+              26,
+              10
+            ],
+            "rad": 0.0,
+            "color": "blue"
+          }
+        ]
+      }
     }
   ]
 }

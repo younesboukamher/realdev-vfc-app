@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v16'; // bumped — invalide l'ancien cache
-const APP_VERSION = '1.12.2';
+const CACHE = 'rdv-v17'; // bumped — 80/80 animations
+const APP_VERSION = '1.12.3';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
