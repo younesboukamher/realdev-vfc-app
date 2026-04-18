@@ -1024,7 +1024,7 @@ button:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .nb-btn:focus-
 .ex-card-title{font:700 12px/1.25 var(--font);color:var(--tx1);margin-bottom:4px;min-height:30px;}
 .ex-card-meta{display:flex;gap:6px;flex-wrap:wrap;font:500 10px/1 var(--font);color:var(--tx3);}
 .ex-card-meta span{background:var(--ink2);padding:3px 6px;border-radius:3px;}
-.ex-card-cat{color:var(--brand)\!important;background:var(--brand-dim)\!important;}
+.ex-card-cat{color:var(--brand)!important;background:var(--brand-dim)!important;}
 .ex-picker-empty{text-align:center;padding:40px 20px;color:var(--tx3);font:500 13px/1.5 var(--font);}
 .ex-picker-custom{grid-column:1/-1;background:var(--brand-dim);border:1px dashed var(--brand);border-radius:var(--r-md);padding:14px;text-align:center;cursor:pointer;color:var(--brand);font:700 13px/1 var(--font);transition:all .12s;}
 .ex-picker-custom:hover{background:var(--brand);color:#000;}
@@ -3433,7 +3433,7 @@ async function loadExerciseDB(){
   if(EXERCISE_DB) return EXERCISE_DB;
   try{
     const r=await fetch('data/exercises.json',{cache:'default'});
-    if(\!r.ok) throw new Error('HTTP '+r.status);
+    if(!r.ok) throw new Error('HTTP '+r.status);
     EXERCISE_DB=await r.json();
     window.EXERCISE_DB=EXERCISE_DB;
     console.log('[EXERCISE_DB] Loaded',EXERCISE_DB.exercises?.length,'exercises');
@@ -3446,9 +3446,9 @@ async function loadExerciseDB(){
 }
 
 function exCatLabel(catKey){
-  if(\!EXERCISE_DB) return catKey;
+  if(!EXERCISE_DB) return catKey;
   const c=(EXERCISE_DB.categories||[]).find(c=>c.key===catKey);
-  if(\!c) return catKey;
+  if(!c) return catKey;
   return S.lang==='nl'?c.label_nl:c.label_fr;
 }
 
@@ -3474,7 +3474,7 @@ window.openExercisePicker = function(onSelect, opts){
 };
 
 function renderExPickerChips(){
-  const el=$('ex-picker-chips'); if(\!el||\!EXERCISE_DB) return;
+  const el=$('ex-picker-chips'); if(!el||!EXERCISE_DB) return;
   const cats=[{key:'all',label_fr:'Tous',label_nl:'Alle'}].concat(EXERCISE_DB.categories||[]);
   el.innerHTML=cats.map(c=>{
     const label=S.lang==='nl'?c.label_nl:c.label_fr;
@@ -3490,17 +3490,17 @@ window.setExPickerCat = function(cat){
 };
 
 window.renderExPickerGrid = function(){
-  const el=$('ex-picker-grid'); if(\!el||\!EXERCISE_DB) return;
+  const el=$('ex-picker-grid'); if(!el||!EXERCISE_DB) return;
   const q=($('ex-picker-q')?.value||'').toLowerCase().trim();
   const cat=EX_PICKER_STATE.cat;
   const list=(EXERCISE_DB.exercises||[]).filter(ex=>{
-    if(cat\!=='all' && ex.category\!==cat) return false;
-    if(\!q) return true;
+    if(cat!=='all' && ex.category!==cat) return false;
+    if(!q) return true;
     const hay=(ex.title_fr+' '+ex.title_nl+' '+exCatLabel(ex.category)+' '+(ex.subcategory||'')).toLowerCase();
     return hay.includes(q);
   });
   const customBtn='<div class="ex-picker-custom" onclick="window.openCustomExercise()">＋ '+(S.lang==='nl'?'Aangepaste oefening':'Exercice personnalisé')+'</div>';
-  if(\!list.length){
+  if(!list.length){
     el.innerHTML=customBtn+'<div class="ex-picker-empty">'+(S.lang==='nl'?'Geen resultaat':'Aucun résultat')+'</div>';
     return;
   }
@@ -3518,7 +3518,7 @@ window.renderExPickerGrid = function(){
 
 window.pickExercise = function(id){
   const ex=(EXERCISE_DB.exercises||[]).find(e=>e.id===id);
-  if(\!ex) return;
+  if(!ex) return;
   close_modal('modal-ex-picker');
   if(typeof EX_PICKER_STATE.onSelect==='function'){
     EX_PICKER_STATE.onSelect(ex);
@@ -3527,7 +3527,7 @@ window.pickExercise = function(id){
 
 window.openCustomExercise = function(){
   const body=$('modal-ex-custom-body');
-  if(\!body) return;
+  if(!body) return;
   body.innerHTML=''
     +'<div class="fg"><label class="fl">Nom / Naam</label><input class="fi" id="cx-name" placeholder="Nom de l\'exercice"></div>'
     +'<div class="fg2">'
@@ -3548,7 +3548,7 @@ window.openCustomExercise = function(){
 
 window.saveCustomExercise = function(){
   const name=$('cx-name')?.value?.trim();
-  if(\!name){ toast('Nom requis'); return; }
+  if(!name){ toast('Nom requis'); return; }
   const dur=parseInt($('cx-dur')?.value)||10;
   const cat=$('cx-cat')?.value||'technique';
   const obj=$('cx-obj')?.value?.trim()||'';
@@ -3574,7 +3574,7 @@ window.saveCustomExercise = function(){
 window.openExerciseDetail = function(exId, exSnapshot){
   loadExerciseDB().then(()=>{
     const ex = exSnapshot || (EXERCISE_DB?.exercises||[]).find(e=>e.id===exId);
-    if(\!ex){ toast('Exercice introuvable'); return; }
+    if(!ex){ toast('Exercice introuvable'); return; }
     renderExerciseDetail(ex);
     open_modal('modal-ex-detail');
   });
@@ -3628,7 +3628,7 @@ function exerciseToSessionFormat(ex){
     category: ex.category,
     duration: ex.duration,
     image_url: ex.image_url || '',
-    custom: \!\!ex.custom,
+    custom: !!ex.custom,
     focus: ex.focus || []
   };
 }
@@ -3688,7 +3688,7 @@ function dayBlock(s,si,mid,absent){
         <div class="exo-title">Exercices</div>
         ${(s.exercises||[]).map((ex,ei)=>{
           const thumb=ex.image_url?`<img src="${ex.image_url}" alt="" loading="lazy" style="width:72px;height:42px;border-radius:3px;object-fit:cover;background:#0a2a18;flex-shrink:0;" onerror="this.style.display='none'">`:'';
-          const clickInfo=ex.id&&\!ex.custom?`onclick="event.stopPropagation();window.openExerciseDetail('${ex.id}')" style="cursor:pointer;"`:'';
+          const clickInfo=ex.id&&!ex.custom?`onclick="event.stopPropagation();window.openExerciseDetail('${ex.id}')" style="cursor:pointer;"`:'';
           return `<div class="exo-row exo-row-v2" ${clickInfo}>
             <div class="exo-n">${ei+1}</div>
             ${thumb}
@@ -3731,15 +3731,15 @@ window.savePlan=async mid=>{
   }
 };
 window.editDay=(mid,si)=>{
-  const s=S.plans[mid]?.sessions[si];if(\!s)return;
+  const s=S.plans[mid]?.sessions[si];if(!s)return;
   S._editBuf = S._editBuf || {};
   S._editBuf[mid+'_'+si] = JSON.parse(JSON.stringify(s.exercises||[]));
   const opts=['lundi','mardi','mercredi'].map(k=>`<option value="${k}" ${k===s.type?'selected':''}>${k}</option>`).join('');
   const renderExerciseList=()=>{
     const list=S._editBuf[mid+'_'+si]||[];
     const host=$('ed-ex-list');
-    if(\!host) return;
-    if(\!list.length){
+    if(!host) return;
+    if(!list.length){
       host.innerHTML='<div style="padding:16px;text-align:center;color:var(--tx3);font:500 12px/1.4 var(--font);border:1px dashed var(--sep2);border-radius:6px;margin-bottom:8px;">Aucun exercice — ajoute-en via la bibliothèque ↓</div>';
       return;
     }
@@ -3748,7 +3748,7 @@ window.editDay=(mid,si)=>{
       const cat=ex.category?exCatLabel(ex.category):'';
       const dur=ex.duration?ex.duration+'′':'';
       const meta=[cat,dur,ex.detail].filter(Boolean).join(' · ');
-      const infoBtn=ex.id&&\!ex.custom?`<button class="ex-row-new-btn" title="Détail" onclick="window.openExerciseDetail('${ex.id}')">ℹ</button>`:'';
+      const infoBtn=ex.id&&!ex.custom?`<button class="ex-row-new-btn" title="Détail" onclick="window.openExerciseDetail('${ex.id}')">ℹ</button>`:'';
       return `<div class="ex-row-new">
         ${thumb}
         <div class="ex-row-new-body">
@@ -3775,13 +3775,13 @@ window.editDay=(mid,si)=>{
   };
   window.removeExFromEdit = (m,i,idx)=>{
     const k=m+'_'+i;
-    if(\!S._editBuf[k]) return;
+    if(!S._editBuf[k]) return;
     S._editBuf[k].splice(idx,1);
     renderExerciseList();
   };
   window.moveExInEdit = (m,i,idx,dir)=>{
     const k=m+'_'+i;
-    const arr=S._editBuf[k]; if(\!arr) return;
+    const arr=S._editBuf[k]; if(!arr) return;
     const j=idx+dir; if(j<0||j>=arr.length) return;
     [arr[idx],arr[j]]=[arr[j],arr[idx]];
     renderExerciseList();
@@ -3811,7 +3811,7 @@ window.editDay=(mid,si)=>{
 };
 // FIX BUG #10 — saveDay persiste désormais via savePlan(mid)
 window.saveDay=async(mid,si)=>{
-  const p=S.plans[mid];if(\!p)return;
+  const p=S.plans[mid];if(!p)return;
   const bufKey=mid+'_'+si;
   const exercises=(S._editBuf&&S._editBuf[bufKey])?S._editBuf[bufKey].slice():[];
   p.sessions[si]={...p.sessions[si],label:$('ed-l').value,type:$('ed-t').value,duration:parseInt($('ed-d').value)||75,rpe_target:$('ed-r').value,focus:$('ed-f').value.split(',').map(f=>f.trim()).filter(Boolean),notes:$('ed-n').value,exercises:exercises};
