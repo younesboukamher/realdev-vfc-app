@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v17'; // bumped — 80/80 animations
-const APP_VERSION = '1.12.3';
+const CACHE = 'rdv-v18'; // bumped — Part 2: bottom sheet édition mobile-first
+const APP_VERSION = '1.12.4';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {

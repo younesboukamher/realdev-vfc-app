@@ -1042,6 +1042,291 @@ button:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .nb-btn:focus-
 .ex-detail{background:var(--ink2);border:1px solid var(--sep2);border-radius:var(--r-md);padding:0;overflow:hidden;}
 .ex-detail-img{width:100%;aspect-ratio:2/1;object-fit:cover;background:#0a2a18;display:block;}
 object.ex-detail-img{object-fit:initial;padding:0;}
+
+/* ═════════════════════════════════════════════════════════════
+   PHASE 2 — Bottom sheet v2 (iOS-native style) + accordion
+   ═════════════════════════════════════════════════════════════ */
+
+/* Overlay v2: sheet colle au bas + safe-area-inset-bottom */
+.overlay.bs2 { padding:0; align-items:flex-end; }
+.overlay.bs2 .sheet {
+  max-width:none; width:100%;
+  margin:0; padding:0;
+  border-radius:18px 18px 0 0;
+  border:none; border-top:3px solid var(--brand);
+  box-shadow:0 -16px 80px rgba(0,0,0,.8);
+  max-height:92vh;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  animation:bs2Up .24s cubic-bezier(.22,1,.36,1);
+  /* Avoid over-scroll chain to body on iOS */
+  overscroll-behavior:contain;
+  /* Safe area padding applied on inner footer, not here */
+}
+@keyframes bs2Up { from{transform:translateY(100%)}to{transform:none} }
+
+/* Drag handle on top (zone tap for close) */
+.bs2-handle-zone {
+  flex-shrink:0;
+  padding:8px 0 6px;
+  display:flex; justify-content:center; align-items:center;
+  cursor:grab;
+  touch-action:pan-y;
+  background:var(--ink2);
+}
+.bs2-handle-zone:active { cursor:grabbing; }
+.bs2-handle-bar {
+  width:44px; height:5px; border-radius:3px;
+  background:var(--sep2);
+  transition:background .15s;
+}
+.bs2-handle-zone:active .bs2-handle-bar { background:var(--tx3); }
+
+/* Sticky header */
+.bs2-header {
+  flex-shrink:0;
+  padding:4px 20px 12px;
+  display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid var(--sep);
+  background:var(--ink2);
+}
+.bs2-title {
+  flex:1; min-width:0;
+  font:700 17px/1.2 var(--font); color:var(--tx1);
+  letter-spacing:-.2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.bs2-save-status {
+  flex-shrink:0;
+  font:600 11px/1 var(--font); color:var(--tx3);
+  padding:6px 10px; border-radius:12px;
+  background:var(--ink3);
+  min-height:24px; display:flex; align-items:center; gap:4px;
+  transition:all .2s;
+}
+.bs2-save-status[data-st="saving"] { color:var(--warn); background:rgba(245,158,11,.12); }
+.bs2-save-status[data-st="saved"]  { color:var(--ok);   background:rgba(16,185,129,.12); }
+.bs2-save-status[data-st="error"]  { color:var(--danger);background:rgba(239,68,68,.12); }
+.bs2-save-status[data-st="idle"]   { color:var(--tx4); }
+.bs2-close {
+  flex-shrink:0;
+  width:44px; height:44px; border-radius:10px;
+  background:var(--ink3); border:1px solid var(--sep2); color:var(--tx2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:18px;
+}
+.bs2-close:hover { border-color:var(--danger); color:var(--danger); }
+
+/* Scrollable body */
+.bs2-body {
+  flex:1; min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:8px 18px 16px;
+  scroll-padding-top:16px;
+  scroll-padding-bottom:120px;
+}
+
+/* Live metrics chip row */
+.bs2-live {
+  display:flex; gap:8px; flex-wrap:wrap;
+  padding:10px 0 12px;
+  border-bottom:1px solid var(--sep);
+  margin-bottom:12px;
+}
+.bs2-metric {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:8px;
+  background:var(--ink3); border:1px solid var(--sep2);
+  font:600 12px/1 var(--font); color:var(--tx2);
+}
+.bs2-metric strong { color:var(--tx1); font-weight:700; }
+.bs2-metric.warn { border-color:rgba(245,158,11,.4); background:rgba(245,158,11,.08); color:var(--warn); }
+
+/* Accordion section */
+.bs2-section {
+  border:1px solid var(--sep2); border-radius:12px;
+  background:var(--ink2);
+  margin-bottom:10px;
+  overflow:hidden;
+  transition:border-color .15s;
+}
+.bs2-section.open { border-color:var(--brand); }
+.bs2-section-head {
+  width:100%;
+  display:flex; align-items:center; gap:10px;
+  padding:14px 14px;
+  background:transparent; border:0; cursor:pointer;
+  font:600 14px/1.2 var(--font); color:var(--tx1);
+  text-align:left;
+  min-height:52px;
+}
+.bs2-section-head:active { background:var(--ink3); }
+.bs2-section-head-icon { font-size:17px; }
+.bs2-section-head-title { flex:1; }
+.bs2-section-head-badge {
+  font:700 10px/1 var(--font); text-transform:uppercase; letter-spacing:.6px;
+  padding:4px 8px; border-radius:8px;
+  background:var(--brand-dim); color:var(--brand);
+}
+.bs2-section-head-caret { transition:transform .2s; color:var(--tx3); font-size:14px; }
+.bs2-section.open .bs2-section-head-caret { transform:rotate(90deg); color:var(--brand); }
+.bs2-section-body {
+  display:none;
+  padding:4px 14px 14px;
+  border-top:1px solid var(--sep);
+}
+.bs2-section.open .bs2-section-body { display:block; }
+
+/* Form fields inside v2 sheet — bigger touch targets */
+.bs2-body .fi, .bs2-body .fs, .bs2-body textarea.fi {
+  min-height:44px; font-size:16px; /* 16px prevents iOS zoom on focus */
+  padding:12px 14px;
+}
+.bs2-body textarea.fi { min-height:88px; resize:vertical; }
+
+/* RPE slider row */
+.bs2-rpe-row {
+  display:grid; grid-template-columns:1fr 60px; gap:10px; align-items:center;
+}
+.bs2-rpe-slider {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:44px; background:transparent;
+  margin:0; padding:0;
+}
+.bs2-rpe-slider::-webkit-slider-runnable-track {
+  height:6px; border-radius:3px; background:var(--sep2);
+}
+.bs2-rpe-slider::-moz-range-track {
+  height:6px; border-radius:3px; background:var(--sep2);
+}
+.bs2-rpe-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none;
+  width:28px; height:28px; border-radius:50%;
+  background:var(--brand); border:3px solid var(--ink2);
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  margin-top:-11px;
+  cursor:grab;
+}
+.bs2-rpe-slider::-moz-range-thumb {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--brand); border:3px solid var(--ink2);
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  cursor:grab;
+}
+.bs2-rpe-display {
+  font:700 17px/1 var(--font); color:var(--brand);
+  text-align:center;
+  padding:10px 0; border-radius:8px;
+  background:var(--brand-dim);
+  min-height:44px; display:flex; align-items:center; justify-content:center;
+}
+
+/* Exercise rows v2 — drag handle + bigger buttons */
+.bs2-ex-list { margin-bottom:10px; }
+.bs2-ex-row {
+  background:var(--ink3); border:1px solid var(--sep2); border-radius:10px;
+  padding:10px; margin-bottom:8px;
+  display:flex; gap:10px; align-items:center;
+  transition:border-color .15s, transform .15s;
+  touch-action:pan-y;
+}
+.bs2-ex-row.sortable-ghost { opacity:.35; border-style:dashed; }
+.bs2-ex-row.sortable-chosen { border-color:var(--brand); transform:scale(1.02); }
+.bs2-ex-drag {
+  flex-shrink:0;
+  width:32px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--tx3); font-size:18px; font-weight:700;
+  cursor:grab; user-select:none;
+  touch-action:none;
+  letter-spacing:-1px;
+}
+.bs2-ex-drag:active { cursor:grabbing; color:var(--brand); }
+.bs2-ex-thumb {
+  width:56px; height:40px; border-radius:4px;
+  background:#0a2a18;
+  object-fit:cover; flex-shrink:0;
+}
+.bs2-ex-meta { flex:1; min-width:0; }
+.bs2-ex-title {
+  font:700 13px/1.3 var(--font); color:var(--tx1);
+  margin-bottom:3px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.bs2-ex-sub { font:500 11px/1.4 var(--font); color:var(--tx3); }
+.bs2-ex-actions { display:flex; gap:4px; flex-shrink:0; }
+.bs2-ex-btn {
+  width:44px; height:44px; border-radius:8px;
+  background:var(--ink2); border:1px solid var(--sep2); color:var(--tx2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:15px;
+  transition:all .12s;
+}
+.bs2-ex-btn:hover { border-color:var(--brand); color:var(--brand); }
+.bs2-ex-btn.danger:hover { border-color:var(--danger); color:var(--danger); }
+.bs2-ex-empty {
+  padding:16px; text-align:center; color:var(--tx3);
+  font:500 12px/1.4 var(--font);
+  border:1px dashed var(--sep2); border-radius:10px;
+  margin-bottom:10px;
+}
+
+/* Add exercise button (v2) */
+.bs2-ex-add {
+  width:100%; min-height:52px;
+  padding:14px; border:1px dashed var(--sep2);
+  background:transparent; color:var(--tx2);
+  border-radius:10px;
+  font:700 13px/1 var(--font);
+  cursor:pointer; transition:all .15s;
+  text-transform:uppercase; letter-spacing:.6px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.bs2-ex-add:hover, .bs2-ex-add:active { border-color:var(--brand); color:var(--brand); background:var(--brand-dim); }
+
+/* Sticky footer with safe-area */
+.bs2-footer {
+  flex-shrink:0;
+  padding:12px 18px calc(12px + var(--safe-b));
+  border-top:1px solid var(--sep);
+  background:var(--ink2);
+  display:flex; gap:10px;
+}
+.bs2-footer .btn { min-height:48px; font-size:14px; }
+
+/* Confirm dialog v2 (replaces confirm()) */
+.bs2-confirm-backdrop {
+  position:fixed; inset:0; z-index:7000;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(4px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px;
+  animation:bs2FadeIn .15s;
+}
+.bs2-confirm-backdrop.on { display:flex; }
+@keyframes bs2FadeIn { from{opacity:0}to{opacity:1} }
+.bs2-confirm {
+  background:var(--ink2); border:1px solid var(--sep2);
+  border-radius:14px; padding:20px;
+  max-width:340px; width:100%;
+}
+.bs2-confirm-title { font:700 16px/1.3 var(--font); color:var(--tx1); margin-bottom:8px; }
+.bs2-confirm-msg { font:400 14px/1.4 var(--font); color:var(--tx2); margin-bottom:16px; }
+.bs2-confirm-btns { display:flex; gap:10px; }
+.bs2-confirm-btns .btn { flex:1; min-height:44px; }
+
+/* Responsive — 1 column fg2 on narrow screens */
+@media (max-width:480px) {
+  .bs2-body .fg2 { grid-template-columns:1fr; }
+}
+
+/* reduce-motion respectueux */
+@media (prefers-reduced-motion:reduce) {
+  .overlay.bs2 .sheet { animation:none; }
+  .bs2-ex-row { transition:none; }
+  .bs2-section-head-caret { transition:none; }
+  .bs2-confirm-backdrop { animation:none; }
+}
 .ex-detail-body{padding:14px;}
 .ex-detail-title{font:700 16px/1.25 var(--font);color:var(--tx1);margin-bottom:6px;}
 .ex-detail-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
@@ -1687,6 +1972,9 @@ function generateMicrocycle(scouting) {
 
 </script>
 
+<!-- Phase 2: drag-and-drop library for exercise reordering (mobile-friendly) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
+
 </head>
 <body>
 
@@ -1755,7 +2043,7 @@ function generateMicrocycle(scouting) {
     </div>
     <div class="topbar-right">
       <span class="top-badge" id="role-pill"></span>
-      <span class="version-badge" id="version-badge">v1.12.3</span>
+      <span class="version-badge" id="version-badge">v1.12.4</span>
       <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
       <select id="season-selector" onchange="window.setArchiveSeason(this.value)" aria-label="Saison" style="background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
         <option value="">Saison 2025-26</option>
@@ -2077,11 +2365,27 @@ function generateMicrocycle(scouting) {
   </div>
 </div>
 
-<div class="overlay" id="modal-session" onclick="if(event.target===this)close_modal('modal-session')">
-  <div class="sheet">
-    <button class="sheet-close" onclick="window.close_modal('modal-session')">✕</button>
-    <div class="sheet-title">Modifier la séance</div>
-    <div id="modal-session-body"></div>
+<div class="overlay bs2" id="modal-session" onclick="if(event.target===this)window.bs2TryClose()">
+  <div class="sheet" id="modal-session-sheet">
+    <div class="bs2-handle-zone" id="bs2-handle-zone" onclick="window.bs2TryClose()" title="Glisser vers le bas pour fermer"><div class="bs2-handle-bar"></div></div>
+    <div class="bs2-header">
+      <div class="bs2-title" id="bs2-title">Modifier la séance</div>
+      <div class="bs2-save-status" id="bs2-save-status" data-st="idle" aria-live="polite"></div>
+      <button class="bs2-close" onclick="window.bs2TryClose()" aria-label="Fermer">✕</button>
+    </div>
+    <div class="bs2-body" id="modal-session-body"></div>
+    <div class="bs2-footer" id="bs2-footer"></div>
+  </div>
+</div>
+
+<div class="bs2-confirm-backdrop" id="bs2-confirm" onclick="if(event.target===this)window.bs2ConfirmCancel()">
+  <div class="bs2-confirm">
+    <div class="bs2-confirm-title" id="bs2-confirm-title">Confirmer</div>
+    <div class="bs2-confirm-msg" id="bs2-confirm-msg"></div>
+    <div class="bs2-confirm-btns">
+      <button class="btn btn-outline" onclick="window.bs2ConfirmCancel()">Annuler</button>
+      <button class="btn btn-danger" id="bs2-confirm-ok">Confirmer</button>
+    </div>
   </div>
 </div>
 
@@ -3731,104 +4035,423 @@ window.savePlan=async mid=>{
     toast('✗ Sauvegarde planning : '+(e.message||'erreur inconnue'));
   }
 };
-window.editDay=(mid,si)=>{
-  const s=S.plans[mid]?.sessions[si];if(!s)return;
-  S._editBuf = S._editBuf || {};
-  S._editBuf[mid+'_'+si] = JSON.parse(JSON.stringify(s.exercises||[]));
-  const opts=['lundi','mardi','mercredi'].map(k=>`<option value="${k}" ${k===s.type?'selected':''}>${k}</option>`).join('');
-  const renderExerciseList=()=>{
-    const list=S._editBuf[mid+'_'+si]||[];
-    const host=$('ed-ex-list');
-    if(!host) return;
-    if(!list.length){
-      host.innerHTML='<div style="padding:16px;text-align:center;color:var(--tx3);font:500 12px/1.4 var(--font);border:1px dashed var(--sep2);border-radius:6px;margin-bottom:8px;">Aucun exercice — ajoute-en via la bibliothèque ↓</div>';
-      return;
+/* ════════════════════════════════════════════════════════════════
+   PHASE 2 — Bottom sheet v2 with accordion, autosave, drag-drop
+   ════════════════════════════════════════════════════════════════ */
+
+// Simple confirm dialog (replaces native confirm, mobile-friendly)
+window.bs2Confirm = (title, msg, onOk, opts)=>{
+  const o = opts || {};
+  const el = $('bs2-confirm'); if(!el) return onOk && onOk();
+  $('bs2-confirm-title').textContent = title || 'Confirmer';
+  $('bs2-confirm-msg').textContent = msg || '';
+  const ok = $('bs2-confirm-ok');
+  ok.textContent = o.okLabel || 'Confirmer';
+  ok.className = 'btn ' + (o.okDanger===false?'btn-green':'btn-danger');
+  ok.onclick = ()=>{ el.classList.remove('on'); onOk && onOk(); };
+  el.classList.add('on');
+};
+window.bs2ConfirmCancel = ()=>{ const el=$('bs2-confirm'); if(el) el.classList.remove('on'); };
+
+// Autosave state
+window._bs2 = window._bs2 || { timer:null, dirty:false, lastSavedAt:0, ctx:null, sortable:null, vvHandler:null };
+
+// Save status indicator
+const bs2SetStatus = (st, label)=>{
+  const el = $('bs2-save-status'); if(!el) return;
+  el.setAttribute('data-st', st);
+  const txt = { saving:'⏳ Saving…', saved:'✓ Saved', error:'✗ Error', idle:'' }[st] || '';
+  el.textContent = label || txt;
+};
+
+// Humanised "saved Ns ago" refresher
+const bs2RefreshSavedAgo = ()=>{
+  const el = $('bs2-save-status'); if(!el) return;
+  if(el.getAttribute('data-st')!=='saved') return;
+  const t = window._bs2.lastSavedAt; if(!t) return;
+  const ago = Math.max(1, Math.round((Date.now()-t)/1000));
+  el.textContent = ago < 60 ? `✓ Saved ${ago}s ago` : `✓ Saved ${Math.round(ago/60)}m ago`;
+};
+setInterval(bs2RefreshSavedAgo, 5000);
+
+// Accordion toggle
+window.bs2ToggleSection = (id)=>{
+  const sec = document.getElementById(id); if(!sec) return;
+  sec.classList.toggle('open');
+};
+
+// Collect current form values into the live plan (without savePlan — autosave does that)
+const bs2CollectToPlan = ()=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  const { mid, si } = ctx;
+  const p = S.plans[mid]; if(!p||!p.sessions[si]) return;
+  const l=$('ed-l'), t=$('ed-t'), d=$('ed-d'), r=$('ed-r'), rn=$('ed-r-num'), f=$('ed-f'), n=$('ed-n');
+  const bufKey = mid+'_'+si;
+  const exercises = (S._editBuf && S._editBuf[bufKey]) ? S._editBuf[bufKey].slice() : (p.sessions[si].exercises||[]);
+  p.sessions[si] = {
+    ...p.sessions[si],
+    label: l?l.value:p.sessions[si].label,
+    type:  t?t.value:p.sessions[si].type,
+    duration: d?(parseInt(d.value)||75):p.sessions[si].duration,
+    rpe_target: r?r.value:p.sessions[si].rpe_target,
+    focus: f?f.value.split(',').map(x=>x.trim()).filter(Boolean):p.sessions[si].focus,
+    notes: n?n.value:p.sessions[si].notes,
+    exercises: exercises
+  };
+};
+
+// Autosave (debounced)
+const bs2ScheduleAutosave = ()=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  window._bs2.dirty = true;
+  bs2SetStatus('saving');
+  if(window._bs2.timer) clearTimeout(window._bs2.timer);
+  window._bs2.timer = setTimeout(async ()=>{
+    try {
+      bs2CollectToPlan();
+      await savePlan(ctx.mid);
+      window._bs2.dirty = false;
+      window._bs2.lastSavedAt = Date.now();
+      bs2SetStatus('saved', '✓ Saved 1s ago');
+      // Re-render planning in background (cheap)
+      try { renderPlanning(); } catch(e){}
+    } catch(e) {
+      bs2SetStatus('error', '✗ Retry…');
+      setTimeout(bs2ScheduleAutosave, 3500);
     }
-    host.innerHTML=list.map((ex,i)=>{
-      const thumb=ex.image_url?`<img class="ex-row-new-thumb" src="${ex.image_url}" alt="" onerror="this.style.display='none'">`:'<div class="ex-row-new-thumb"></div>';
-      const cat=ex.category?exCatLabel(ex.category):'';
-      const dur=ex.duration?ex.duration+'′':'';
-      const meta=[cat,dur,ex.detail].filter(Boolean).join(' · ');
-      const infoBtn=ex.id&&!ex.custom?`<button class="ex-row-new-btn" title="Détail" onclick="window.openExerciseDetail('${ex.id}')">ℹ</button>`:'';
-      return `<div class="ex-row-new">
+  }, 1500);
+};
+
+// Live metrics update (total duration = Σ exercises, warn if exceeds session duration)
+const bs2UpdateMetrics = ()=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  const { mid, si } = ctx;
+  const list = (S._editBuf && S._editBuf[mid+'_'+si]) || [];
+  const sumEx = list.reduce((a,e)=>a+(parseInt(e.duration)||0),0);
+  const sessDur = parseInt(($('ed-d')||{}).value) || 0;
+  const chipA = $('bs2-metric-exsum'); if(chipA) chipA.innerHTML = `⏱ Exos : <strong>${sumEx}</strong> min`;
+  const chipB = $('bs2-metric-sess'); if(chipB) chipB.innerHTML = `🗓 Séance : <strong>${sessDur}</strong> min`;
+  const diff = sumEx - sessDur;
+  const warnEl = $('bs2-metric-warn');
+  if(warnEl){
+    if(sessDur>0 && Math.abs(diff)>10){
+      warnEl.style.display='inline-flex';
+      warnEl.innerHTML = diff>0 ? `⚠ +${diff} min` : `⚠ ${diff} min`;
+    } else { warnEl.style.display='none'; }
+  }
+  const countBadge = $('bs2-ex-count-badge');
+  if(countBadge) countBadge.textContent = list.length;
+};
+
+// Render exercise list with drag handles
+const bs2RenderExList = ()=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  const { mid, si } = ctx;
+  const list = S._editBuf[mid+'_'+si] || [];
+  const host = $('ed-ex-list'); if(!host) return;
+  if(!list.length){
+    host.innerHTML = '<div class="bs2-ex-empty">Aucun exercice — ajoute-en via le bouton ci-dessous ↓</div>';
+  } else {
+    host.innerHTML = list.map((ex,i)=>{
+      const safe = (s)=>String(s||'').replace(/"/g,'&quot;');
+      const thumb = ex.image_url
+        ? `<img class="bs2-ex-thumb" src="${safe(ex.image_url)}" alt="" onerror="this.style.display='none'">`
+        : '<div class="bs2-ex-thumb"></div>';
+      const cat = ex.category ? (typeof exCatLabel==='function' ? exCatLabel(ex.category) : ex.category) : '';
+      const dur = ex.duration ? ex.duration+'′' : '';
+      const sub = [cat,dur].filter(Boolean).join(' · ') || (ex.detail ? String(ex.detail).slice(0,40)+'…' : '');
+      const infoBtn = (ex.id && !ex.custom)
+        ? `<button class="bs2-ex-btn" title="Détail" onclick="event.stopPropagation();window.openExerciseDetail('${ex.id}')" aria-label="Voir détail">ℹ</button>`
+        : '';
+      return `<div class="bs2-ex-row" data-idx="${i}">
+        <div class="bs2-ex-drag" aria-label="Glisser pour réordonner">⋮⋮</div>
         ${thumb}
-        <div class="ex-row-new-body">
-          <div class="ex-row-new-title">${ex.name||'(sans nom)'}</div>
-          <div class="ex-row-new-meta">${meta}</div>
+        <div class="bs2-ex-meta">
+          <div class="bs2-ex-title">${safe(ex.name||'(sans nom)')}</div>
+          <div class="bs2-ex-sub">${safe(sub)}</div>
         </div>
-        <div class="ex-row-new-actions">
-          ${i>0?`<button class="ex-row-new-btn" title="Monter" onclick="window.moveExInEdit('${mid}',${si},${i},-1)">↑</button>`:''}
-          ${i<list.length-1?`<button class="ex-row-new-btn" title="Descendre" onclick="window.moveExInEdit('${mid}',${si},${i},1)">↓</button>`:''}
+        <div class="bs2-ex-actions">
           ${infoBtn}
-          <button class="ex-row-new-btn danger" title="Retirer" onclick="window.removeExFromEdit('${mid}',${si},${i})">✕</button>
+          <button class="bs2-ex-btn danger" title="Retirer" onclick="event.stopPropagation();window.bs2RemoveEx(${i})" aria-label="Retirer">✕</button>
         </div>
       </div>`;
     }).join('');
-  };
-  window._rerenderEditList = renderExerciseList;
-  window.addExToEdit = ()=>{
-    window.openExercisePicker((ex)=>{
-      const key=mid+'_'+si;
-      S._editBuf[key]=S._editBuf[key]||[];
-      S._editBuf[key].push(exerciseToSessionFormat(ex));
-      renderExerciseList();
+  }
+  // Destroy previous sortable and re-create
+  if(window._bs2.sortable){ try { window._bs2.sortable.destroy(); } catch(e){} window._bs2.sortable = null; }
+  if(window.Sortable && list.length>1){
+    window._bs2.sortable = window.Sortable.create(host, {
+      handle: '.bs2-ex-drag',
+      animation: 160,
+      forceFallback: true,
+      fallbackOnBody: true,
+      delay: 80, delayOnTouchOnly: true, touchStartThreshold: 5,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      onEnd: (evt)=>{
+        const arr = S._editBuf[mid+'_'+si]; if(!arr) return;
+        const [moved] = arr.splice(evt.oldIndex,1);
+        arr.splice(evt.newIndex,0,moved);
+        bs2UpdateMetrics();
+        bs2ScheduleAutosave();
+        bs2RenderExList();
+      }
     });
+  }
+  bs2UpdateMetrics();
+};
+
+window.bs2RemoveEx = (idx)=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  const k = ctx.mid+'_'+ctx.si;
+  if(!S._editBuf[k]) return;
+  S._editBuf[k].splice(idx,1);
+  bs2RenderExList();
+  bs2ScheduleAutosave();
+};
+
+window.bs2AddEx = ()=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  if(typeof window.openExercisePicker!=='function') return;
+  window.openExercisePicker((ex)=>{
+    const k = ctx.mid+'_'+ctx.si;
+    S._editBuf[k] = S._editBuf[k] || [];
+    S._editBuf[k].push(exerciseToSessionFormat(ex));
+    bs2RenderExList();
+    bs2ScheduleAutosave();
+  });
+};
+
+// Close with "unsaved changes" guard
+window.bs2TryClose = ()=>{
+  // Flush any pending autosave synchronously (state is already mutated)
+  if(window._bs2.timer){ clearTimeout(window._bs2.timer); window._bs2.timer=null; }
+  const doClose = ()=>{
+    bs2CollectToPlan();
+    // If dirty, save one more time then close
+    const ctx = window._bs2.ctx;
+    if(window._bs2.dirty && ctx){
+      bs2SetStatus('saving');
+      savePlan(ctx.mid).then(()=>{
+        window._bs2.dirty=false;
+        window._bs2.lastSavedAt = Date.now();
+        bs2CleanupAndClose();
+      }).catch(()=> bs2CleanupAndClose());
+    } else {
+      bs2CleanupAndClose();
+    }
   };
-  window.removeExFromEdit = (m,i,idx)=>{
-    const k=m+'_'+i;
-    if(!S._editBuf[k]) return;
-    S._editBuf[k].splice(idx,1);
-    renderExerciseList();
+  doClose();
+};
+
+const bs2CleanupAndClose = ()=>{
+  const ctx = window._bs2.ctx;
+  if(ctx && S._editBuf){ delete S._editBuf[ctx.mid+'_'+ctx.si]; }
+  if(window._bs2.sortable){ try { window._bs2.sortable.destroy(); } catch(e){} window._bs2.sortable = null; }
+  if(window._bs2.vvHandler && window.visualViewport){
+    window.visualViewport.removeEventListener('resize', window._bs2.vvHandler);
+    window.visualViewport.removeEventListener('scroll', window._bs2.vvHandler);
+    window._bs2.vvHandler = null;
+  }
+  const sheet = $('modal-session-sheet'); if(sheet){ sheet.style.maxHeight=''; sheet.style.paddingBottom=''; }
+  window._bs2.ctx = null;
+  window._bs2.dirty = false;
+  close_modal('modal-session');
+  try { renderPlanning(); } catch(e){}
+};
+
+// visualViewport handling — resize sheet when iOS keyboard appears
+const bs2AttachVV = ()=>{
+  if(!window.visualViewport) return;
+  const handler = ()=>{
+    const sheet = $('modal-session-sheet'); if(!sheet) return;
+    const kbH = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
+    // Cap sheet body to leave room for keyboard
+    if(kbH > 80){
+      sheet.style.maxHeight = (window.visualViewport.height - 8) + 'px';
+      // Bring focused element into view
+      const focused = document.activeElement;
+      if(focused && sheet.contains(focused)){
+        setTimeout(()=> focused.scrollIntoView({block:'center', behavior:'smooth'}), 60);
+      }
+    } else {
+      sheet.style.maxHeight = '';
+    }
   };
-  window.moveExInEdit = (m,i,idx,dir)=>{
-    const k=m+'_'+i;
-    const arr=S._editBuf[k]; if(!arr) return;
-    const j=idx+dir; if(j<0||j>=arr.length) return;
-    [arr[idx],arr[j]]=[arr[j],arr[idx]];
-    renderExerciseList();
-  };
-  $('modal-session-body').innerHTML=`
-    <div class="fg"><label class="fl">Label</label><input class="fi" id="ed-l" value="${s.label||''}"></div>
-    <div class="fg2">
-      <div class="fg"><label class="fl">Type</label><select class="fs" id="ed-t">${opts}</select></div>
-      <div class="fg"><label class="fl">Durée (min)</label><input type="number" class="fi" id="ed-d" value="${s.duration||75}"></div>
+  window._bs2.vvHandler = handler;
+  window.visualViewport.addEventListener('resize', handler);
+  window.visualViewport.addEventListener('scroll', handler);
+};
+
+window.editDay=(mid,si)=>{
+  const s = S.plans[mid]?.sessions[si]; if(!s) return;
+  S._editBuf = S._editBuf || {};
+  S._editBuf[mid+'_'+si] = JSON.parse(JSON.stringify(s.exercises||[]));
+  window._bs2.ctx = { mid, si };
+  window._bs2.dirty = false;
+  window._bs2.lastSavedAt = 0;
+  bs2SetStatus('idle');
+
+  const types = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+  if(s.type && !types.includes(s.type)) types.push(s.type);
+  const typeOpts = types.map(k=>`<option value="${k}" ${k===s.type?'selected':''}>${k}</option>`).join('');
+
+  const safe = v => String(v==null?'':v).replace(/"/g,'&quot;');
+  const rpeNum = (()=>{ const m=String(s.rpe_target||'').match(/(\d+(?:\.\d+)?)/); return m?parseFloat(m[1]):7; })();
+
+  // Title
+  const dayLabel = s.label || (s.type ? s.type.charAt(0).toUpperCase()+s.type.slice(1) : 'Séance');
+  $('bs2-title').textContent = dayLabel;
+
+  // Accordion body
+  $('modal-session-body').innerHTML = `
+    <div class="bs2-live">
+      <span class="bs2-metric" id="bs2-metric-exsum">⏱ Exos : <strong>0</strong> min</span>
+      <span class="bs2-metric" id="bs2-metric-sess">🗓 Séance : <strong>${s.duration||75}</strong> min</span>
+      <span class="bs2-metric warn" id="bs2-metric-warn" style="display:none;"></span>
     </div>
-    <div class="fg2">
-      <div class="fg"><label class="fl">RPE cible</label><input class="fi" id="ed-r" value="${s.rpe_target||''}"></div>
-      <div class="fg"><label class="fl">Focus</label><input class="fi" id="ed-f" value="${(s.focus||[]).join(', ')}"></div>
+
+    <div class="bs2-section open" id="bs2-sec-header">
+      <button type="button" class="bs2-section-head" onclick="window.bs2ToggleSection('bs2-sec-header')">
+        <span class="bs2-section-head-icon">📌</span>
+        <span class="bs2-section-head-title">En-tête de séance</span>
+        <span class="bs2-section-head-caret">›</span>
+      </button>
+      <div class="bs2-section-body">
+        <div class="fg"><label class="fl">Label</label>
+          <input class="fi" id="ed-l" value="${safe(s.label)}" placeholder="ex. Pré-match">
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Jour</label>
+            <select class="fs" id="ed-t">${typeOpts}</select>
+          </div>
+          <div class="fg"><label class="fl">Durée (min)</label>
+            <input type="number" class="fi" id="ed-d" value="${parseInt(s.duration)||75}" min="15" max="180" step="5" inputmode="numeric">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">RPE cible <span style="text-transform:none;color:var(--tx4);font-weight:500;">· échelle 0-10</span></label>
+          <div class="bs2-rpe-row">
+            <input type="range" class="bs2-rpe-slider" id="ed-r-num" min="0" max="10" step="0.5" value="${rpeNum}">
+            <div class="bs2-rpe-display" id="ed-r-display">${rpeNum.toFixed(1)}</div>
+          </div>
+          <input type="hidden" id="ed-r" value="${safe(s.rpe_target||rpeNum)}">
+        </div>
+        <div class="fg"><label class="fl">Focus <span style="text-transform:none;color:var(--tx4);font-weight:500;">· séparés par virgules</span></label>
+          <input class="fi" id="ed-f" value="${safe((s.focus||[]).join(', '))}" placeholder="ex. pressing, transitions">
+        </div>
+      </div>
     </div>
-    <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="ed-n">${s.notes||''}</textarea></div>
-    <p style="font:700 10px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin-bottom:10px;">Exercices</p>
-    <div id="ed-ex-list"></div>
-    <button type="button" class="ex-add-btn" onclick="window.addExToEdit()">＋ Ajouter un exercice</button>
-    <div class="btn-row" style="margin-top:14px;">
-      <button class="btn btn-outline" style="flex:1;" onclick="close_modal('modal-session')">Annuler</button>
-      <button class="btn btn-green" style="flex:2;" onclick="saveDay('${mid}',${si})">Enregistrer</button>
+
+    <div class="bs2-section open" id="bs2-sec-exos">
+      <button type="button" class="bs2-section-head" onclick="window.bs2ToggleSection('bs2-sec-exos')">
+        <span class="bs2-section-head-icon">🏃</span>
+        <span class="bs2-section-head-title">Exercices</span>
+        <span class="bs2-section-head-badge" id="bs2-ex-count-badge">0</span>
+        <span class="bs2-section-head-caret">›</span>
+      </button>
+      <div class="bs2-section-body">
+        <div class="bs2-ex-list" id="ed-ex-list"></div>
+        <button type="button" class="bs2-ex-add" onclick="window.bs2AddEx()" aria-label="Ajouter un exercice">＋ Ajouter un exercice</button>
+      </div>
     </div>
-    <button class="btn btn-danger btn-block" style="margin-top:8px;" onclick="deleteDay('${mid}',${si});close_modal('modal-session')">Supprimer la séance</button>
+
+    <div class="bs2-section" id="bs2-sec-notes">
+      <button type="button" class="bs2-section-head" onclick="window.bs2ToggleSection('bs2-sec-notes')">
+        <span class="bs2-section-head-icon">📝</span>
+        <span class="bs2-section-head-title">Notes</span>
+        <span class="bs2-section-head-caret">›</span>
+      </button>
+      <div class="bs2-section-body">
+        <div class="fg">
+          <textarea class="fi" id="ed-n" placeholder="Intentions, remarques, consignes clés…">${safe(s.notes)}</textarea>
+        </div>
+      </div>
+    </div>
   `;
-  renderExerciseList();
+
+  // Footer buttons
+  $('bs2-footer').innerHTML = `
+    <button class="btn btn-danger" style="flex:1;" onclick="window.bs2DeleteFromEdit()">🗑 Supprimer</button>
+    <button class="btn btn-green" style="flex:2;" onclick="window.bs2TryClose()">✓ Fermer</button>
+  `;
+
+  // Wire inputs: autosave + live metrics
+  ['ed-l','ed-t','ed-d','ed-r','ed-f','ed-n'].forEach(id=>{
+    const el = $(id); if(!el) return;
+    el.addEventListener('input', ()=>{ bs2UpdateMetrics(); bs2ScheduleAutosave(); });
+    el.addEventListener('change', ()=>{ bs2UpdateMetrics(); bs2ScheduleAutosave(); });
+    // iOS keyboard: ensure focused field stays visible
+    el.addEventListener('focus', ()=>{
+      setTimeout(()=> el.scrollIntoView({block:'center', behavior:'smooth'}), 280);
+    });
+  });
+  const slider = $('ed-r-num');
+  if(slider){
+    const updateRpe = ()=>{
+      const v = parseFloat(slider.value);
+      $('ed-r-display').textContent = v.toFixed(1);
+      $('ed-r').value = v.toFixed(1);
+      bs2ScheduleAutosave();
+    };
+    slider.addEventListener('input', updateRpe);
+  }
+
+  bs2RenderExList();
+  bs2AttachVV();
   open_modal('modal-session');
 };
-// FIX BUG #10 — saveDay persiste désormais via savePlan(mid)
+
+// Manual delete from footer — confirms via in-app dialog
+window.bs2DeleteFromEdit = ()=>{
+  const ctx = window._bs2.ctx; if(!ctx) return;
+  bs2Confirm('Supprimer la séance ?','Cette action est irréversible.', async ()=>{
+    await window.deleteDay(ctx.mid, ctx.si);
+    // Cleanup without saving
+    if(window._bs2.timer){ clearTimeout(window._bs2.timer); window._bs2.timer=null; }
+    window._bs2.dirty = false;
+    bs2CleanupAndClose();
+  }, { okLabel:'Supprimer' });
+};
+
+// Legacy manual save (kept for back-compat; not used by new footer)
 window.saveDay=async(mid,si)=>{
   const p=S.plans[mid];if(!p)return;
   const bufKey=mid+'_'+si;
   const exercises=(S._editBuf&&S._editBuf[bufKey])?S._editBuf[bufKey].slice():[];
-  p.sessions[si]={...p.sessions[si],label:$('ed-l').value,type:$('ed-t').value,duration:parseInt($('ed-d').value)||75,rpe_target:$('ed-r').value,focus:$('ed-f').value.split(',').map(f=>f.trim()).filter(Boolean),notes:$('ed-n').value,exercises:exercises};
+  const l=$('ed-l'), t=$('ed-t'), d=$('ed-d'), r=$('ed-r'), f=$('ed-f'), n=$('ed-n');
+  p.sessions[si]={...p.sessions[si],
+    label:l?l.value:p.sessions[si].label,
+    type: t?t.value:p.sessions[si].type,
+    duration: d?(parseInt(d.value)||75):p.sessions[si].duration,
+    rpe_target: r?r.value:p.sessions[si].rpe_target,
+    focus: f?f.value.split(',').map(x=>x.trim()).filter(Boolean):p.sessions[si].focus,
+    notes: n?n.value:p.sessions[si].notes,
+    exercises:exercises};
   if(S._editBuf) delete S._editBuf[bufKey];
   close_modal('modal-session');
   await savePlan(mid);
   renderPlanning();
   toast(msg('updated'));
 };
-// FIX BUG #11 — deleteDay persiste désormais via savePlan(mid)
+
 window.deleteDay=async(mid,si)=>{
   if(!S.plans[mid]?.sessions) return;
   S.plans[mid].sessions.splice(si,1);
   await savePlan(mid);
   renderPlanning();
   toast(msg('deleted'));
+};
+
+// Legacy helpers kept for backward-compat (unused by new UI but referenced elsewhere)
+window.addExToEdit = ()=> window.bs2AddEx();
+window.removeExFromEdit = (m,i,idx)=> window.bs2RemoveEx(idx);
+window.moveExInEdit = (m,i,idx,dir)=>{
+  const arr = S._editBuf[m+'_'+i]; if(!arr) return;
+  const j = idx+dir; if(j<0||j>=arr.length) return;
+  [arr[idx],arr[j]]=[arr[j],arr[idx]];
+  bs2RenderExList();
+  bs2ScheduleAutosave();
 };
 
 /* ════════ SQUAD ════════ */
