@@ -68,6 +68,7 @@ html, body { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   /* Layout */
   --topbar-h: 56px;
   --navbar-h: 72px;
+  --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
 
   /* Rayons */
@@ -296,11 +297,12 @@ body.offline #offline-bar { display:block; }
 /* ── Topbar ── */
 .topbar {
   position:fixed; top:0; left:0; right:0;
-  height:var(--topbar-h); z-index:200;
+  height:calc(var(--topbar-h) + var(--safe-t)); z-index:200;
   background:rgba(17,19,24,.92);
   border-bottom:1px solid var(--sep);
   backdrop-filter:blur(16px);
-  display:flex; align-items:center; padding:0 18px;
+  display:flex; align-items:center;
+  padding:var(--safe-t) 18px 0 18px;
 }
 .topbar-left { flex:1; display:flex; align-items:center; gap:10px; }
 .topbar-dot {
@@ -340,7 +342,7 @@ body.offline #offline-bar { display:block; }
 
 /* ── Main content ── */
 .main {
-  padding-top:var(--topbar-h);
+  padding-top:calc(var(--topbar-h) + var(--safe-t));
   padding-bottom:calc(var(--navbar-h) + var(--safe-b));
 }
 
@@ -1450,6 +1452,25 @@ button:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .nb-btn:focus-
   .topbar { padding-left:max(8px, env(safe-area-inset-left)); padding-right:max(8px, env(safe-area-inset-right)); }
   .topbar-title { font-size:13px; }
 }
+
+/* FIX PWA standalone mode (iPhone home-screen app) — topbar must not be masked by Dynamic Island / status bar */
+/* Safari iOS classique montre l'URL bar par-dessus le status bar, mais en standalone + black-translucent,
+   le viewport s'étend sous la Dynamic Island → padding-top: env(safe-area-inset-top) obligatoire sur topbar */
+@media (display-mode: standalone) {
+  .topbar {
+    /* redondance defensive, déjà couvert par --safe-t, mais garantit le comportement même si --safe-t tombe à 0 */
+    padding-top:max(var(--safe-t), 8px) !important;
+    height:calc(var(--topbar-h) + max(var(--safe-t), 8px)) !important;
+  }
+  .main {
+    padding-top:calc(var(--topbar-h) + max(var(--safe-t), 8px)) !important;
+  }
+  /* topbar-right : marge droite en landscape standalone (Dynamic Island peut déborder sur les côtés en paysage) */
+  .topbar-right {
+    margin-right:max(0px, env(safe-area-inset-right));
+  }
+}
+
 @media (prefers-reduced-motion:reduce) {
   *, *::before, *::after { animation:none !important; transition:none !important; }
 }
