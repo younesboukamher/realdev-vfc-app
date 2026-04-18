@@ -24,6 +24,7 @@
    =========================================== */
 
 /* ── TOKENS ── */
+html, body { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 :root {
   /* Couleurs système */
   --ink:       #111318;      /* fond principal */
@@ -1410,28 +1411,43 @@ button:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .nb-btn:focus-
 }
 
 /* Responsive */
-/* FIX BUG responsive topbar (≤640px) — FR/NL/Exit buttons must stay visible and tappable on iPhone */
-@media (max-width:640px) {
-  .topbar { padding:0 12px; gap:6px; }
+/* FIX responsive topbar iOS — guarantee FR/NL/Exit always tappable on iPhone portrait */
+/* Strategy: on ≤768px, hide non-critical items (season-selector, version-badge, role-pill ≤480) */
+/* Critical kept: FR, NL, Exit. Archive mode still accessible via desktop or archive banner button. */
+@media (max-width:768px) {
+  .topbar {
+    padding-left:max(12px, env(safe-area-inset-left));
+    padding-right:max(12px, env(safe-area-inset-right));
+    gap:6px;
+  }
   .topbar-left { gap:8px; min-width:0; flex:1 1 auto; }
-  .topbar-left img { width:28px !important; height:28px !important; }
-  .topbar-left > div { min-width:0; overflow:hidden; }
+  .topbar-left > img { width:28px !important; height:28px !important; flex-shrink:0; }
+  .topbar-left > div { min-width:0; overflow:hidden; flex:1 1 auto; }
   .topbar-title { font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .topbar-page { font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .topbar-right { gap:4px; flex-shrink:0; flex-wrap:nowrap; }
-  .version-badge { display:none; }
-  #season-selector { max-width:96px; padding:4px 6px !important; font-size:10px !important; }
-  .top-badge { padding:3px 5px; font-size:8px; letter-spacing:.5px; }
-  .top-lang { padding:5px 8px; font-size:10px; }
-  .top-exit { width:30px; height:30px; font-size:14px; }
+  .topbar-right { gap:4px; flex-shrink:0; flex-wrap:nowrap; margin-left:auto; }
+  .version-badge { display:none !important; }
+  #season-selector { display:none !important; }
+  .top-badge { padding:3px 5px; font-size:8px; letter-spacing:.5px; flex-shrink:0; }
+  .top-lang {
+    padding:6px 10px; font-size:11px; min-width:36px; min-height:32px;
+    flex-shrink:0; -webkit-appearance:none; appearance:none;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .top-exit {
+    width:32px; height:32px; min-width:32px; font-size:14px; flex-shrink:0;
+    -webkit-appearance:none; appearance:none;
+  }
+}
+@media (max-width:480px) {
+  .topbar { padding-left:max(10px, env(safe-area-inset-left)); padding-right:max(10px, env(safe-area-inset-right)); }
+  .top-badge { display:none !important; }
 }
 @media (max-width:360px) {
   .quick-stats { grid-template-columns:repeat(2,1fr); }
   .qs-num { font-size:20px; }
   .match-team-name { font-size:14px; }
-  .topbar { padding:0 8px; }
-  .top-badge { display:none; }
-  #season-selector { max-width:80px; font-size:9px !important; }
+  .topbar { padding-left:max(8px, env(safe-area-inset-left)); padding-right:max(8px, env(safe-area-inset-right)); }
   .topbar-title { font-size:13px; }
 }
 @media (prefers-reduced-motion:reduce) {
