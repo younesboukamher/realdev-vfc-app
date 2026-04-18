@@ -1,0 +1,3173 @@
+{
+  "version": "1.0.0",
+  "generated_count": 80,
+  "categories": [
+    {
+      "key": "warmup",
+      "label_fr": "Échauffement",
+      "label_nl": "Opwarming"
+    },
+    {
+      "key": "technique",
+      "label_fr": "Technique",
+      "label_nl": "Techniek"
+    },
+    {
+      "key": "tactique",
+      "label_fr": "Tactique",
+      "label_nl": "Tactiek"
+    },
+    {
+      "key": "ssg",
+      "label_fr": "Jeu réduit",
+      "label_nl": "Klein spel"
+    },
+    {
+      "key": "finition",
+      "label_fr": "Finition",
+      "label_nl": "Afwerking"
+    },
+    {
+      "key": "setpieces",
+      "label_fr": "Coups arrêtés",
+      "label_nl": "Standaardsituaties"
+    },
+    {
+      "key": "defense",
+      "label_fr": "Défense",
+      "label_nl": "Verdediging"
+    },
+    {
+      "key": "gardien",
+      "label_fr": "Gardien",
+      "label_nl": "Keeper"
+    },
+    {
+      "key": "prevention",
+      "label_fr": "Prévention",
+      "label_nl": "Preventie"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "wu-01",
+      "category": "warmup",
+      "subcategory": "mobilité",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 6,
+      "intensity": "faible",
+      "title_fr": "Mobilité articulaire dynamique",
+      "title_nl": "Dynamische gewrichtsmobiliteit",
+      "objective_fr": "Préparer articulations et chaînes musculaires au contact répété du futsal.",
+      "objective_nl": "Gewrichten en spierketens voorbereiden op het herhaalde contact van futsal.",
+      "setup_fr": "Joueurs en demi-cercle face au coach, 1,5 m entre chacun, sans ballon.",
+      "setup_nl": "Spelers in halve cirkel tegenover coach, 1,5 m tussenruimte, zonder bal.",
+      "instructions_fr": [
+        "Rotations de chevilles (10 par côté), puis de genoux (10).",
+        "Fentes avant marchées 10 m, retour avec rotation de buste.",
+        "Skipping bas puis haut sur 10 m, allers-retours.",
+        "Déplacements latéraux croisés (pas chassés + rotation hanche).",
+        "Finir par 2 x accélérations progressives sur 15 m."
+      ],
+      "instructions_nl": [
+        "Enkelrotaties (10 per kant), dan knierotaties (10).",
+        "Uitvalpassen vooruit 10 m, terug met romprotatie.",
+        "Lage dan hoge skipping over 10 m, heen en weer.",
+        "Zijwaartse kruispassen (chassé + heuprotatie).",
+        "Afsluiten met 2 x progressieve versnellingen over 15 m."
+      ],
+      "variants_fr": [
+        "Ajouter un ballon en main pour travail coordination bras/jambes.",
+        "Enchaîner avec mini-jeu de réaction visuelle (coach pointe direction)."
+      ],
+      "variants_nl": [
+        "Voeg bal in de hand toe voor coördinatie arm/been.",
+        "Volg met mini-reactiespel (coach wijst richting aan)."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.58",
+      "image_url": "exercises/wu-01.png"
+    },
+    {
+      "id": "wu-02",
+      "category": "warmup",
+      "subcategory": "conduite",
+      "age_range": "U11-Senior",
+      "duration": 6,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Conduite libre en zone",
+      "title_nl": "Vrij dribbelen in zone",
+      "objective_fr": "Relancer le toucher de balle, varier appuis et prise d'information tête haute.",
+      "objective_nl": "Balgevoel activeren, steunbenen variëren en rondkijken met opgeheven hoofd.",
+      "setup_fr": "Zone 20×15 m délimitée par 8 cônes. 1 ballon par joueur.",
+      "setup_nl": "Zone 20×15 m afgebakend met 8 kegels. 1 bal per speler.",
+      "instructions_fr": [
+        "Conduite libre, tête haute, éviter contacts et ballons adverses.",
+        "Au signal coach, changer de pied/surface (semelle, intérieur, extérieur).",
+        "Toutes les 30 s : 3 dribbles puis stop-and-go.",
+        "Terminer par 3 x 20 s de conduite vitesse maximale contrôlée.",
+        "Récupération active : jongles en équipe libres."
+      ],
+      "instructions_nl": [
+        "Vrij dribbelen, hoofd omhoog, contact en ballen van anderen vermijden.",
+        "Op signaal coach: wissel voet/voetoppervlak (zool, binnenkant, buitenkant).",
+        "Elke 30 s: 3 dribbels dan stop-and-go.",
+        "Afsluiten met 3 x 20 s gecontroleerd maximaal tempo dribbelen.",
+        "Actief herstel: vrij jongleren in team."
+      ],
+      "variants_fr": [
+        "Ajouter 2 'voleurs' sans ballon qui tentent de sortir les ballons.",
+        "Imposer semelle uniquement pendant 1 minute."
+      ],
+      "variants_nl": [
+        "Voeg 2 'dieven' zonder bal toe die ballen proberen weg te tikken.",
+        "Verplicht enkel zool gedurende 1 minuut."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.4",
+      "image_url": "exercises/wu-02.png"
+    },
+    {
+      "id": "wu-03",
+      "category": "warmup",
+      "subcategory": "passes",
+      "age_range": "U11-Senior",
+      "duration": 8,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Passes par 2 — progression",
+      "title_nl": "Passen per 2 — progressie",
+      "objective_fr": "Qualité de passe au sol, orientation du corps, contrôle orienté vers l'avant.",
+      "objective_nl": "Kwaliteit van grondpass, lichaamsoriëntatie, gerichte controle vooruit.",
+      "setup_fr": "Paires face à face, 6 m d'écart. 1 ballon par paire. Couloir 15 m de long pour progresser.",
+      "setup_nl": "Paren tegenover elkaar, 6 m uit elkaar. 1 bal per paar. Corridor 15 m lang om te vorderen.",
+      "instructions_fr": [
+        "30 s de passes statiques intérieur pied droit, puis 30 s pied gauche.",
+        "Passe et va : après passe, appel pour recevoir en avançant de 1 m.",
+        "Une-deux (mur) : joueur A passe à B, B remise en 1 touche, A avance 2 m.",
+        "Progression jusqu'au bout du couloir, puis retour.",
+        "Finale : passe en mouvement, contrôle orienté + 1 touche de passe."
+      ],
+      "instructions_nl": [
+        "30 s statische passes binnenkant rechts, dan 30 s links.",
+        "Pas-en-ga: na pass, loop in om 1 m vooruit te ontvangen.",
+        "Een-twee (muurtje): A past op B, B 1-touch terug, A gaat 2 m vooruit.",
+        "Progressie tot einde corridor, dan terug.",
+        "Finale: pass in beweging, gerichte controle + 1-touch pass."
+      ],
+      "variants_fr": [
+        "Imposer 2 touches max (contrôle + passe).",
+        "Ajouter 1 cône central à contourner avant chaque passe."
+      ],
+      "variants_nl": [
+        "Verplicht max 2 contacten (controle + pass).",
+        "Voeg 1 middencone toe die omzeild moet worden voor elke pass."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.72",
+      "image_url": "exercises/wu-03.png"
+    },
+    {
+      "id": "wu-04",
+      "category": "warmup",
+      "subcategory": "coordination",
+      "age_range": "U11-U17",
+      "duration": 7,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Échelle de coordination",
+      "title_nl": "Coördinatieladder",
+      "objective_fr": "Vitesse d'appuis, pose de pied précise, coordination jambes/bras.",
+      "objective_nl": "Snelheid van steunbenen, precieze voetplaatsing, coördinatie benen/armen.",
+      "setup_fr": "Échelle de coordination (ou cônes au sol) 5 m de long. File indienne à 2 m de l'entrée.",
+      "setup_nl": "Coördinatieladder (of kegels op de grond) 5 m lang. Rij op 2 m van de ingang.",
+      "instructions_fr": [
+        "Passage 1 : un pied par case, vitesse moyenne.",
+        "Passage 2 : deux pieds par case, explosivité.",
+        "Passage 3 : pas chassé latéral, bras actifs.",
+        "Passage 4 : in-in-out-out (2 pieds dans, 2 pieds dehors).",
+        "Passage 5 : sortie en accélération sur 5 m + tir ou conduite courte."
+      ],
+      "instructions_nl": [
+        "Ronde 1: één voet per vak, gemiddeld tempo.",
+        "Ronde 2: twee voeten per vak, explosief.",
+        "Ronde 3: zijwaartse chassé, actieve armen.",
+        "Ronde 4: in-in-out-out (2 voeten in, 2 voeten uit).",
+        "Ronde 5: uitgang in versnelling over 5 m + schot of korte dribbel."
+      ],
+      "variants_fr": [
+        "Finir chaque passage par une passe reçue d'un partenaire.",
+        "Chronométrer les passages, classement par équipe."
+      ],
+      "variants_nl": [
+        "Elke ronde afsluiten met een ontvangen pass van een medespeler.",
+        "Rondes chronometreren, teamklassement."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Warm-up appendix",
+      "image_url": "exercises/wu-04.png"
+    },
+    {
+      "id": "wu-05",
+      "category": "warmup",
+      "subcategory": "rondo",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 7,
+      "intensity": "moyenne",
+      "title_fr": "Rondo 5v2 — mise en route",
+      "title_nl": "Rondo 5v2 — opstart",
+      "objective_fr": "Conservation 1-2 touches, prise d'information, pression adverse.",
+      "objective_nl": "Balbezit 1-2 contacten, informatie opnemen, tegendruk.",
+      "setup_fr": "Cercle de 8 m diamètre, 5 joueurs en périphérie, 2 au centre.",
+      "setup_nl": "Cirkel 8 m doorsnede, 5 spelers buitenom, 2 in het midden.",
+      "instructions_fr": [
+        "5 passeurs extérieurs, 2 défenseurs au centre.",
+        "Objectif : conserver en 2 touches max.",
+        "Interception ou sortie de ballon → joueur responsable devient défenseur.",
+        "Compter à voix haute les passes consécutives, record de groupe.",
+        "Durée : 3 blocs de 2 min, 30 s récupération."
+      ],
+      "instructions_nl": [
+        "5 buitenspelers, 2 verdedigers in het midden.",
+        "Doel: balbezit houden met max 2 contacten.",
+        "Onderschepping of bal uit → verantwoordelijke speler wordt verdediger.",
+        "Tel hardop opeenvolgende passes, groepsrecord.",
+        "Duur: 3 blokken van 2 min, 30 s rust."
+      ],
+      "variants_fr": [
+        "Rondo 4v2 en carré pour progresser en triangulation.",
+        "Imposer 1 seule touche pendant 30 s."
+      ],
+      "variants_nl": [
+        "Rondo 4v2 in vierkant voor driehoekspel.",
+        "1-touch verplicht gedurende 30 s."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.84",
+      "image_url": "exercises/wu-05.png"
+    },
+    {
+      "id": "wu-06",
+      "category": "warmup",
+      "subcategory": "réactivité",
+      "age_range": "U11-U17",
+      "duration": 6,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Réactivité couleurs",
+      "title_nl": "Kleurreactiviteit",
+      "objective_fr": "Temps de réaction, prise de décision rapide sous signal visuel.",
+      "objective_nl": "Reactietijd, snelle besluitvorming op visueel signaal.",
+      "setup_fr": "4 cônes de couleurs différentes en carré (5 m de côté). Joueurs au centre.",
+      "setup_nl": "4 kegels van verschillende kleuren in vierkant (5 m zijde). Spelers in het midden.",
+      "instructions_fr": [
+        "Coach annonce une couleur : joueurs sprintent toucher le cône correspondant.",
+        "Retour en pas chassé au centre.",
+        "Ajouter combinaisons : 'rouge-bleu' = toucher les 2 dans l'ordre.",
+        "Variante réflexe : coach pointe avec la main sans parler.",
+        "Finir par 2 x 15 s à vitesse max, récupération 30 s."
+      ],
+      "instructions_nl": [
+        "Coach roept kleur: spelers sprinten om juiste kegel aan te raken.",
+        "Terugkeer in chassé naar midden.",
+        "Combinaties toevoegen: 'rood-blauw' = beide in volgorde aanraken.",
+        "Reflexvariant: coach wijst met hand zonder te spreken.",
+        "Afsluiten met 2 x 15 s max tempo, 30 s rust."
+      ],
+      "variants_fr": [
+        "Version 'piège' : coach dit rouge mais pointe bleu — suivre la main.",
+        "Ajouter ballon en conduite entre chaque sprint."
+      ],
+      "variants_nl": [
+        "'Val'-variant: coach zegt rood maar wijst blauw — volg hand.",
+        "Bal toevoegen tussen sprints door."
+      ],
+      "source": "RFEF — Escuela de entrenadores de fútbol sala, bloque físico",
+      "image_url": "exercises/wu-06.png"
+    },
+    {
+      "id": "wu-07",
+      "category": "warmup",
+      "subcategory": "triangulation",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 9,
+      "intensity": "moyenne",
+      "title_fr": "Triangulations à 3",
+      "title_nl": "Driehoekjes met 3",
+      "objective_fr": "Jeu en triangle, appuis décalés, qualité de passe en mouvement.",
+      "objective_nl": "Driehoekspel, verspringende steunposities, kwaliteit pass in beweging.",
+      "setup_fr": "3 joueurs par groupe en triangle équilatéral de 6 m. 1 ballon par groupe.",
+      "setup_nl": "3 spelers per groep in gelijkzijdige driehoek van 6 m. 1 bal per groep.",
+      "instructions_fr": [
+        "Passe en 2 touches : contrôle orienté + passe.",
+        "Après passe, le passeur remplace le receveur (rotation).",
+        "Changer sens de rotation toutes les 45 s.",
+        "Une-deux : joueur B remet en 1 touche vers C, A court au poste de B.",
+        "Finale : 30 s à 1 touche max."
+      ],
+      "instructions_nl": [
+        "Pass in 2 contacten: gerichte controle + pass.",
+        "Na pass: passer vervangt ontvanger (rotatie).",
+        "Richting wisselen elke 45 s.",
+        "Een-twee: B 1-touch terug naar C, A loopt naar positie B.",
+        "Finale: 30 s max 1 contact."
+      ],
+      "variants_fr": [
+        "Ajouter 1 défenseur passif dans le triangle.",
+        "Augmenter à 10 m de côté pour forcer longueur de passe."
+      ],
+      "variants_nl": [
+        "Voeg 1 passieve verdediger toe in de driehoek.",
+        "Vergroot tot 10 m zijde om pasafstand uit te rekken."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.88",
+      "image_url": "exercises/wu-07.png"
+    },
+    {
+      "id": "wu-08",
+      "category": "warmup",
+      "subcategory": "tir",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Tir progressif — circuit",
+      "title_nl": "Progressief schot — circuit",
+      "objective_fr": "Réveil musculaire orienté finition, précision et frappe du coup de pied.",
+      "objective_nl": "Activerende opwarming gericht op afwerking, precisie en traptechniek.",
+      "setup_fr": "Gardien en place. 2 files de 3 joueurs à 15 m du but, côtés opposés. 3 ballons par file.",
+      "setup_nl": "Keeper staat. 2 rijen van 3 spelers op 15 m van doel, tegenover elkaar. 3 ballen per rij.",
+      "instructions_fr": [
+        "Tour 1 : conduite 5 m + tir placé en pied droit.",
+        "Tour 2 : idem en pied gauche.",
+        "Tour 3 : conduite + frappe de l'extérieur du pied.",
+        "Tour 4 : 1-2 avec coach latéral avant tir.",
+        "Récupération active en trottinant vers file opposée."
+      ],
+      "instructions_nl": [
+        "Ronde 1: dribbel 5 m + geplaatst schot rechts.",
+        "Ronde 2: idem links.",
+        "Ronde 3: dribbel + schot met buitenkant voet.",
+        "Ronde 4: een-twee met coach zijwaarts voor schot.",
+        "Actief herstel joggend naar andere rij."
+      ],
+      "variants_fr": [
+        "Ajouter un défenseur passif entre conduite et tir.",
+        "Imposer contrôle en 1 touche avant tir."
+      ],
+      "variants_nl": [
+        "Voeg passieve verdediger toe tussen dribbel en schot.",
+        "Verplicht 1-touch controle voor schot."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.5",
+      "image_url": "exercises/wu-08.png"
+    },
+    {
+      "id": "wu-09",
+      "category": "warmup",
+      "subcategory": "duels",
+      "age_range": "U13-Senior",
+      "duration": 7,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "1v1 aller simple",
+      "title_nl": "1v1 enkele passage",
+      "objective_fr": "Mise en jambes duels, agressivité contrôlée, répétition des feintes.",
+      "objective_nl": "Opwarmen duels, gecontroleerde agressie, herhaling van schijnbewegingen.",
+      "setup_fr": "2 files face à face à 10 m, cône central. Attaquant d'un côté, défenseur de l'autre.",
+      "setup_nl": "2 rijen tegenover elkaar op 10 m, middencone. Aanvaller aan één kant, verdediger aan andere.",
+      "instructions_fr": [
+        "Attaquant part en conduite, défenseur sort quand attaquant passe le cône.",
+        "Objectif attaquant : franchir la ligne défenseur avec ballon.",
+        "Rotation : attaquant devient défenseur, défenseur rejoint file attaque.",
+        "Imposer une feinte obligatoire après 3 répétitions.",
+        "8 répétitions par joueur maximum."
+      ],
+      "instructions_nl": [
+        "Aanvaller vertrekt met bal, verdediger komt pas uit zodra aanvaller cone passeert.",
+        "Doel aanvaller: lijn van verdediger doorkruisen met bal.",
+        "Rotatie: aanvaller wordt verdediger, verdediger gaat naar aanvallersrij.",
+        "Verplichte schijnbeweging na 3 herhalingen.",
+        "Max 8 herhalingen per speler."
+      ],
+      "variants_fr": [
+        "Limiter à 5 secondes par duel.",
+        "Imposer pied faible uniquement."
+      ],
+      "variants_nl": [
+        "Beperk tot 5 seconden per duel.",
+        "Alleen zwakke voet verplicht."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Duel drills",
+      "image_url": "exercises/wu-09.png"
+    },
+    {
+      "id": "wu-10",
+      "category": "warmup",
+      "subcategory": "possession",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 10,
+      "intensity": "moyenne",
+      "title_fr": "Possession 5v5 zones calmes",
+      "title_nl": "Balbezit 5v5 rustige zones",
+      "objective_fr": "Intégrer intensité progressive, reconnaissance espaces libres, transitions douces.",
+      "objective_nl": "Progressieve intensiteit, herkenning van vrije ruimtes, zachte transities.",
+      "setup_fr": "Terrain futsal complet ou moitié. 2 équipes de 5, jeu en 2 touches max. Pas de gardien.",
+      "setup_nl": "Volledig futsalveld of helft. 2 teams van 5, max 2 contacten. Geen keeper.",
+      "instructions_fr": [
+        "Conserver la balle, objectif : 10 passes d'affilée = 1 point.",
+        "Pas de tir, pas de duel dur, intensité 70 %.",
+        "Privilégier décrochage et prise d'espace.",
+        "Coach introduit progressivement la pression au bout de 4 min.",
+        "Finir avec 2 min intensité match pour basculer vers la phase principale."
+      ],
+      "instructions_nl": [
+        "Balbezit houden, doel: 10 passes op rij = 1 punt.",
+        "Geen schot, geen hard duel, intensiteit 70 %.",
+        "Focus op inzakken en ruimte innemen.",
+        "Coach voert druk geleidelijk op na 4 min.",
+        "Afsluiten met 2 min wedstrijdtempo om over te gaan op hoofdfase."
+      ],
+      "variants_fr": [
+        "Réduire à 4v4 + 1 joker neutre qui aide le porteur.",
+        "Ajouter règle : pas 2 passes de suite entre mêmes joueurs."
+      ],
+      "variants_nl": [
+        "Verklein naar 4v4 + 1 neutrale joker die balbezitter helpt.",
+        "Regel: geen 2 passes op rij tussen dezelfde spelers."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.6 — Possession",
+      "image_url": "exercises/wu-10.png"
+    },
+    {
+      "id": "te-01",
+      "category": "technique",
+      "subcategory": "conduite",
+      "age_range": "U11-U15",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Slalom conduite — deux pieds",
+      "title_nl": "Slalom dribbel — beide voeten",
+      "objective_fr": "Contrôle de balle en conduite rapide alternée pied droit/pied gauche.",
+      "objective_nl": "Balcontrole in snelle dribbel afwisselend rechts/links.",
+      "setup_fr": "8 cônes alignés espacés de 1,5 m. 1 ballon par joueur. File d'attente à 3 m.",
+      "setup_nl": "8 kegels op rij, 1,5 m tussenruimte. 1 bal per speler. Wachtrij op 3 m.",
+      "instructions_fr": [
+        "Passage aller : slalom intérieur du pied droit uniquement.",
+        "Retour : intérieur du pied gauche uniquement.",
+        "Passage 3 : alterner intérieur droit / intérieur gauche à chaque cône.",
+        "Passage 4 : extérieur du pied à chaque cône.",
+        "Finir par sortie cône 1 + tir ou passe à cible."
+      ],
+      "instructions_nl": [
+        "Heen: slalom met alleen binnenkant rechts.",
+        "Terug: alleen binnenkant links.",
+        "Ronde 3: afwisselend binnenkant rechts/links bij elke kegel.",
+        "Ronde 4: buitenkant voet bij elke kegel.",
+        "Afsluiten met uitgang kegel 1 + schot of pass naar doel."
+      ],
+      "variants_fr": [
+        "Chronométrer les passages, compétition par équipes.",
+        "Supprimer regard vers le bas : coach signale un geste à faire à la sortie."
+      ],
+      "variants_nl": [
+        "Rondes chronometreren, teamcompetitie.",
+        "Zonder naar beneden kijken: coach geeft signaal bij uitgang."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.96",
+      "image_url": "exercises/te-01.png"
+    },
+    {
+      "id": "te-02",
+      "category": "technique",
+      "subcategory": "semelle",
+      "age_range": "U11-U17",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "faible",
+      "title_fr": "Semelle futsal — fondamentaux",
+      "title_nl": "Zoolcontrole — basis",
+      "objective_fr": "Maîtrise de la semelle, signature technique du futsal (roll, stop, drag).",
+      "objective_nl": "Zoolcontrole beheersen, technisch kenmerk van futsal (roll, stop, drag).",
+      "setup_fr": "Zone 10×10 m. 1 ballon par joueur. Tous dans la zone.",
+      "setup_nl": "Zone 10×10 m. 1 bal per speler. Iedereen in de zone.",
+      "instructions_fr": [
+        "Roulement semelle sur place : alterner pied droit / gauche 30 s chacun.",
+        "Roulement en mouvement latéral, 20 s chaque côté.",
+        "Drag back : semelle + tirer le ballon derrière soi, demi-tour.",
+        "V-cut : semelle stoppe ballon, pied fort pousse ballon de l'autre côté.",
+        "Mini-défi : coach appelle un geste, exécution immédiate."
+      ],
+      "instructions_nl": [
+        "Roll met zool ter plaatse: afwisselend rechts/links 30 s elk.",
+        "Roll in zijwaartse beweging, 20 s per kant.",
+        "Drag back: zool + bal achterwaarts trekken, halve draai.",
+        "V-cut: zool stopt bal, sterke voet duwt bal naar andere kant.",
+        "Mini-uitdaging: coach noemt beweging, directe uitvoering."
+      ],
+      "variants_fr": [
+        "Deux joueurs face à face imitent mutuellement les gestes.",
+        "Enchaîner 3 gestes différents sans pause."
+      ],
+      "variants_nl": [
+        "Twee spelers tegenover elkaar imiteren bewegingen.",
+        "3 verschillende bewegingen na elkaar zonder pauze."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Technique foundations",
+      "image_url": "exercises/te-02.png"
+    },
+    {
+      "id": "te-03",
+      "category": "technique",
+      "subcategory": "passe",
+      "age_range": "U11-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "Étoile à 5 — passes orientées",
+      "title_nl": "Ster met 5 — gerichte passes",
+      "objective_fr": "Qualité de passe tendue, corps orienté avant réception, tête relevée.",
+      "objective_nl": "Kwalitatieve strakke pass, lichaam gericht voor ontvangst, hoofd omhoog.",
+      "setup_fr": "5 plots en étoile, chacun espacé de 8 m. 1 joueur par plot, 1 ballon au départ.",
+      "setup_nl": "5 kegels in ster, elk 8 m uit elkaar. 1 speler per kegel, 1 bal bij start.",
+      "instructions_fr": [
+        "Séquence A → C → E → B → D → A (passe + suit sa passe, remplace le suivant).",
+        "Contrôle en 2 touches max : contrôle orienté puis passe.",
+        "Changer de sens de rotation à mi-séance.",
+        "Imposer passe tendue (ras du sol, sans rebond).",
+        "Variante : 2 ballons simultanés pour densifier."
+      ],
+      "instructions_nl": [
+        "Reeks A → C → E → B → D → A (pass + volg, vervang volgende).",
+        "Max 2 contacten: gerichte controle dan pass.",
+        "Wissel rotatie halverwege.",
+        "Verplicht strakke pass (grondpass, geen stuit).",
+        "Variant: 2 ballen tegelijk voor verdichting."
+      ],
+      "variants_fr": [
+        "Imposer passe en une touche.",
+        "Ajouter un défenseur passif au centre."
+      ],
+      "variants_nl": [
+        "Verplicht 1-touch pass.",
+        "Voeg passieve verdediger toe in het midden."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.102",
+      "image_url": "exercises/te-03.png"
+    },
+    {
+      "id": "te-04",
+      "category": "technique",
+      "subcategory": "contrôle",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Contrôle orienté + remise",
+      "title_nl": "Gerichte controle + terugkaatsen",
+      "objective_fr": "Contrôle du premier appui qui oriente le jeu dans la direction voulue.",
+      "objective_nl": "Eerste balcontact dat spel in gewenste richting oriënteert.",
+      "setup_fr": "Paires face à face à 8 m. Cône latéral à 2 m de chaque joueur.",
+      "setup_nl": "Paren tegenover elkaar op 8 m. Zijkegel op 2 m van elke speler.",
+      "instructions_fr": [
+        "A envoie passe à B. B contrôle orienté vers le cône gauche.",
+        "B donne la passe à A depuis ce côté.",
+        "A contrôle orienté vers son cône droit, retour à B.",
+        "Alterner côtés toutes les 6 passes.",
+        "Finir : contrôle + passe en 1 touche (pas de contrôle)."
+      ],
+      "instructions_nl": [
+        "A speelt pass naar B. B controleert gericht naar linker kegel.",
+        "B past vanaf daar terug naar A.",
+        "A controleert gericht naar rechter kegel, terug naar B.",
+        "Wissel van kant elke 6 passes.",
+        "Afsluiten: pass + 1-touch (zonder controle)."
+      ],
+      "variants_fr": [
+        "Coach dicte le côté (gauche/droite) à chaque passe.",
+        "Ajouter 1 feinte après contrôle."
+      ],
+      "variants_nl": [
+        "Coach dicteert kant (links/rechts) elke pass.",
+        "Voeg 1 schijnbeweging toe na controle."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.110",
+      "image_url": "exercises/te-04.png"
+    },
+    {
+      "id": "te-05",
+      "category": "technique",
+      "subcategory": "passe longue",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Passe courte-courte-longue",
+      "title_nl": "Kort-kort-lang",
+      "objective_fr": "Changer de rythme dans la circulation : 2 passes courtes puis rupture longue.",
+      "objective_nl": "Ritmewissel in bal circulatie: 2 korte passes dan lange breekpass.",
+      "setup_fr": "6 joueurs en 2 lignes de 3 (15 m écart). Ballon démarre ligne A.",
+      "setup_nl": "6 spelers in 2 rijen van 3 (15 m tussen rijen). Bal start in rij A.",
+      "instructions_fr": [
+        "A1 passe courte à A2 (2 m).",
+        "A2 remise courte à A3 (2 m).",
+        "A3 passe longue à B1 (ligne opposée).",
+        "Ligne B enchaîne le même schéma en sens retour.",
+        "Toutes les 90 s, rotation des joueurs dans les lignes."
+      ],
+      "instructions_nl": [
+        "A1 korte pass naar A2 (2 m).",
+        "A2 korte terugspeler A3 (2 m).",
+        "A3 lange pass naar B1 (andere rij).",
+        "Rij B zelfde patroon in omgekeerde richting.",
+        "Elke 90 s rotatie van spelers in rijen."
+      ],
+      "variants_fr": [
+        "Passe longue obligatoirement en cloche (balle aérienne).",
+        "Ajouter un défenseur qui presse la ligne en possession."
+      ],
+      "variants_nl": [
+        "Lange pass verplicht in boog (luchtbal).",
+        "Voeg verdediger toe die rij in balbezit onder druk zet."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.118",
+      "image_url": "exercises/te-05.png"
+    },
+    {
+      "id": "te-06",
+      "category": "technique",
+      "subcategory": "feinte",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Répertoire feintes — 4 gestes",
+      "title_nl": "Schijnbewegingen — 4 moves",
+      "objective_fr": "Acquisition et répétition de 4 feintes de base adaptées au futsal.",
+      "objective_nl": "Verwerven en herhalen van 4 futsal-basis-schijnbewegingen.",
+      "setup_fr": "Cône central, attaquant à 4 m avec ballon, défenseur passif à 2 m derrière le cône.",
+      "setup_nl": "Middencone, aanvaller met bal op 4 m, passieve verdediger op 2 m achter cone.",
+      "instructions_fr": [
+        "Geste 1 — Step-over : simuler passe, retirer pied et prendre l'extérieur.",
+        "Geste 2 — V-cut : semelle stoppe, pied opposé pousse ballon.",
+        "Geste 3 — Roulette de Zidane : 360° protégé par le corps.",
+        "Geste 4 — Élastico : extérieur pied puis intérieur rapide.",
+        "6 répétitions par geste, alterner pieds."
+      ],
+      "instructions_nl": [
+        "Move 1 — Overstap: pass faken, voet terugtrekken en buitenom.",
+        "Move 2 — V-cut: zool stopt bal, andere voet duwt bal.",
+        "Move 3 — Zidane-roulette: 360° met lichaam beschermd.",
+        "Move 4 — Elastico: buitenkant voet dan snel binnenkant.",
+        "6 herhalingen per move, afwisselend voeten."
+      ],
+      "variants_fr": [
+        "Défenseur actif 50 % dès maîtrise.",
+        "Enchaîner 2 feintes par passage."
+      ],
+      "variants_nl": [
+        "Actieve verdediger 50 % na beheersing.",
+        "2 schijnbewegingen per passage."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.5 Skills",
+      "image_url": "exercises/te-06.png"
+    },
+    {
+      "id": "te-07",
+      "category": "technique",
+      "subcategory": "prise de balle",
+      "age_range": "U11-U17",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Prise de balle dos au but",
+      "title_nl": "Balaanname met rug naar doel",
+      "objective_fr": "Contrôle dos au jeu, protection et ouverture avec demi-tour.",
+      "objective_nl": "Controle met rug naar spel, afschermen en openen met halve draai.",
+      "setup_fr": "Joueur A servant à 6 m, joueur B dos au servant à 4 m.",
+      "setup_nl": "Speler A bedient op 6 m, speler B met rug naar bediener op 4 m.",
+      "instructions_fr": [
+        "A envoie passe au sol à B, dos au jeu.",
+        "B contrôle semelle, protège le ballon.",
+        "B exécute demi-tour rapide et repasse à A en 2 touches.",
+        "Alterner demi-tour pied droit / pied gauche.",
+        "Rotation A/B toutes les 6 passes."
+      ],
+      "instructions_nl": [
+        "A speelt grondpass naar B met rug naar spel.",
+        "B controleert met zool, schermt bal af.",
+        "B maakt snelle halve draai en past in 2 contacten terug naar A.",
+        "Halve draai afwisselend rechts/links.",
+        "Rotatie A/B elke 6 passes."
+      ],
+      "variants_fr": [
+        "A appuie passivement sur B pour simuler pression.",
+        "Au signal coach, B se retourne sans contrôle (1 touche)."
+      ],
+      "variants_nl": [
+        "A duwt passief tegen B om druk te simuleren.",
+        "Op signaal: B draait zonder controle (1-touch)."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.122",
+      "image_url": "exercises/te-07.png"
+    },
+    {
+      "id": "te-08",
+      "category": "technique",
+      "subcategory": "frappe",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Frappe du cou de pied puts",
+      "title_nl": "Wreeftrap uit spelsituatie",
+      "objective_fr": "Précision de frappe après mouvement, choix du type de tir selon angle.",
+      "objective_nl": "Nauwkeurig schieten na beweging, keuze schottype afhankelijk van hoek.",
+      "setup_fr": "Gardien en place. 3 zones de tir (axe, droite, gauche) à 8 m du but. Ballons à proximité.",
+      "setup_nl": "Keeper staat. 3 schotzones (as, rechts, links) op 8 m van doel. Ballen binnen handbereik.",
+      "instructions_fr": [
+        "Tour 1 — axe : conduite 3 m + frappe placée.",
+        "Tour 2 — droite : conduite latérale + frappe pied fort.",
+        "Tour 3 — gauche : conduite latérale + frappe pied fort (angle fermé).",
+        "Tour 4 — feinte passe au coach puis tir.",
+        "Tour 5 — choix libre : coach crie un côté, tir opposé."
+      ],
+      "instructions_nl": [
+        "Ronde 1 — as: dribbel 3 m + geplaatst schot.",
+        "Ronde 2 — rechts: zijdribbel + schot sterke voet.",
+        "Ronde 3 — links: zijdribbel + schot sterke voet (gesloten hoek).",
+        "Ronde 4 — schijnpass coach dan schot.",
+        "Ronde 5 — vrije keuze: coach roept kant, schot aan andere kant."
+      ],
+      "variants_fr": [
+        "Chronométrer + % de réussite affiché.",
+        "Défenseur passif qui sort sur la frappe."
+      ],
+      "variants_nl": [
+        "Chronometreren + % rake schoten tonen.",
+        "Passieve verdediger komt uit op schot."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.5",
+      "image_url": "exercises/te-08.png"
+    },
+    {
+      "id": "te-09",
+      "category": "technique",
+      "subcategory": "head-up",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Conduite tête haute — commandes",
+      "title_nl": "Dribbel hoofd omhoog — commando's",
+      "objective_fr": "Forcer la prise d'information périphérique pendant la conduite.",
+      "objective_nl": "Periferisch zicht afdwingen tijdens dribbel.",
+      "setup_fr": "Zone 15×15 m. 6 joueurs avec ballon. Coach au centre avec panneaux de couleur ou chiffres.",
+      "setup_nl": "Zone 15×15 m. 6 spelers met bal. Coach in midden met kleurenbordjes of cijfers.",
+      "instructions_fr": [
+        "Conduite libre, obligation de garder un œil sur le coach.",
+        "Coach lève un panneau : tous les joueurs crient la couleur/chiffre.",
+        "Coach lève 2 panneaux : joueurs exécutent 2 gestes techniques.",
+        "Coach pointe un joueur : passe au joueur désigné.",
+        "3 blocs de 2 min, 30 s pause."
+      ],
+      "instructions_nl": [
+        "Vrij dribbelen, één oog op coach houden.",
+        "Coach heft bordje: iedereen roept kleur/cijfer.",
+        "Coach heft 2 bordjes: 2 technische bewegingen uitvoeren.",
+        "Coach wijst speler aan: pass naar die speler.",
+        "3 blokken van 2 min, 30 s pauze."
+      ],
+      "variants_fr": [
+        "Coach bouge dans la zone, joueurs doivent toujours le voir.",
+        "Ajouter règle : pas de ballon proche de la tête → perte."
+      ],
+      "variants_nl": [
+        "Coach beweegt in zone, moet altijd zichtbaar blijven.",
+        "Regel: bal bij de voet houden, niet hoger dan knie."
+      ],
+      "source": "RFEF Escuela — Técnica individual U14-U16",
+      "image_url": "exercises/te-09.png"
+    },
+    {
+      "id": "te-10",
+      "category": "technique",
+      "subcategory": "passe diagonale",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Passe diagonale + croisement",
+      "title_nl": "Diagonale pass + kruising",
+      "objective_fr": "Changer de couloir par passe longue diagonale, gérer la course croisée.",
+      "objective_nl": "Vleugel wisselen via diagonale pass, kruislopen beheersen.",
+      "setup_fr": "2 couloirs parallèles sur 20 m. 3 joueurs par couloir. 1 ballon.",
+      "setup_nl": "2 parallelle corridors over 20 m. 3 spelers per corridor. 1 bal.",
+      "instructions_fr": [
+        "A1 (couloir gauche) envoie passe diagonale à B1 (couloir droit).",
+        "A1 court dans le couloir droit pour remplacer B1.",
+        "B1 contrôle, avance 5 m, passe diagonale à A2 (gauche).",
+        "Même principe, croisement continu.",
+        "Finir avec remise en 1 touche avant passe diagonale."
+      ],
+      "instructions_nl": [
+        "A1 (links) speelt diagonale pass naar B1 (rechts).",
+        "A1 loopt rechts om B1 te vervangen.",
+        "B1 controleert, loopt 5 m vooruit, diagonale pass naar A2 (links).",
+        "Zelfde principe, doorlopende kruising.",
+        "Afsluiten met 1-touch terugspelen voor diagonale pass."
+      ],
+      "variants_fr": [
+        "Imposer passe tendue au sol.",
+        "Limiter à 1 touche max."
+      ],
+      "variants_nl": [
+        "Verplicht strakke grondpass.",
+        "Beperk tot 1-touch."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Flow patterns",
+      "image_url": "exercises/te-10.png"
+    },
+    {
+      "id": "te-11",
+      "category": "technique",
+      "subcategory": "amorti",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "faible",
+      "title_fr": "Amorti aérien + passe",
+      "title_nl": "Luchtbal breken + pass",
+      "objective_fr": "Contrôle de la balle aérienne : cuisse, poitrine, semelle.",
+      "objective_nl": "Luchtbal onder controle brengen: dij, borst, zool.",
+      "setup_fr": "Paires à 5 m. Le serveur lance à la main, le receveur contrôle.",
+      "setup_nl": "Paren op 5 m. Bediener gooit met de hand, ontvanger controleert.",
+      "instructions_fr": [
+        "Contrôle de la cuisse (5 fois chaque jambe).",
+        "Contrôle de la poitrine (5 fois).",
+        "Contrôle semelle sur ballon demi-volée (5 fois chaque pied).",
+        "Variante : amorti + passe en 1 touche retour.",
+        "Finir par 1 amorti + contrôle orienté + passe."
+      ],
+      "instructions_nl": [
+        "Dijcontrole (5 x elk been).",
+        "Borstcontrole (5 x).",
+        "Zoolcontrole op halfvolley (5 x elke voet).",
+        "Variant: controle + 1-touch terug.",
+        "Afsluiten met controle + gerichte controle + pass."
+      ],
+      "variants_fr": [
+        "Ballon à différentes hauteurs : cuisse, poitrine, tête.",
+        "Servir en coup de pied aérien à 10 m."
+      ],
+      "variants_nl": [
+        "Bal op verschillende hoogtes: dij, borst, hoofd.",
+        "Bedien met getrapte luchtbal op 10 m."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.128",
+      "image_url": "exercises/te-11.png"
+    },
+    {
+      "id": "te-12",
+      "category": "technique",
+      "subcategory": "rapidité",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Conduite vitesse + finition",
+      "title_nl": "Dribbel op snelheid + afwerking",
+      "objective_fr": "Maîtriser la conduite à pleine vitesse sans perdre le contrôle avant finition.",
+      "objective_nl": "Dribbel op volle snelheid beheersen zonder controleverlies vóór afwerking.",
+      "setup_fr": "Gardien en place. Cône de départ à 18 m, zone de tir à 6 m. 2 files.",
+      "setup_nl": "Keeper staat. Startkegel op 18 m, schotzone op 6 m. 2 rijen.",
+      "instructions_fr": [
+        "Joueur part en conduite pleine vitesse du cône de départ.",
+        "Dernier appui à 6 m : frappe précise dans le coin opposé.",
+        "Varier pied fort / pied faible selon le côté de la file.",
+        "Après 3 passages, ajouter défenseur passif à 10 m du but.",
+        "Finir : 3 essais chronométrés, meilleur temps."
+      ],
+      "instructions_nl": [
+        "Speler vertrekt met volle snelheid vanaf startkegel.",
+        "Laatste steun op 6 m: geplaatst schot in tegenoverliggende hoek.",
+        "Afwisselen sterke/zwakke voet volgens kant van de rij.",
+        "Na 3 passages: passieve verdediger op 10 m van doel.",
+        "Afsluiten: 3 gechronometreerde pogingen, beste tijd."
+      ],
+      "variants_fr": [
+        "Ajouter 2 cônes à zigzaguer avant le tir.",
+        "Défenseur actif après cônes."
+      ],
+      "variants_nl": [
+        "Voeg 2 slalomkegels toe voor het schot.",
+        "Actieve verdediger na kegels."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Finishing drills",
+      "image_url": "exercises/te-12.png"
+    },
+    {
+      "id": "te-13",
+      "category": "technique",
+      "subcategory": "tête et volée",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Volée + tête (reprise aérienne)",
+      "title_nl": "Volley + kopstoot (luchtspel)",
+      "objective_fr": "Timing du saut ou de la reprise volée sur centre bas ou aérien.",
+      "objective_nl": "Timing van sprong of volley op laag of hoog voorzet.",
+      "setup_fr": "Centreur sur aile, attaquant à 8 m du but. Gardien en place.",
+      "setup_nl": "Voorzetter op vleugel, aanvaller op 8 m van doel. Keeper staat.",
+      "instructions_fr": [
+        "Centre mi-hauteur : reprise de volée pied fort.",
+        "Centre aérien : tête plongeante ou piquée.",
+        "Centre au sol : reprise 1 touche intérieur.",
+        "Alterner entrée côté gauche / droit.",
+        "10 répétitions par type, changer les rôles."
+      ],
+      "instructions_nl": [
+        "Halfhoge voorzet: volley met sterke voet.",
+        "Luchtvoorzet: duikkop of gerichte kopstoot.",
+        "Grondpass: 1-touch met binnenkant.",
+        "Afwisselen links/rechts inkomen.",
+        "10 herhalingen per type, rollen wisselen."
+      ],
+      "variants_fr": [
+        "Défenseur qui suit l'attaquant en marquage.",
+        "Centre après dribble + feinte."
+      ],
+      "variants_nl": [
+        "Verdediger volgt aanvaller in dekking.",
+        "Voorzet na dribbel + schijnbeweging."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.136",
+      "image_url": "exercises/te-13.png"
+    },
+    {
+      "id": "te-14",
+      "category": "technique",
+      "subcategory": "1c1 technique",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "élevée",
+      "title_fr": "1v1 carré technique",
+      "title_nl": "1v1 technisch vierkant",
+      "objective_fr": "Gagner 1v1 dans zone restreinte, répertoire de feintes, protection de balle.",
+      "objective_nl": "1v1 winnen in beperkte zone, schijnbewegingen, afschermen bal.",
+      "setup_fr": "Carré 8×8 m. Porteur attaque, défenseur défend. Joueur marque en franchissant la ligne opposée.",
+      "setup_nl": "Vierkant 8×8 m. Balbezitter valt aan, verdediger verdedigt. Punt bij lijn overkant doorkruisen.",
+      "instructions_fr": [
+        "1v1 en 20 s max. But : franchir ligne opposée avec ballon sous contrôle.",
+        "Alterner rôles après chaque duel.",
+        "Imposer 1 feinte minimum par attaque.",
+        "Ajouter règle : 2 duels, changement de partenaire.",
+        "Compter les réussites par joueur."
+      ],
+      "instructions_nl": [
+        "1v1 in max 20 s. Doel: lijn overkant doorkruisen met bal.",
+        "Rolwissel na elk duel.",
+        "Verplicht min 1 schijnbeweging per aanval.",
+        "Regel: 2 duels, dan partner wisselen.",
+        "Succeskansen per speler tellen."
+      ],
+      "variants_fr": [
+        "Ajouter zone but 1 m devant la ligne pour récompenser tir.",
+        "Terminer duel par passe à un appui extérieur."
+      ],
+      "variants_nl": [
+        "Doelzone 1 m voor lijn om schot te belonen.",
+        "Duel afsluiten met pass naar externe steunspeler."
+      ],
+      "source": "RFEF Escuela — Duels individuels",
+      "image_url": "exercises/te-14.png"
+    },
+    {
+      "id": "te-15",
+      "category": "technique",
+      "subcategory": "passe à travers",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Passe dans le dos (fente)",
+      "title_nl": "Pass in de rug (gap)",
+      "objective_fr": "Exécution et timing de la passe entre deux défenseurs + appel dans l'espace.",
+      "objective_nl": "Uitvoering en timing van pass tussen 2 verdedigers + inlopen in ruimte.",
+      "setup_fr": "2 cônes espacés de 3 m (fente). Porteur à 6 m en amont, receveur en appel à 5 m en aval.",
+      "setup_nl": "2 kegels 3 m uit elkaar (gap). Balbezitter 6 m ervoor, ontvanger 5 m erna in inloop.",
+      "instructions_fr": [
+        "Porteur contrôle et passe entre les 2 cônes.",
+        "Receveur lance son appel au moment de la passe (pas avant).",
+        "Réception, contrôle en mouvement, tir ou passe retour.",
+        "Rotation : receveur devient porteur.",
+        "Ajouter 2 défenseurs passifs positionnés aux cônes."
+      ],
+      "instructions_nl": [
+        "Balbezitter controleert en speelt pass tussen de 2 kegels.",
+        "Ontvanger loopt pas in op moment van pass (niet eerder).",
+        "Ontvangst in beweging, schot of terugpass.",
+        "Rotatie: ontvanger wordt balbezitter.",
+        "Voeg 2 passieve verdedigers toe bij kegels."
+      ],
+      "variants_fr": [
+        "Défenseurs actifs qui serrent la fente.",
+        "Multi-fentes : 3 passages consécutifs à enchaîner."
+      ],
+      "variants_nl": [
+        "Actieve verdedigers die gap sluiten.",
+        "Multi-gaps: 3 opeenvolgende pogingen."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Penetration passing",
+      "image_url": "exercises/te-15.png"
+    },
+    {
+      "id": "ta-01",
+      "category": "tactique",
+      "subcategory": "rotation",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Rotation en losange (quadrado)",
+      "title_nl": "Rotatie in ruit (quadrado)",
+      "objective_fr": "Principe de rotation futsal : le porteur conduit, un partenaire décroche, un autre s'élance.",
+      "objective_nl": "Futsal-rotatieprincipe: balbezitter dribbelt, één medespeler zakt in, ander start door.",
+      "setup_fr": "4 joueurs en losange (12 m de côté). 1 ballon.",
+      "setup_nl": "4 spelers in ruit (12 m zijde). 1 bal.",
+      "instructions_fr": [
+        "Porteur conduit vers un coéquipier.",
+        "Coéquipier décroche, donne passe en mouvement.",
+        "Il remplace la position du porteur.",
+        "Le porteur prend sa nouvelle position et relance.",
+        "Toutes les 90 s, changer sens de rotation."
+      ],
+      "instructions_nl": [
+        "Balbezitter dribbelt naar medespeler.",
+        "Medespeler zakt in, speelt pass in beweging.",
+        "Hij vervangt positie van balbezitter.",
+        "Balbezitter neemt nieuwe positie en vervolgt.",
+        "Elke 90 s: richting wisselen."
+      ],
+      "variants_fr": [
+        "Ajouter 2 défenseurs passifs au centre.",
+        "Imposer 2 touches max."
+      ],
+      "variants_nl": [
+        "2 passieve verdedigers in het midden.",
+        "Max 2 contacten."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.148",
+      "image_url": "exercises/ta-01.png"
+    },
+    {
+      "id": "ta-02",
+      "category": "tactique",
+      "subcategory": "2c1",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "2v1 + finition",
+      "title_nl": "2v1 + afwerking",
+      "objective_fr": "Décision 2v1 : fixer le défenseur, passe ou dribble, finition.",
+      "objective_nl": "Beslissing 2v1: verdediger fixeren, pass of dribbel, afwerking.",
+      "setup_fr": "Gardien en place. 2 attaquants à 20 m du but, 1 défenseur à 12 m. Zone tir à 6 m.",
+      "setup_nl": "Keeper staat. 2 aanvallers op 20 m van doel, 1 verdediger op 12 m. Schotzone op 6 m.",
+      "instructions_fr": [
+        "Porteur attaque, partenaire en appui lointain ou croisé.",
+        "Principe : fixer le défenseur 2-3 m avant d'agir.",
+        "Si défenseur ferme passe → dribble ou frappe.",
+        "Si défenseur ferme conduite → passe puis appel diagonal.",
+        "8 répétitions par attaquant, rotation avec le défenseur."
+      ],
+      "instructions_nl": [
+        "Balbezitter valt aan, medespeler diepte of kruising.",
+        "Principe: verdediger 2-3 m fixeren voor actie.",
+        "Als verdediger pass afsluit → dribbel of schot.",
+        "Als verdediger dribbel afsluit → pass dan diagonaal inlopen.",
+        "8 herhalingen per aanvaller, rotatie met verdediger."
+      ],
+      "variants_fr": [
+        "Défenseur démarre 2 m derrière pour simuler transition.",
+        "Limiter à 5 s pour frapper."
+      ],
+      "variants_nl": [
+        "Verdediger start 2 m achter om transitie te simuleren.",
+        "Beperk tot 5 s voor schot."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.156",
+      "image_url": "exercises/ta-02.png"
+    },
+    {
+      "id": "ta-03",
+      "category": "tactique",
+      "subcategory": "3c2",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "élevée",
+      "title_fr": "3v2 largeur-profondeur",
+      "title_nl": "3v2 breedte-diepte",
+      "objective_fr": "Utiliser largeur et profondeur en supériorité, timing des appels.",
+      "objective_nl": "Breedte en diepte benutten bij overtal, timing van inlopen.",
+      "setup_fr": "Demi-terrain. 3 attaquants, 2 défenseurs, 1 gardien. Zone départ au milieu.",
+      "setup_nl": "Halve veld. 3 aanvallers, 2 verdedigers, 1 keeper. Startzone in midden.",
+      "instructions_fr": [
+        "Les 3 attaquants partent en triangle : 1 au centre, 2 aux ailes.",
+        "Les ailiers fixent les défenseurs sur leur couloir.",
+        "Le central crée décalages par conduite ou passe.",
+        "Finition : passe latérale + appel second poteau.",
+        "Tour 1 : jeu libre. Tour 2 : 2 passes max avant tir."
+      ],
+      "instructions_nl": [
+        "3 aanvallers in driehoek: 1 centraal, 2 op vleugels.",
+        "Vleugelspelers fixeren verdedigers op hun kant.",
+        "Middenspeler creëert ruimte door dribbel of pass.",
+        "Afwerking: zijpass + inlopen tweede paal.",
+        "Ronde 1: vrij spel. Ronde 2: max 2 passes voor schot."
+      ],
+      "variants_fr": [
+        "Défenseurs + GK démarrent en transition (course retour).",
+        "Imposer finition en 1 touche."
+      ],
+      "variants_nl": [
+        "Verdedigers + keeper starten in transitie (terugloop).",
+        "Verplicht 1-touch afwerking."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.7",
+      "image_url": "exercises/ta-03.png"
+    },
+    {
+      "id": "ta-04",
+      "category": "tactique",
+      "subcategory": "bloc défensif",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "Bloc 2-2 organisation",
+      "title_nl": "Blok 2-2 organisatie",
+      "objective_fr": "Coordination bloc défensif à 4 joueurs : distances, couvertures, orientation.",
+      "objective_nl": "Coördinatie 4-mans verdedigingsblok: afstanden, dekking, oriëntatie.",
+      "setup_fr": "Terrain complet ou moitié. 4 défenseurs en 2-2. 4 attaquants + gardien.",
+      "setup_nl": "Volledig veld of helft. 4 verdedigers in 2-2. 4 aanvallers + keeper.",
+      "instructions_fr": [
+        "Les 4 défenseurs se placent en 2-2, distances 4-6 m entre joueurs.",
+        "Règle : quand porteur franchit médiane, toute la ligne coulisse.",
+        "Quand ballon à l'aile : bloc se décale du côté du ballon.",
+        "Pression sur porteur, couverture du défenseur le plus proche.",
+        "Changer les rôles après 3 min."
+      ],
+      "instructions_nl": [
+        "4 verdedigers in 2-2, 4-6 m tussen spelers.",
+        "Regel: zodra balbezitter midlijn overschrijdt, hele linie schuift.",
+        "Bal op vleugel: blok schuift naar balkant.",
+        "Druk op balbezitter, dekking dichtste verdediger.",
+        "Rolwissel na 3 min."
+      ],
+      "variants_fr": [
+        "Limiter attaquants à 3 touches max.",
+        "Coach scanne attaques pour noter distances entre défenseurs."
+      ],
+      "variants_nl": [
+        "Aanvallers max 3 contacten.",
+        "Coach scant aanvallen om afstanden te noteren."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.168",
+      "image_url": "exercises/ta-04.png"
+    },
+    {
+      "id": "ta-05",
+      "category": "tactique",
+      "subcategory": "pressing",
+      "age_range": "U15-Senior",
+      "duration": 12,
+      "players_min": 10,
+      "intensity": "élevée",
+      "title_fr": "Pressing haut 4v4 + GK",
+      "title_nl": "Hoge druk 4v4 + GK",
+      "objective_fr": "Mettre en place le pressing coordonné en phase de relance adverse.",
+      "objective_nl": "Gecoördineerde druk bij tegenstander-opbouw instellen.",
+      "setup_fr": "Terrain complet. 2 équipes 4+1. Relance démarre sur gardien.",
+      "setup_nl": "Volledig veld. 2 teams 4+1. Opbouw start bij keeper.",
+      "instructions_fr": [
+        "Équipe en défense démarre relance sur son GK.",
+        "Équipe en pressing déclenche dès que GK touche ballon.",
+        "Attaquant le plus proche oriente la relance côté faible.",
+        "Les 3 autres ferment lignes de passes adjacentes.",
+        "Objectif : récupérer dans les 10 s ou contraindre sortie en touche."
+      ],
+      "instructions_nl": [
+        "Verdedigend team start opbouw bij keeper.",
+        "Drukkend team start druk zodra keeper bal raakt.",
+        "Dichtste aanvaller dwingt opbouw naar zwakke kant.",
+        "3 anderen sluiten aangrenzende pasopties.",
+        "Doel: balrecuperatie binnen 10 s of bal uit spel dwingen."
+      ],
+      "variants_fr": [
+        "Récupération haute = 2 points, but classique = 1 point.",
+        "GK doit jouer 1 touche maximum."
+      ],
+      "variants_nl": [
+        "Hoge balrecuperatie = 2 punten, gewoon doelpunt = 1 punt.",
+        "Keeper 1-touch verplicht."
+      ],
+      "source": "RFEF — Presión coordinada en fútbol sala",
+      "image_url": "exercises/ta-05.png"
+    },
+    {
+      "id": "ta-06",
+      "category": "tactique",
+      "subcategory": "bloc médian",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "Bloc médian 1-2-1",
+      "title_nl": "Middenblok 1-2-1",
+      "objective_fr": "Bloc médian compact, oblige l'adversaire à jouer sur les côtés.",
+      "objective_nl": "Compact middenblok, dwingt tegenstander naar de kanten.",
+      "setup_fr": "Terrain complet. 1 pivot, 2 ailes, 1 fixo + gardien côté défense. 4 attaquants.",
+      "setup_nl": "Volledig veld. 1 pivot, 2 vleugels, 1 fixo + keeper. 4 aanvallers.",
+      "instructions_fr": [
+        "Bloc 1-2-1 se place à 15 m du but.",
+        "Fixo oriente, les 2 ailes verrouillent couloirs, pivot harcèle.",
+        "Règle de sortie : 1 défenseur maximum franchit la ligne du bloc.",
+        "Si pas de pression efficace, repli en bloc bas.",
+        "Après récupération → contre-attaque directe."
+      ],
+      "instructions_nl": [
+        "Blok 1-2-1 staat op 15 m van doel.",
+        "Fixo dirigeert, 2 vleugels sluiten kanten, pivot hindert.",
+        "Uittredingsregel: max 1 verdediger voorbij blok.",
+        "Geen effectieve druk → terug in laag blok.",
+        "Na recuperatie → directe counter."
+      ],
+      "variants_fr": [
+        "Ajouter règle : passe à travers bloc = but automatique pour attaque.",
+        "Chronométrer durée de possession adverse."
+      ],
+      "variants_nl": [
+        "Regel: pass door blok = automatisch doelpunt voor aanval.",
+        "Duur balbezit tegenstander chronometreren."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.178",
+      "image_url": "exercises/ta-06.png"
+    },
+    {
+      "id": "ta-07",
+      "category": "tactique",
+      "subcategory": "transition",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "élevée",
+      "title_fr": "Transition 4v4 → 4v3",
+      "title_nl": "Transitie 4v4 → 4v3",
+      "objective_fr": "Réagir rapidement à une perte/récupération pour basculer attaque-défense.",
+      "objective_nl": "Snel reageren bij balverlies/recuperatie voor omschakeling.",
+      "setup_fr": "Terrain complet. 2 équipes de 4 + gardiens. Coach sert le ballon à n'importe quelle équipe.",
+      "setup_nl": "Volledig veld. 2 teams van 4 + keepers. Coach bedient willekeurig team.",
+      "instructions_fr": [
+        "Au signal, coach distribue à une équipe.",
+        "Équipe en possession a 10 s pour attaquer, l'autre 1 joueur en moins.",
+        "Au but, perte ou 10 s, nouveau service côté adverse.",
+        "Accent : premier joueur revient au pressing, le reste replie.",
+        "3 blocs de 3 min, 1 min récupération."
+      ],
+      "instructions_nl": [
+        "Op signaal bedient coach een team.",
+        "Balbezittend team heeft 10 s, ander 1 speler minder.",
+        "Bij doelpunt, verlies of 10 s: nieuwe bediening ander team.",
+        "Accent: eerste speler terug in druk, rest zakt in.",
+        "3 blokken van 3 min, 1 min herstel."
+      ],
+      "variants_fr": [
+        "Ajouter règle : 1ere passe obligatoirement vers l'avant.",
+        "Après 5 s, joueur manquant rentre en jeu."
+      ],
+      "variants_nl": [
+        "Regel: eerste pass verplicht naar voren.",
+        "Na 5 s: ontbrekende speler komt erbij."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.184",
+      "image_url": "exercises/ta-07.png"
+    },
+    {
+      "id": "ta-08",
+      "category": "tactique",
+      "subcategory": "supériorité numérique",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 7,
+      "intensity": "élevée",
+      "title_fr": "4v3 maintien supériorité",
+      "title_nl": "4v3 overtal behouden",
+      "objective_fr": "Conserver l'avantage numérique : positionnement en losange, passes rapides.",
+      "objective_nl": "Overtal behouden: ruitpositionering, snelle passes.",
+      "setup_fr": "Demi-terrain. 4 attaquants vs 3 défenseurs + GK. Zone de tir 12 m.",
+      "setup_nl": "Halve veld. 4 aanvallers vs 3 verdedigers + GK. Schotzone 12 m.",
+      "instructions_fr": [
+        "Losange : 1 derrière, 2 côtés, 1 pivot.",
+        "Passe rapide pour trouver le joueur libre.",
+        "Principe : fixer 2 défenseurs pour créer 2v1 latéral.",
+        "Finition obligatoire en moins de 15 s.",
+        "Variante : 1 attaquant ne peut pas être en zone de tir."
+      ],
+      "instructions_nl": [
+        "Ruit: 1 achter, 2 zijkanten, 1 pivot.",
+        "Snelle pass om vrije speler te vinden.",
+        "Principe: 2 verdedigers fixeren om lateraal 2v1 te creëren.",
+        "Afwerking verplicht in <15 s.",
+        "Variant: 1 aanvaller mag niet in schotzone."
+      ],
+      "variants_fr": [
+        "Réduire 4v3 → 5v4 pour tester supériorité en densité.",
+        "Imposer 1 passe minimum avant frappe."
+      ],
+      "variants_nl": [
+        "Verklein 4v3 → 5v4 om dichtheid te testen.",
+        "Verplicht min. 1 pass voor schot."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.8",
+      "image_url": "exercises/ta-08.png"
+    },
+    {
+      "id": "ta-09",
+      "category": "tactique",
+      "subcategory": "infériorité",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 7,
+      "intensity": "élevée",
+      "title_fr": "3v4 défense infériorité",
+      "title_nl": "3v4 verdediging in ondertal",
+      "objective_fr": "Tenir en infériorité : zone, couverture, fermer axe, retarder l'action.",
+      "objective_nl": "Ondertal standhouden: zone, dekking, as sluiten, actie vertragen.",
+      "setup_fr": "Demi-terrain. 3 défenseurs + GK vs 4 attaquants. Attaquants partent à 20 m.",
+      "setup_nl": "Halve veld. 3 verdedigers + GK vs 4 aanvallers. Aanvallers starten op 20 m.",
+      "instructions_fr": [
+        "Défenseurs en triangle compact, sommet le plus haut.",
+        "Ne jamais sortir 2 défenseurs simultanément.",
+        "Forcer l'attaquant sur son pied faible ou latéral.",
+        "Gardien sort pour couper passe en profondeur.",
+        "Objectif : tenir 15 s sans but ou forcer erreur."
+      ],
+      "instructions_nl": [
+        "Verdedigers in compacte driehoek, punt vooraan.",
+        "Nooit 2 verdedigers tegelijk uitbreken.",
+        "Aanvaller dwingen op zwakke voet of flank.",
+        "Keeper komt uit om diepe pass te onderscheppen.",
+        "Doel: 15 s standhouden zonder doelpunt of fout afdwingen."
+      ],
+      "variants_fr": [
+        "Si défenseurs tiennent 20 s → 1 défenseur entre (égalité numérique).",
+        "Noter les récupérations par type (interception, duel, tacle)."
+      ],
+      "variants_nl": [
+        "Als verdedigers 20 s standhouden → 1 verdediger erbij (gelijk aantal).",
+        "Recuperaties noteren per type (onderschepping, duel, tackle)."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.192",
+      "image_url": "exercises/ta-09.png"
+    },
+    {
+      "id": "ta-10",
+      "category": "tactique",
+      "subcategory": "bloc bas",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "Bloc bas 4v4 + GK",
+      "title_nl": "Laag blok 4v4 + GK",
+      "objective_fr": "Tenir dans les 10 derniers mètres, fermer les espaces clés, encaisser pression.",
+      "objective_nl": "Laatste 10 m standhouden, sleutelruimtes afsluiten, druk opvangen.",
+      "setup_fr": "Demi-terrain. Défenseurs en bloc bas à 8 m du but. Attaquants partent à 18 m.",
+      "setup_nl": "Halve veld. Verdedigers in laag blok op 8 m van doel. Aanvallers starten op 18 m.",
+      "instructions_fr": [
+        "Défenseurs en ligne 4, distance 3 m entre chacun.",
+        "Centre du terrain occupé en priorité, couloirs secondaires.",
+        "Gardien en ligne avec défenseurs sur ballon aérien.",
+        "Les 4 ne sortent jamais tous simultanément.",
+        "Récupération = sortie rapide en contre."
+      ],
+      "instructions_nl": [
+        "Verdedigers op lijn 4, 3 m tussenruimte.",
+        "Centrale zone prioriteit, vleugels secundair.",
+        "Keeper op lijn met verdedigers bij luchtbal.",
+        "Niet alle 4 tegelijk eruit.",
+        "Recuperatie = snelle uitbraak in counter."
+      ],
+      "variants_fr": [
+        "Ajouter règle : attaque limitée à 30 s.",
+        "Coach donne un score à atteindre (ex. 3 buts en 5 min)."
+      ],
+      "variants_nl": [
+        "Regel: aanval beperkt tot 30 s.",
+        "Coach geeft doelscore (bv. 3 doelpunten in 5 min)."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.8 Low block",
+      "image_url": "exercises/ta-10.png"
+    },
+    {
+      "id": "ta-11",
+      "category": "tactique",
+      "subcategory": "para",
+      "age_range": "U15-Senior",
+      "duration": 12,
+      "players_min": 10,
+      "intensity": "moyenne",
+      "title_fr": "Para (pick & roll futsal)",
+      "title_nl": "Para (pick & roll futsal)",
+      "objective_fr": "Exécuter un blocage-roulé : poser écran puis rouler vers but ou espace.",
+      "objective_nl": "Blok-en-rol uitvoeren: scherm zetten dan draaien naar doel of ruimte.",
+      "setup_fr": "Demi-terrain. 2 attaquants vs 2 défenseurs + GK. Coach sert ballon à l'un.",
+      "setup_nl": "Halve veld. 2 aanvallers vs 2 verdedigers + GK. Coach bedient één speler.",
+      "instructions_fr": [
+        "Attaquant A a le ballon, B vient poser écran sur D1.",
+        "A utilise l'écran pour conduire ou passer.",
+        "B se retourne (roll) en appel dans l'espace libre.",
+        "Défenseur D1 doit annoncer switch ou contourner.",
+        "3 répétitions par côté, rotation A/B."
+      ],
+      "instructions_nl": [
+        "A heeft bal, B komt scherm zetten op D1.",
+        "A gebruikt scherm om te dribbelen of passen.",
+        "B draait (roll) in vrije ruimte.",
+        "D1 moet 'switch' roepen of omzeilen.",
+        "3 herhalingen per kant, rotatie A/B."
+      ],
+      "variants_fr": [
+        "Imposer finition en 2 passes max.",
+        "Défenseurs consigne : pas de switch, forcer contournement."
+      ],
+      "variants_nl": [
+        "Afwerking in max 2 passes.",
+        "Verdedigers opdracht: geen switch, rond scherm lopen."
+      ],
+      "source": "RFEF — Sistema de juego 'Para' en fútbol sala",
+      "image_url": "exercises/ta-11.png"
+    },
+    {
+      "id": "ta-12",
+      "category": "tactique",
+      "subcategory": "sortie de pressing",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 9,
+      "intensity": "moyenne",
+      "title_fr": "Relance sous pression (4v3)",
+      "title_nl": "Opbouw onder druk (4v3)",
+      "objective_fr": "Construire proprement en zone basse face à un pressing haut.",
+      "objective_nl": "Zuiver opbouwen in achterhoede onder hoge druk.",
+      "setup_fr": "Demi-terrain. 4 relanceurs + GK, 3 presseurs. Objectif = franchir ligne à 25 m.",
+      "setup_nl": "Halve veld. 4 opbouwers + GK, 3 drukzetters. Doel = lijn op 25 m passeren.",
+      "instructions_fr": [
+        "Relance démarre sur GK.",
+        "Créer 2 lignes : 1 appui court (pivot qui décroche), 1 appui profond.",
+        "Principe : passer sur le joueur libre, orienter pour progression.",
+        "Un appui doit toujours se proposer derrière le ballon.",
+        "Variante : imposer 1 passe sur GK avant la ligne."
+      ],
+      "instructions_nl": [
+        "Opbouw start bij keeper.",
+        "2 lijnen creëren: 1 korte steun (pivot inzakt), 1 diepe steun.",
+        "Principe: pass naar vrije speler, oriënteren op progressie.",
+        "Altijd 1 steun achter bal.",
+        "Variant: verplicht 1 pass naar keeper vóór lijn passeren."
+      ],
+      "variants_fr": [
+        "Relance en 6 s max.",
+        "Presseurs deviennent 4 (égalité) si 1 passe manquée."
+      ],
+      "variants_nl": [
+        "Opbouw in max 6 s.",
+        "Drukzetters worden 4 (gelijk) na 1 gemiste pass."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.202",
+      "image_url": "exercises/ta-12.png"
+    },
+    {
+      "id": "ta-13",
+      "category": "tactique",
+      "subcategory": "pivot",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 7,
+      "intensity": "moyenne",
+      "title_fr": "Jeu avec pivot — remise",
+      "title_nl": "Pivotspel — terugkaatsen",
+      "objective_fr": "Utiliser le pivot fixe comme point d'appui offensif, remise + tir.",
+      "objective_nl": "Vaste pivot gebruiken als aanvalssteun, terugleggen + schot.",
+      "setup_fr": "Demi-terrain. Pivot à 8 m du but, 3 joueurs en ligne à 18 m + GK.",
+      "setup_nl": "Halve veld. Pivot op 8 m van doel, 3 spelers op lijn op 18 m + GK.",
+      "instructions_fr": [
+        "Un joueur de la ligne passe au pivot.",
+        "Pivot remise en 1 touche à un autre appui entrant.",
+        "Celui-ci fait 1 passe ou frappe directement.",
+        "Varier : remise à gauche, remise à droite.",
+        "Rotation du pivot toutes les 2 min."
+      ],
+      "instructions_nl": [
+        "Een speler uit de lijn speelt naar pivot.",
+        "Pivot legt 1-touch terug op andere inkomende steun.",
+        "Die speelt 1 pass of schiet direct.",
+        "Afwisselen: links, rechts terugleggen.",
+        "Rotatie pivot elke 2 min."
+      ],
+      "variants_fr": [
+        "Ajouter défenseur sur pivot.",
+        "Imposer finition en 1 touche."
+      ],
+      "variants_nl": [
+        "Verdediger op pivot.",
+        "Verplicht 1-touch afwerking."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.7",
+      "image_url": "exercises/ta-13.png"
+    },
+    {
+      "id": "ta-14",
+      "category": "tactique",
+      "subcategory": "circulation",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "Circulation 3-1 sans tir",
+      "title_nl": "Circulatie 3-1 zonder schot",
+      "objective_fr": "Circulation longue du ballon pour déstabiliser et étirer la défense.",
+      "objective_nl": "Lange circulatie om defensie te destabiliseren en uit elkaar te trekken.",
+      "setup_fr": "Demi-terrain. 4 attaquants en 3-1 (3 en ligne + pivot). 4 défenseurs.",
+      "setup_nl": "Halve veld. 4 aanvallers in 3-1 (3 op lijn + pivot). 4 verdedigers.",
+      "instructions_fr": [
+        "But interdit pendant 60 s, obligation de faire 10 passes.",
+        "Pivot doit recevoir et remiser 3 fois par série.",
+        "Changement d'aile obligatoire toutes les 5 passes.",
+        "Après 10 passes et 3 remises → tir autorisé.",
+        "Rotation des rôles toutes les 2 min."
+      ],
+      "instructions_nl": [
+        "Schot verboden gedurende 60 s, 10 passes verplicht.",
+        "Pivot moet 3x ontvangen + terugleggen per serie.",
+        "Vleugelwissel elke 5 passes.",
+        "Na 10 passes en 3 terugleggingen → schot toegestaan.",
+        "Rolwissel elke 2 min."
+      ],
+      "variants_fr": [
+        "Pivot seul autorisé à marquer.",
+        "Ajouter 1 joker neutre pour fluidifier."
+      ],
+      "variants_nl": [
+        "Alleen pivot mag scoren.",
+        "Voeg 1 neutrale joker toe voor vloeibaarheid."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.212",
+      "image_url": "exercises/ta-14.png"
+    },
+    {
+      "id": "ta-15",
+      "category": "tactique",
+      "subcategory": "GK joueur",
+      "age_range": "U15-Senior",
+      "duration": 10,
+      "players_min": 10,
+      "intensity": "élevée",
+      "title_fr": "Power play (GK joueur)",
+      "title_nl": "Power play (keeper als veldspeler)",
+      "objective_fr": "Attaquer en 5v4 avec gardien volant, maintenir supériorité positionnelle.",
+      "objective_nl": "Aanvallen in 5v4 met vliegende keeper, positioneel overtal behouden.",
+      "setup_fr": "Demi-terrain. 5 attaquants (GK inclus remplaçant un joueur) vs 4 défenseurs + GK adverse.",
+      "setup_nl": "Halve veld. 5 aanvallers (keeper als veldspeler) vs 4 verdedigers + tegenkeeper.",
+      "instructions_fr": [
+        "Disposition : 4 à l'extérieur + GK en appui au centre.",
+        "Circulation rapide, minimum 6 passes avant tir.",
+        "Trouver tir à l'entrée de zone sur joueur démarqué.",
+        "Si récupération adverse, GK doit revenir son but en sprint.",
+        "Durée : 4 blocs de 2 min avec récupération."
+      ],
+      "instructions_nl": [
+        "Opstelling: 4 buiten + keeper als steun centraal.",
+        "Snelle circulatie, min 6 passes voor schot.",
+        "Zoek schot aan rand zone op vrije speler.",
+        "Bij balverlies: keeper sprint terug naar eigen doel.",
+        "Duur: 4 blokken van 2 min met herstel."
+      ],
+      "variants_fr": [
+        "Imposer tir depuis le 6e mètre uniquement.",
+        "Défenseurs marquent 2 points si ils marquent dans le but vide."
+      ],
+      "variants_nl": [
+        "Schot alleen vanaf 6m+.",
+        "Verdedigers krijgen 2 punten bij doelpunt in leeg doel."
+      ],
+      "source": "RFEF / UEFA — Power play tactical framework",
+      "image_url": "exercises/ta-15.png"
+    },
+    {
+      "id": "sg-01",
+      "category": "ssg",
+      "subcategory": "possession",
+      "age_range": "U11-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "4v4 en 3 zones",
+      "title_nl": "4v4 in 3 zones",
+      "objective_fr": "Développer circulation par zones, traverser le bloc adverse.",
+      "objective_nl": "Circulatie per zone, tegenstanderblok doorkruisen.",
+      "setup_fr": "Terrain divisé en 3 zones (10-20-10 m). 2 équipes de 4. Pas de gardien.",
+      "setup_nl": "Veld in 3 zones (10-20-10 m). 2 teams van 4. Geen keeper.",
+      "instructions_fr": [
+        "Pour marquer : franchir les 3 zones avec le ballon.",
+        "Max 3 joueurs d'une équipe par zone.",
+        "1 point : 6 passes consécutives dans 2 zones différentes.",
+        "Au signal coach, changer d'équipe en possession.",
+        "Durée : 3 blocs de 4 min, 1 min pause."
+      ],
+      "instructions_nl": [
+        "Om te scoren: 3 zones met bal doorkruisen.",
+        "Max 3 spelers van een team per zone.",
+        "1 punt: 6 opeenvolgende passes in 2 verschillende zones.",
+        "Op signaal coach: balbezit wisselen.",
+        "Duur: 3 blokken van 4 min, 1 min pauze."
+      ],
+      "variants_fr": [
+        "Ajouter 2 mini-buts à chaque extrémité.",
+        "Interdire retour vers sa zone de départ."
+      ],
+      "variants_nl": [
+        "Voeg 2 minidoeltjes toe aan elk uiteinde.",
+        "Terugpass naar beginzone verboden."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), ch.9 SSG",
+      "image_url": "exercises/sg-01.png"
+    },
+    {
+      "id": "sg-02",
+      "category": "ssg",
+      "subcategory": "multi-buts",
+      "age_range": "U11-U17",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "élevée",
+      "title_fr": "4v4 quatre mini-buts",
+      "title_nl": "4v4 vier minidoelen",
+      "objective_fr": "Changer d'orientation rapidement, identifier le but libre.",
+      "objective_nl": "Snel wisselen van oriëntatie, vrij doel herkennen.",
+      "setup_fr": "Demi-terrain. 4 mini-buts : 2 à chaque extrémité, décalés sur largeur.",
+      "setup_nl": "Halve veld. 4 minidoeltjes: 2 aan elk uiteinde, verspreid over breedte.",
+      "instructions_fr": [
+        "Chaque équipe attaque 2 mini-buts opposés.",
+        "Changer de but offensif après chaque but marqué.",
+        "Pas de gardien, tirs autorisés à partir de 5 m.",
+        "Objectif : scanner la situation pour choisir but libre.",
+        "3 blocs de 3 min."
+      ],
+      "instructions_nl": [
+        "Elk team valt 2 minidoeltjes aan de overkant aan.",
+        "Na elk doelpunt: wissel doel.",
+        "Geen keeper, schot toegestaan vanaf 5 m.",
+        "Doel: situatie scannen en vrij doel kiezen.",
+        "3 blokken van 3 min."
+      ],
+      "variants_fr": [
+        "Ajouter règle : tir 1 touche uniquement.",
+        "Bonus : but avec passe décisive adverse = 2 points."
+      ],
+      "variants_nl": [
+        "Regel: 1-touch schot verplicht.",
+        "Bonus: doelpunt na pass op andere kant = 2 punten."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), SSG library",
+      "image_url": "exercises/sg-02.png"
+    },
+    {
+      "id": "sg-03",
+      "category": "ssg",
+      "subcategory": "transition",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 10,
+      "intensity": "élevée",
+      "title_fr": "3v3 + 2 jokers neutres",
+      "title_nl": "3v3 + 2 neutrale jokers",
+      "objective_fr": "Jouer en supériorité offensive permanente, exploiter les jokers.",
+      "objective_nl": "Permanente offensieve overmacht, jokers uitbuiten.",
+      "setup_fr": "Terrain complet. 3v3 + 2 jokers qui jouent toujours avec l'équipe en possession. Gardiens.",
+      "setup_nl": "Volledig veld. 3v3 + 2 jokers altijd met balbezittend team. Keepers.",
+      "instructions_fr": [
+        "5 joueurs attaquent (3 + 2 jokers), 3 défenseurs.",
+        "Jokers limités à 2 touches pour éviter monopolisation.",
+        "À la perte, jokers changent de camp (maintien supériorité pour nouvelle équipe en attaque).",
+        "Objectif : finir en moins de 12 s.",
+        "Bloc 4 min, 2 min pause, répéter 3x."
+      ],
+      "instructions_nl": [
+        "5 aanvallers (3 + 2 jokers), 3 verdedigers.",
+        "Jokers max 2 contacten om monopolie te vermijden.",
+        "Bij balverlies: jokers wisselen (overmacht behouden voor nieuwe aanvaller).",
+        "Doel: afwerken in <12 s.",
+        "Blok 4 min, 2 min pauze, 3 herhalingen."
+      ],
+      "variants_fr": [
+        "Réduire jokers à 1 seul.",
+        "Imposer : 1 joker côté droit, 1 joker côté gauche."
+      ],
+      "variants_nl": [
+        "Verminder naar 1 joker.",
+        "Regel: 1 joker rechts, 1 joker links."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.9",
+      "image_url": "exercises/sg-03.png"
+    },
+    {
+      "id": "sg-04",
+      "category": "ssg",
+      "subcategory": "blitz",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 10,
+      "intensity": "élevée",
+      "title_fr": "5v5 blitz 60 secondes",
+      "title_nl": "5v5 blitz 60 seconden",
+      "objective_fr": "Intensité maximale, gestion effort court, transitions permanentes.",
+      "objective_nl": "Maximale intensiteit, korte inspanning, continue omschakeling.",
+      "setup_fr": "Terrain complet. 2 équipes de 5 (+ gardien). Temps fort et court.",
+      "setup_nl": "Volledig veld. 2 teams van 5 (+ keeper). Korte intense blokken.",
+      "instructions_fr": [
+        "Jeu 5v5 classique, durée 60 s.",
+        "Chaque but compte double pendant blitz.",
+        "Après 60 s : 90 s récupération.",
+        "Alterner avec 3 rotations d'équipes différentes.",
+        "Total : 6 blocs de 60 s."
+      ],
+      "instructions_nl": [
+        "Klassiek 5v5, duur 60 s.",
+        "Elk doelpunt telt dubbel tijdens blitz.",
+        "Na 60 s: 90 s herstel.",
+        "Wisselen met 3 verschillende teamrotaties.",
+        "Totaal: 6 blokken van 60 s."
+      ],
+      "variants_fr": [
+        "Imposer 1 touche max pendant blitz.",
+        "Règle : pas de passe avec GK pendant blitz."
+      ],
+      "variants_nl": [
+        "1-touch verplicht tijdens blitz.",
+        "Regel: geen terugspeler naar keeper."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.10",
+      "image_url": "exercises/sg-04.png"
+    },
+    {
+      "id": "sg-05",
+      "category": "ssg",
+      "subcategory": "contraintes",
+      "age_range": "U11-U17",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "4v4 2 touches max",
+      "title_nl": "4v4 max 2 contacten",
+      "objective_fr": "Rapidité d'exécution, qualité du 1er contrôle, choix de passe.",
+      "objective_nl": "Snelheid van uitvoering, kwaliteit eerste contact, paskeuze.",
+      "setup_fr": "Terrain réduit (20×15 m). 2 équipes de 4. 2 mini-buts.",
+      "setup_nl": "Kleiner veld (20×15 m). 2 teams van 4. 2 minidoeltjes.",
+      "instructions_fr": [
+        "Max 2 touches par joueur.",
+        "3e touche = perte de balle (règle stricte).",
+        "Tir possible dès que reçu (1 touche).",
+        "Exception : pivot fixe peut 3 touches.",
+        "3 blocs de 3 min."
+      ],
+      "instructions_nl": [
+        "Max 2 contacten per speler.",
+        "3e contact = balverlies (strikte regel).",
+        "Schot vanaf ontvangst toegestaan (1-touch).",
+        "Uitzondering: vaste pivot mag 3 contacten.",
+        "3 blokken van 3 min."
+      ],
+      "variants_fr": [
+        "Passer à 1 touche si dominé.",
+        "Ajouter 1 joker neutre à 3 touches."
+      ],
+      "variants_nl": [
+        "1-touch als te makkelijk.",
+        "Voeg 1 neutrale joker toe met 3 contacten."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Time pressure",
+      "image_url": "exercises/sg-05.png"
+    },
+    {
+      "id": "sg-06",
+      "category": "ssg",
+      "subcategory": "but extérieur",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "4v4 zones de tir extérieur",
+      "title_nl": "4v4 buitenschotzones",
+      "objective_fr": "Entraîner la frappe longue distance, utiliser les zones extérieures.",
+      "objective_nl": "Trainen op lange afstand schot, buitenzones benutten.",
+      "setup_fr": "Terrain complet. 2 équipes + gardiens. Zones à 10-15 m du but marquées.",
+      "setup_nl": "Volledig veld. 2 teams + keepers. Zones op 10-15 m van doel gemarkeerd.",
+      "instructions_fr": [
+        "But 1 point : depuis zone tir (proche).",
+        "But 2 points : depuis zone 10-15 m (extérieur).",
+        "But 3 points : depuis zone milieu (>15 m).",
+        "Interdiction tir direct de relance gardien.",
+        "3 blocs de 4 min, 1 min pause."
+      ],
+      "instructions_nl": [
+        "Doelpunt 1 punt: uit schotzone (dichtbij).",
+        "Doelpunt 2 punten: uit zone 10-15 m (buiten).",
+        "Doelpunt 3 punten: uit middenzone (>15 m).",
+        "Direct schot vanaf keeperopbouw verboden.",
+        "3 blokken van 4 min, 1 min pauze."
+      ],
+      "variants_fr": [
+        "Ajouter bonus : passe décisive venant de la même zone.",
+        "Encourager tir lointain par coach."
+      ],
+      "variants_nl": [
+        "Bonus: assist uit dezelfde zone.",
+        "Coach stimuleert afstandsschot."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Shooting zones",
+      "image_url": "exercises/sg-06.png"
+    },
+    {
+      "id": "sg-07",
+      "category": "ssg",
+      "subcategory": "directionnel",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 10,
+      "intensity": "moyenne",
+      "title_fr": "5v5 règle des couloirs",
+      "title_nl": "5v5 regel van de corridors",
+      "objective_fr": "Forcer l'utilisation de la largeur, étirer l'adversaire.",
+      "objective_nl": "Dwingen tot gebruik van breedte, tegenstander uit elkaar trekken.",
+      "setup_fr": "Terrain divisé longitudinalement en 3 couloirs (gauche-centre-droit).",
+      "setup_nl": "Veld longitudinaal in 3 corridors (links-midden-rechts).",
+      "instructions_fr": [
+        "But vaut 1 point normalement.",
+        "But après passe de couloir à couloir vaut 2 points.",
+        "But après 2 changements de couloir vaut 3 points.",
+        "Interdiction : 3 joueurs dans même couloir simultanément.",
+        "3 blocs de 3 min."
+      ],
+      "instructions_nl": [
+        "Normaal doelpunt: 1 punt.",
+        "Doelpunt na pass corridor-naar-corridor: 2 punten.",
+        "Doelpunt na 2 corridorwissels: 3 punten.",
+        "Verboden: 3 spelers in zelfde corridor tegelijk.",
+        "3 blokken van 3 min."
+      ],
+      "variants_fr": [
+        "Interdire 2 passes de suite dans le même couloir.",
+        "Seul le couloir avec ballon peut tirer."
+      ],
+      "variants_nl": [
+        "Verboden 2 opeenvolgende passes in zelfde corridor.",
+        "Alleen corridor met bal mag schieten."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), ch.9",
+      "image_url": "exercises/sg-07.png"
+    },
+    {
+      "id": "sg-08",
+      "category": "ssg",
+      "subcategory": "ratio",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 10,
+      "intensity": "élevée",
+      "title_fr": "5v5 ratio attaque/défense",
+      "title_nl": "5v5 aanval/verdedigings-ratio",
+      "objective_fr": "Match intégré avec thèmes coachés : ratio passes/pertes, tirs cadrés.",
+      "objective_nl": "Wedstrijd met coachthema's: pass/verlies ratio, schoten tussen palen.",
+      "setup_fr": "Terrain complet. 2 équipes de 5 + gardiens. Coach note statistiques.",
+      "setup_nl": "Volledig veld. 2 teams van 5 + keepers. Coach noteert statistieken.",
+      "instructions_fr": [
+        "Match classique, durée 4×3 min avec coach pause.",
+        "Coach note : passes réussies / tentées, tirs cadrés, fautes.",
+        "Feedback en fin de bloc, consigne pour bloc suivant.",
+        "Équipe qui mène par >2 buts : joue avec 1 joueur en moins.",
+        "Objectif : équilibre compétition."
+      ],
+      "instructions_nl": [
+        "Klassieke match, duur 4×3 min met coachpauze.",
+        "Coach noteert: geslaagde/gespeelde passes, schoten op doel, fouten.",
+        "Feedback na blok, opdracht volgende blok.",
+        "Team voorop met >2: 1 speler minder.",
+        "Doel: competitieve balans."
+      ],
+      "variants_fr": [
+        "Noter score coach : thème respecté = +1 point.",
+        "Imposer un système (1-2-1, 2-2, diamant)."
+      ],
+      "variants_nl": [
+        "Coach-score: thema gerespecteerd = +1 punt.",
+        "Systeem opleggen (1-2-1, 2-2, ruit)."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), ch.10 match intégré",
+      "image_url": "exercises/sg-08.png"
+    },
+    {
+      "id": "fi-01",
+      "category": "finition",
+      "subcategory": "classique",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Atelier finition — cercle",
+      "title_nl": "Afwerking — cirkel",
+      "objective_fr": "Répéter 3 types de finition en enchaînement rapide.",
+      "objective_nl": "3 afwerktypes in snelle opvolging herhalen.",
+      "setup_fr": "Gardien en place. 6 plots en demi-cercle à 8 m. Ballons à disposition.",
+      "setup_nl": "Keeper staat. 6 kegels in halve cirkel op 8 m. Ballen beschikbaar.",
+      "instructions_fr": [
+        "Poste 1-2 : conduite + tir placé pied fort.",
+        "Poste 3-4 : passe coach + remise + tir.",
+        "Poste 5-6 : 1v1 avec défenseur passif + finition.",
+        "Enchaîner les 6 postes sans pause.",
+        "3 tours, 1 min pause entre tours."
+      ],
+      "instructions_nl": [
+        "Post 1-2: dribbel + geplaatst schot sterke voet.",
+        "Post 3-4: pass coach + terugleggen + schot.",
+        "Post 5-6: 1v1 met passieve verdediger + afwerking.",
+        "6 posten zonder pauze.",
+        "3 rondes, 1 min pauze tussen rondes."
+      ],
+      "variants_fr": [
+        "Chronométrer les 6 postes par joueur.",
+        "Alterner pied fort/faible par poste."
+      ],
+      "variants_nl": [
+        "6 posten chronometreren per speler.",
+        "Afwisselen sterke/zwakke voet per post."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Finishing circuit",
+      "image_url": "exercises/fi-01.png"
+    },
+    {
+      "id": "fi-02",
+      "category": "finition",
+      "subcategory": "appui",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Appui-remise + tir",
+      "title_nl": "Aangespeeld-terugleggen + schot",
+      "objective_fr": "Jouer en une-deux avec appui pivot avant finition.",
+      "objective_nl": "Een-twee spelen met pivot-steun voor afwerking.",
+      "setup_fr": "Gardien. Appui (pivot) à 6 m du but. Attaquant à 18 m.",
+      "setup_nl": "Keeper. Steun (pivot) op 6 m van doel. Aanvaller op 18 m.",
+      "instructions_fr": [
+        "Attaquant conduit 3 m, passe au pivot.",
+        "Pivot remise en 1 touche décalée (gauche/droite).",
+        "Attaquant tire en 1 touche.",
+        "Alterner pivot droit/gauche selon file.",
+        "10 répétitions par joueur."
+      ],
+      "instructions_nl": [
+        "Aanvaller dribbelt 3 m, speelt naar pivot.",
+        "Pivot 1-touch terugleggen (links/rechts).",
+        "Aanvaller 1-touch afwerken.",
+        "Pivot afwisselend links/rechts.",
+        "10 herhalingen per speler."
+      ],
+      "variants_fr": [
+        "Ajouter défenseur passif entre pivot et but.",
+        "Imposer 1 feinte avant passe au pivot."
+      ],
+      "variants_nl": [
+        "Passieve verdediger tussen pivot en doel.",
+        "1 schijnbeweging voor pass."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Finishing",
+      "image_url": "exercises/fi-02.png"
+    },
+    {
+      "id": "fi-03",
+      "category": "finition",
+      "subcategory": "centre-tir",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Centre + reprise 2e poteau",
+      "title_nl": "Voorzet + afronding 2e paal",
+      "objective_fr": "Timing de l'appel 2e poteau, précision de la reprise.",
+      "objective_nl": "Timing inloop 2e paal, nauwkeurig afronden.",
+      "setup_fr": "Centreur à l'aile, attaquant en zone. Gardien en place.",
+      "setup_nl": "Voorzetter op vleugel, aanvaller in zone. Keeper staat.",
+      "instructions_fr": [
+        "Centreur conduit le long de l'aile et centre bas.",
+        "Attaquant se démarque du 1er appui, court au 2e poteau.",
+        "Reprise en 1 touche pied droit/gauche selon côté.",
+        "Ajouter 2e attaquant sur 1er poteau (détournement).",
+        "10 répétitions par côté."
+      ],
+      "instructions_nl": [
+        "Voorzetter dribbelt langs vleugel en legt laag voor.",
+        "Aanvaller lost van 1e paal los, loopt naar 2e paal.",
+        "1-touch afronding rechts/links afhankelijk kant.",
+        "2e aanvaller op 1e paal (afleiding).",
+        "10 herhalingen per kant."
+      ],
+      "variants_fr": [
+        "Centre aérien → tête.",
+        "Centre arrière → tir pour joueur en soutien."
+      ],
+      "variants_nl": [
+        "Luchtvoorzet → kopbal.",
+        "Achterwaartse voorzet → schot voor steunspeler."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.222",
+      "image_url": "exercises/fi-03.png"
+    },
+    {
+      "id": "fi-04",
+      "category": "finition",
+      "subcategory": "contre-attaque",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Contre-attaque 3v1",
+      "title_nl": "Counter 3v1",
+      "objective_fr": "Finir en 6 s après récupération, prise de décision rapide.",
+      "objective_nl": "Afwerken binnen 6 s na recuperatie, snelle besluitvorming.",
+      "setup_fr": "Terrain complet. 3 attaquants partent au milieu, 1 défenseur + GK en défense.",
+      "setup_nl": "Volledig veld. 3 aanvallers starten in midden, 1 verdediger + GK in verdediging.",
+      "instructions_fr": [
+        "Coach siffle, 3 attaquants démarrent ballon au pied.",
+        "Défenseur part du but, suit la course.",
+        "Objectif : marquer en <6 s, max 4 passes.",
+        "Répétition directe : défenseur devient attaquant.",
+        "3 rotations par équipe."
+      ],
+      "instructions_nl": [
+        "Coach fluit, 3 aanvallers starten met bal.",
+        "Verdediger start vanaf doel, volgt.",
+        "Doel: scoren binnen 6 s, max 4 passes.",
+        "Directe herhaling: verdediger wordt aanvaller.",
+        "3 rotaties per team."
+      ],
+      "variants_fr": [
+        "Ajouter 2e défenseur à 10 s.",
+        "Imposer tir avant entrée zone."
+      ],
+      "variants_nl": [
+        "2e verdediger na 10 s.",
+        "Schot verplicht voor zone-ingang."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Counter",
+      "image_url": "exercises/fi-04.png"
+    },
+    {
+      "id": "fi-05",
+      "category": "finition",
+      "subcategory": "premier poteau",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Tir premier poteau",
+      "title_nl": "Eerste paal schot",
+      "objective_fr": "Placer la frappe au premier poteau depuis angle fermé.",
+      "objective_nl": "Plaatsen van schot op eerste paal vanuit gesloten hoek.",
+      "setup_fr": "Gardien en place. Plots à 7 m, côté aile. Ballons prêts.",
+      "setup_nl": "Keeper staat. Kegels op 7 m, vleugelkant. Ballen klaar.",
+      "instructions_fr": [
+        "Joueur part conduire vers le plot côté aile.",
+        "Arrivé au plot, déclenche frappe rasante 1er poteau.",
+        "Pied fort depuis extérieur = pied droit côté droit, pied gauche côté gauche.",
+        "Gardien doit lire la course.",
+        "10 tentatives par côté, alterner."
+      ],
+      "instructions_nl": [
+        "Speler dribbelt naar kegel aan vleugelkant.",
+        "Bij kegel: schot op eerste paal laag.",
+        "Sterke voet vanaf buitenkant: rechts rechts, links links.",
+        "Keeper moet loop lezen.",
+        "10 pogingen per kant, afwisselen."
+      ],
+      "variants_fr": [
+        "Défenseur passif entre attaquant et but.",
+        "Chronométrer : 2 s max entre plot et tir."
+      ],
+      "variants_nl": [
+        "Passieve verdediger tussen aanvaller en doel.",
+        "Chronometreren: max 2 s tussen kegel en schot."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Angles",
+      "image_url": "exercises/fi-05.png"
+    },
+    {
+      "id": "fi-06",
+      "category": "finition",
+      "subcategory": "combinée",
+      "age_range": "U13-Senior",
+      "duration": 12,
+      "players_min": 8,
+      "intensity": "élevée",
+      "title_fr": "Combinaison 3 joueurs",
+      "title_nl": "Combinatie met 3 spelers",
+      "objective_fr": "Enchaînement passe, remise, tir, exécution précise à 3.",
+      "objective_nl": "Pass, terugleggen, schot opvolgen, precieze uitvoering met 3.",
+      "setup_fr": "Gardien. 3 zones : appui 1 (gauche), appui 2 (droit), tireur central.",
+      "setup_nl": "Keeper. 3 zones: steun 1 (links), steun 2 (rechts), schutter centraal.",
+      "instructions_fr": [
+        "Central (A) passe à appui gauche (B).",
+        "B remise 1 touche à appui droit (C).",
+        "C remise décalée à A.",
+        "A frappe en 1 touche.",
+        "Permuter les 3 rôles toutes les 3 répétitions."
+      ],
+      "instructions_nl": [
+        "Centraal (A) speelt naar links (B).",
+        "B 1-touch terug naar rechts (C).",
+        "C versneld terug naar A.",
+        "A 1-touch afronden.",
+        "Rolwissel elke 3 herhalingen."
+      ],
+      "variants_fr": [
+        "Ajouter défenseur entre A et but.",
+        "Imposer passe en 1 touche à tous."
+      ],
+      "variants_nl": [
+        "Voeg verdediger toe tussen A en doel.",
+        "1-touch verplicht voor iedereen."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.228",
+      "image_url": "exercises/fi-06.png"
+    },
+    {
+      "id": "fi-07",
+      "category": "finition",
+      "subcategory": "défenseur actif",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "élevée",
+      "title_fr": "Finition 1v1 sous pression",
+      "title_nl": "Afwerking 1v1 onder druk",
+      "objective_fr": "Tir avec défenseur actif, gérer le stress de finition.",
+      "objective_nl": "Schot met actieve verdediger, afwerkstress hanteren.",
+      "setup_fr": "Gardien. Attaquant part à 15 m avec ballon, défenseur derrière à 2 m.",
+      "setup_nl": "Keeper. Aanvaller start op 15 m met bal, verdediger 2 m erachter.",
+      "instructions_fr": [
+        "Coach siffle, attaquant part, défenseur poursuit.",
+        "Attaquant doit déclencher frappe en moins de 3 s.",
+        "Varier surface : pied fort / faible / extérieur.",
+        "Rotation attaquant / défenseur / gardien.",
+        "8 tentatives par joueur."
+      ],
+      "instructions_nl": [
+        "Coach fluit, aanvaller start, verdediger volgt.",
+        "Aanvaller moet schieten binnen 3 s.",
+        "Voet wisselen: sterk / zwak / buitenkant.",
+        "Rotatie aanvaller / verdediger / keeper.",
+        "8 pogingen per speler."
+      ],
+      "variants_fr": [
+        "Chronométrer + % réussite.",
+        "Ajouter obligation de feinte."
+      ],
+      "variants_nl": [
+        "Chronometreren + % rake.",
+        "Verplichte schijnbeweging."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Pressure finishing",
+      "image_url": "exercises/fi-07.png"
+    },
+    {
+      "id": "fi-08",
+      "category": "finition",
+      "subcategory": "rebond",
+      "age_range": "U11-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Finition sur rebond",
+      "title_nl": "Afronden op rebound",
+      "objective_fr": "Anticiper le rebond gardien, réagir vite sur ballon en l'air ou rebondi.",
+      "objective_nl": "Keeperrebound anticiperen, snel reageren op lucht of stuitbal.",
+      "setup_fr": "Gardien. Coach tir depuis 10 m, attaquant se démarque.",
+      "setup_nl": "Keeper. Coach schiet vanaf 10 m, aanvaller loopt in.",
+      "instructions_fr": [
+        "Coach frappe au but (force modérée, gardien stoppe).",
+        "Attaquant anticipe le rebond et finit en 1 touche.",
+        "Alterner tirs coach : court, aérien, excentré.",
+        "Attaquant varie appuis et positions d'attaque.",
+        "10 répétitions par joueur."
+      ],
+      "instructions_nl": [
+        "Coach schiet op doel (gemiddelde kracht, keeper stopt).",
+        "Aanvaller anticipeert rebound en werkt 1-touch af.",
+        "Afwisselen: laag, hoog, buiten-as schot.",
+        "Aanvaller varieert steunposten en aanvalspositie.",
+        "10 herhalingen per speler."
+      ],
+      "variants_fr": [
+        "Ajouter défenseur qui suit attaquant.",
+        "Attaquant doit réagir à rebond d'adversaire (blocage défensif)."
+      ],
+      "variants_nl": [
+        "Voeg verdediger toe die volgt.",
+        "Aanvaller reageert op tegenstander-rebound (blok)."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Rebound play",
+      "image_url": "exercises/fi-08.png"
+    },
+    {
+      "id": "sp-01",
+      "category": "setpieces",
+      "subcategory": "corner",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Corner combiné — 1er poteau",
+      "title_nl": "Corner combinatie — 1e paal",
+      "objective_fr": "Organiser un corner court avec appel 1er poteau, déviation.",
+      "objective_nl": "Korte hoekschop organiseren met inloop 1e paal, afleiding.",
+      "setup_fr": "Gardien. Tireur au corner, 3 attaquants + 2 défenseurs passifs dans la zone.",
+      "setup_nl": "Keeper. Nemer bij hoek, 3 aanvallers + 2 passieve verdedigers in zone.",
+      "instructions_fr": [
+        "Tireur : court vers 1er poteau (centre tendu au sol).",
+        "Attaquant 1 (A1) au 1er poteau : fait passer en déviant.",
+        "Attaquant 2 (A2) démarque du 2e poteau, tire au 1er poteau ou remise.",
+        "Attaquant 3 (A3) en point de penalty pour rebonds.",
+        "10 répétitions, noter réussites."
+      ],
+      "instructions_nl": [
+        "Nemer: kort naar 1e paal (strakke grondbal).",
+        "A1 op 1e paal: verlengt in één tik.",
+        "A2 loskomen van 2e paal, schiet op 1e paal of terugleggen.",
+        "A3 op strafschotstip voor rebounds.",
+        "10 herhalingen, succes noteren."
+      ],
+      "variants_fr": [
+        "Version 2 : centre aérien pour tête.",
+        "Version 3 : tir direct en 2 touches par tireur."
+      ],
+      "variants_nl": [
+        "Versie 2: luchtvoorzet voor kopbal.",
+        "Versie 3: direct schot in 2 touches door nemer."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Set plays",
+      "image_url": "exercises/sp-01.png"
+    },
+    {
+      "id": "sp-02",
+      "category": "setpieces",
+      "subcategory": "coup-franc",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Coup franc indirect — combinaison",
+      "title_nl": "Indirecte vrije trap — combinatie",
+      "objective_fr": "Exécuter 2 variantes de coup-franc : feinte et tir à l'extérieur du mur.",
+      "objective_nl": "2 varianten vrije trap: schijnbeweging en schot naast muur.",
+      "setup_fr": "Coup-franc à 10 m du but, mur de 3 défenseurs.",
+      "setup_nl": "Vrije trap op 10 m van doel, muur van 3 verdedigers.",
+      "instructions_fr": [
+        "Variante 1 — feinte : joueur A approche, laisse passer. Joueur B frappe au-dessus du mur.",
+        "Variante 2 — latéral : A passe en 2 touches à B positionné sur le côté. B frappe en extérieur du pied.",
+        "Variante 3 — one-two : A passe court à B, B remise, A frappe.",
+        "Alterner les variantes toutes les 3 répétitions.",
+        "Gardien avec consigne standard."
+      ],
+      "instructions_nl": [
+        "Variant 1 — schijn: A loopt, laat bal gaan. B schiet over muur.",
+        "Variant 2 — lateraal: A past in 2 touches naar B opzij. B schiet met buitenkant.",
+        "Variant 3 — een-twee: A kort naar B, B terug, A schiet.",
+        "Varianten afwisselen elke 3 herhalingen.",
+        "Keeper standaard opdracht."
+      ],
+      "variants_fr": [
+        "Mur à 4 joueurs.",
+        "Imposer passe longue avant tir."
+      ],
+      "variants_nl": [
+        "Muur van 4 spelers.",
+        "Verplicht lange pass voor schot."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Set pieces",
+      "image_url": "exercises/sp-02.png"
+    },
+    {
+      "id": "sp-03",
+      "category": "setpieces",
+      "subcategory": "touche",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "faible",
+      "title_fr": "Kick-in — relance rapide",
+      "title_nl": "Intrap — snelle opbouw",
+      "objective_fr": "Exécuter kick-in précis sous pression (règle 4 secondes).",
+      "objective_nl": "Precieze intrap onder druk (4-secondenregel).",
+      "setup_fr": "Ligne de touche. 1 tireur avec ballon, 2 appuis (1 court, 1 long), 1 presseur.",
+      "setup_nl": "Zijlijn. 1 nemer met bal, 2 steunen (1 kort, 1 lang), 1 drukzetter.",
+      "instructions_fr": [
+        "Tireur a 4 s max pour remettre en jeu.",
+        "Option A : passe courte à appui sous pression, retour.",
+        "Option B : passe longue à appui en appel profond.",
+        "Presseur simule défenseur adverse (marquage court).",
+        "Alterner options selon signal coach."
+      ],
+      "instructions_nl": [
+        "Nemer heeft max 4 s.",
+        "Optie A: korte pass naar nabije steun, terug.",
+        "Optie B: lange pass naar diepe steun.",
+        "Drukzetter simuleert verdediger (kortmarkering).",
+        "Afwisselen volgens coach-signaal."
+      ],
+      "variants_fr": [
+        "Ajouter 2 appuis + 2 défenseurs.",
+        "Chronométrer : 4 s strictes."
+      ],
+      "variants_nl": [
+        "Voeg 2 steunen + 2 verdedigers toe.",
+        "Strikte 4 s chrono."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Kick-in",
+      "image_url": "exercises/sp-03.png"
+    },
+    {
+      "id": "sp-04",
+      "category": "setpieces",
+      "subcategory": "penalty",
+      "age_range": "U13-Senior",
+      "duration": 6,
+      "players_min": 2,
+      "intensity": "faible",
+      "title_fr": "Penalty + 2e penalty (10 m)",
+      "title_nl": "Strafschop + 2e strafschop (10 m)",
+      "objective_fr": "Répéter les tirs de penalty (6 m) et second penalty (10 m) sous pression.",
+      "objective_nl": "Strafschoppen (6 m) en tweede strafschop (10 m) oefenen onder druk.",
+      "setup_fr": "Gardien. Points de penalty à 6 m et 10 m.",
+      "setup_nl": "Keeper. Strafschotstippen op 6 m en 10 m.",
+      "instructions_fr": [
+        "Série 1 : 5 penalties à 6 m par joueur.",
+        "Série 2 : 5 penalties à 10 m par joueur.",
+        "Varier placement : lucarne gauche, lucarne droite, ras du poteau.",
+        "Coach note % de réussite.",
+        "Concours élimination en fin de séance."
+      ],
+      "instructions_nl": [
+        "Serie 1: 5 strafschoppen op 6 m per speler.",
+        "Serie 2: 5 strafschoppen op 10 m per speler.",
+        "Varieer plaatsing: hoek links, hoek rechts, paal.",
+        "Coach noteert % rake.",
+        "Afsluiten: afvalconcours."
+      ],
+      "variants_fr": [
+        "Imposer annoncer le coin avant tir.",
+        "Concours équipes : 1v1 après chaque salve."
+      ],
+      "variants_nl": [
+        "Verplicht hoek aankondigen voor schot.",
+        "Teamcompetitie: 1v1 na elke serie."
+      ],
+      "source": "FIFA Futsal Laws of the Game — Penalty kicks",
+      "image_url": "exercises/sp-04.png"
+    },
+    {
+      "id": "sp-05",
+      "category": "setpieces",
+      "subcategory": "corner direct",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "faible",
+      "title_fr": "Corner direct (olympique)",
+      "title_nl": "Directe corner (olympisch)",
+      "objective_fr": "Exécuter corner rentrant direct à 180° ou vers lucarne.",
+      "objective_nl": "Directe corner uitvoeren (ingedraaid of in de hoek).",
+      "setup_fr": "Gardien. Tireur au corner, 1 attaquant en zone.",
+      "setup_nl": "Keeper. Nemer bij hoek, 1 aanvaller in zone.",
+      "instructions_fr": [
+        "Tireur frappe brossée avec effet rentrant.",
+        "Objectif : ballon directement au 1er ou 2e poteau.",
+        "Attaquant prêt à marquer sur rebond gardien.",
+        "Alterner pied fort / pied faible (tireur).",
+        "5 tentatives par pied."
+      ],
+      "instructions_nl": [
+        "Nemer trapt met effect (ingedraaid).",
+        "Doel: bal direct op 1e of 2e paal.",
+        "Aanvaller klaar voor rebound.",
+        "Afwisselen sterke/zwakke voet.",
+        "5 pogingen per voet."
+      ],
+      "variants_fr": [
+        "Imposer coin haut du but (lucarne).",
+        "Ajouter 1 défenseur sur la ligne."
+      ],
+      "variants_nl": [
+        "Hoek bovenhoek (kruising) verplicht.",
+        "Voeg 1 verdediger op lijn toe."
+      ],
+      "source": "FIFA Futsal Laws — Corner kick",
+      "image_url": "exercises/sp-05.png"
+    },
+    {
+      "id": "sp-06",
+      "category": "setpieces",
+      "subcategory": "mur défensif",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 7,
+      "intensity": "faible",
+      "title_fr": "Organisation mur défensif",
+      "title_nl": "Muur-organisatie verdediging",
+      "objective_fr": "Positionner le mur et les autres défenseurs sur coup-franc.",
+      "objective_nl": "Muur en andere verdedigers plaatsen bij vrije trap.",
+      "setup_fr": "Gardien. Coup-franc à 10 m. 4 défenseurs à organiser.",
+      "setup_nl": "Keeper. Vrije trap op 10 m. 4 verdedigers te plaatsen.",
+      "instructions_fr": [
+        "3 joueurs en mur : côté opposé au pied fort du tireur.",
+        "1 défenseur sort sur tireur après coup siffle.",
+        "Autres défenseurs marquent attaquants en zone.",
+        "GK couvre le côté opposé au mur.",
+        "Répéter avec tireur droitier puis gaucher."
+      ],
+      "instructions_nl": [
+        "3 in muur: tegenovergestelde kant van sterke voet nemer.",
+        "1 verdediger komt uit op nemer na fluit.",
+        "Anderen dekken aanvallers in zone.",
+        "Keeper dekt kant zonder muur.",
+        "Herhaal met rechtsbeen dan linksbeen nemer."
+      ],
+      "variants_fr": [
+        "Changer position mur selon angle du coup-franc.",
+        "Mur 4 pour angles plus centraux."
+      ],
+      "variants_nl": [
+        "Muur verplaatsen volgens hoek.",
+        "Muur van 4 bij centrale vrije trap."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Defensive set plays",
+      "image_url": "exercises/sp-06.png"
+    },
+    {
+      "id": "df-01",
+      "category": "defense",
+      "subcategory": "marquage",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Marquage individuel — ombre",
+      "title_nl": "Individuele dekking — schaduw",
+      "objective_fr": "Position de marquage : distance, orientation, appui arrière actif.",
+      "objective_nl": "Dekkingpositie: afstand, oriëntatie, actieve steun achteraan.",
+      "setup_fr": "Paires attaquant/défenseur. Zone 15×10 m. 1 ballon au coach.",
+      "setup_nl": "Paren aanvaller/verdediger. Zone 15×10 m. 1 bal bij coach.",
+      "instructions_fr": [
+        "Coach sert ballon aléatoirement à un attaquant.",
+        "Défenseur marque à 1,5 m, orienté légèrement côté ballon.",
+        "Attaquant tente dribble ou passe.",
+        "Défenseur doit rester entre attaquant et but.",
+        "Rotation après 30 s, analyser distance et orientation."
+      ],
+      "instructions_nl": [
+        "Coach bedient willekeurig aanvaller.",
+        "Verdediger dekt op 1,5 m, licht naar balkant gericht.",
+        "Aanvaller probeert dribbel of pass.",
+        "Verdediger blijft tussen aanvaller en doel.",
+        "Rotatie na 30 s, afstand en oriëntatie analyseren."
+      ],
+      "variants_fr": [
+        "Ajouter règle : défenseur ne peut reculer qu'en pas chassé.",
+        "Réduire zone pour densité."
+      ],
+      "variants_nl": [
+        "Verdediger mag alleen in chassé achteruit.",
+        "Zone verkleinen voor dichtheid."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Individual defending",
+      "image_url": "exercises/df-01.png"
+    },
+    {
+      "id": "df-02",
+      "category": "defense",
+      "subcategory": "tacle",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Tacle rasant + récupération",
+      "title_nl": "Sliding + recuperatie",
+      "objective_fr": "Technique du tacle rasant (1 jambe étendue), prévention faute.",
+      "objective_nl": "Techniek van sliding (1 been gestrekt), fout vermijden.",
+      "setup_fr": "Attaquant en conduite, défenseur de côté. Zone 10×5 m.",
+      "setup_nl": "Aanvaller dribbelt, verdediger zijwaarts. Zone 10×5 m.",
+      "instructions_fr": [
+        "Attaquant conduit sur 10 m.",
+        "Défenseur arrive en diagonale et tacle ballon uniquement.",
+        "Jambe d'appui fléchie, jambe d'attaque tendue pour sortir ballon.",
+        "Relevé rapide et récupération course.",
+        "Alterner rôles toutes les 3 répétitions."
+      ],
+      "instructions_nl": [
+        "Aanvaller dribbelt over 10 m.",
+        "Verdediger komt diagonaal en tackelt enkel de bal.",
+        "Steunbeen gebogen, aanvalsbeen gestrekt om bal weg te halen.",
+        "Snel opstaan en in loop hernemen.",
+        "Rolwissel elke 3 herhalingen."
+      ],
+      "variants_fr": [
+        "Ajouter finition : défenseur doit sortir ballon en touche.",
+        "Coach évalue hauteur du tacle (pas au-dessus genou)."
+      ],
+      "variants_nl": [
+        "Verdediger moet bal in 'uit' werken.",
+        "Coach evalueert hoogte tackle (niet boven knie)."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Tackling",
+      "image_url": "exercises/df-02.png"
+    },
+    {
+      "id": "df-03",
+      "category": "defense",
+      "subcategory": "coulissage",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 6,
+      "intensity": "moyenne",
+      "title_fr": "Coulissage en ligne 3 défenseurs",
+      "title_nl": "Verschuiven met 3 verdedigers",
+      "objective_fr": "Travailler la ligne défensive qui coulisse en fonction du ballon.",
+      "objective_nl": "Defensieve lijn laten verschuiven volgens de bal.",
+      "setup_fr": "3 défenseurs en ligne, 3 attaquants face (15 m). Coach derrière attaquants.",
+      "setup_nl": "3 verdedigers op lijn, 3 aanvallers tegenover (15 m). Coach achter aanvallers.",
+      "instructions_fr": [
+        "Coach nomme un attaquant → celui-ci reçoit ballon.",
+        "Les 3 défenseurs coulissent : 1 presse porteur, 2 couvrent.",
+        "Distance défenseurs : 3-4 m maximum.",
+        "Changer d'attaquant porteur, ligne doit coulisser fluide.",
+        "3 min d'exercice, 30 s pause, 3 séries."
+      ],
+      "instructions_nl": [
+        "Coach noemt aanvaller → die ontvangt bal.",
+        "3 verdedigers verschuiven: 1 druk, 2 dekking.",
+        "Afstand verdedigers: max 3-4 m.",
+        "Balbezitter wisselt, lijn verschuift soepel.",
+        "3 min oefening, 30 s rust, 3 series."
+      ],
+      "variants_fr": [
+        "Ajouter 4e défenseur en couverture.",
+        "Attaquants avec 2 touches max."
+      ],
+      "variants_nl": [
+        "4e verdediger in dekking.",
+        "Aanvallers max 2 contacten."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), p.236",
+      "image_url": "exercises/df-03.png"
+    },
+    {
+      "id": "df-04",
+      "category": "defense",
+      "subcategory": "repli",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "élevée",
+      "title_fr": "Repli défensif rapide",
+      "title_nl": "Snel defensief terugloopwerk",
+      "objective_fr": "Transition perte de balle → organisation défensive en <5 s.",
+      "objective_nl": "Transitie balverlies → verdedigingsorganisatie binnen 5 s.",
+      "setup_fr": "Terrain complet. 4 attaquants vs 4 défenseurs + GK. Coach signale perte.",
+      "setup_nl": "Volledig veld. 4 aanvallers vs 4 verdedigers + GK. Coach signaleert verlies.",
+      "instructions_fr": [
+        "Phase 1 : attaquants font circuler le ballon.",
+        "Coach siffle, ballon donné aux adverses.",
+        "Équipe en perte : repli sprint, bloquer retour attaquant proche.",
+        "Objectif : reformer bloc 2-2 en 5 s.",
+        "Alterner rôles toutes les 3 min."
+      ],
+      "instructions_nl": [
+        "Fase 1: aanvallers doen bal circuleren.",
+        "Coach fluit, bal naar tegenstander.",
+        "Verliezend team: sprint terug, dichtste aanvaller bij bal vooruit-stoppen.",
+        "Doel: blok 2-2 hervormen binnen 5 s.",
+        "Rolwissel elke 3 min."
+      ],
+      "variants_fr": [
+        "Imposer 1 joueur reste en haut (pressing future).",
+        "Mesurer temps de repli avec chronomètre."
+      ],
+      "variants_nl": [
+        "1 speler blijft vooraan (toekomstige druk).",
+        "Terugloop-tijd meten met chrono."
+      ],
+      "source": "FIFA Futsal Coaching Manual (2022), Transition",
+      "image_url": "exercises/df-04.png"
+    },
+    {
+      "id": "df-05",
+      "category": "defense",
+      "subcategory": "duel aérien",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Duel aérien + dégagement",
+      "title_nl": "Luchtduel + wegwerken",
+      "objective_fr": "Timing du saut, positionnement du corps, dégagement orienté.",
+      "objective_nl": "Sprongtiming, lichaamspositionering, gericht wegwerken.",
+      "setup_fr": "Coach sert balle aérienne à 5 m. Attaquant + défenseur en duel.",
+      "setup_nl": "Coach bedient luchtbal op 5 m. Aanvaller + verdediger in duel.",
+      "instructions_fr": [
+        "Coach sert ballon aérien entre les 2.",
+        "Défenseur doit dégager de la tête ou du pied en sécurité.",
+        "Attaquant tente reprise directe.",
+        "Alterner rôles et côtés de service.",
+        "10 duels par joueur."
+      ],
+      "instructions_nl": [
+        "Coach bedient luchtbal tussen beiden.",
+        "Verdediger moet met hoofd of voet veilig wegwerken.",
+        "Aanvaller probeert directe afronding.",
+        "Rollen en zijdes afwisselen.",
+        "10 duels per speler."
+      ],
+      "variants_fr": [
+        "Ajouter but pour attaquant.",
+        "Défenseur doit dégager vers une zone cible."
+      ],
+      "variants_nl": [
+        "Doel voor aanvaller.",
+        "Verdediger wegwerken naar doelzone."
+      ],
+      "source": "UEFA Futsal Coaching Manual (2020), Aerial duels",
+      "image_url": "exercises/df-05.png"
+    },
+    {
+      "id": "df-06",
+      "category": "defense",
+      "subcategory": "communication",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 8,
+      "intensity": "moyenne",
+      "title_fr": "Bloc défensif verbal",
+      "title_nl": "Verbaal verdedigingsblok",
+      "objective_fr": "Imposer communication entre défenseurs : appels, switch, couverture.",
+      "objective_nl": "Communicatie tussen verdedigers: 'mij', 'switch', 'dekking'.",
+      "setup_fr": "4 défenseurs vs 4 attaquants, demi-terrain. GK en place.",
+      "setup_nl": "4 verdedigers vs 4 aanvallers, halve veld. GK staat.",
+      "instructions_fr": [
+        "Règle : chaque défenseur DOIT crier à chaque action.",
+        "'Mien\\!' = je prends le porteur.",
+        "'Switch\\!' = on échange de marquage.",
+        "'Couvre\\!' = je demande couverture.",
+        "Perte de balle sans communication = 1 tour de terrain."
+      ],
+      "instructions_nl": [
+        "Regel: elke verdediger MOET roepen bij elke actie.",
+        "'Mij\\!' = ik pak balbezitter.",
+        "'Switch\\!' = we wisselen dekking.",
+        "'Dek\\!' = ik vraag dekking.",
+        "Balverlies zonder communicatie = 1 rondje veld."
+      ],
+      "variants_fr": [
+        "Interdire parole en 1er bloc pour illustrer différence.",
+        "Filmer et analyser à la fin."
+      ],
+      "variants_nl": [
+        "Eerste blok stil om verschil te tonen.",
+        "Filmen en nabespreken."
+      ],
+      "source": "RFEF — Coaching defensivo, comunicación",
+      "image_url": "exercises/df-06.png"
+    },
+    {
+      "id": "gk-01",
+      "category": "gardien",
+      "subcategory": "position",
+      "age_range": "U11-Senior",
+      "duration": 8,
+      "players_min": 2,
+      "intensity": "faible",
+      "title_fr": "Position de base + déplacement",
+      "title_nl": "Basispositie + verplaatsing",
+      "objective_fr": "Ancrer position de base GK futsal (pieds largeur épaules, fléchi, mains prêtes).",
+      "objective_nl": "Basispositie inprenten (voeten schouderbreedte, gebogen, handen klaar).",
+      "setup_fr": "Gardien dans ses 6 m. Coach à 8 m avec ballons.",
+      "setup_nl": "Keeper in eigen 6 m. Coach op 8 m met ballen.",
+      "instructions_fr": [
+        "Coach signale couleur → GK se déplace en pas chassé au cône correspondant.",
+        "Retour systématique à position centrale après chaque action.",
+        "Garder position basse et active tout le temps.",
+        "10 signaux, 30 s pause entre séries.",
+        "Corriger la distance mains/cuisses, pieds parallèles."
+      ],
+      "instructions_nl": [
+        "Coach signaleert kleur → keeper verplaatst in chassé naar juiste kegel.",
+        "Systematische terugkeer naar centrum na elke actie.",
+        "Lage actieve positie altijd behouden.",
+        "10 signalen, 30 s pauze tussen series.",
+        "Handen/dijen afstand corrigeren, voeten parallel."
+      ],
+      "variants_fr": [
+        "Ajouter tir après chaque déplacement.",
+        "Varier signal : auditif, visuel, mixte."
+      ],
+      "variants_nl": [
+        "Schot na elke verplaatsing.",
+        "Signaal variëren: auditief, visueel, mix."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), ch.2",
+      "image_url": "exercises/gk-01.png"
+    },
+    {
+      "id": "gk-02",
+      "category": "gardien",
+      "subcategory": "réflexes",
+      "age_range": "U11-Senior",
+      "duration": 8,
+      "players_min": 2,
+      "intensity": "élevée",
+      "title_fr": "Réflexes — multi-ballons",
+      "title_nl": "Reflexen — multi-ballen",
+      "objective_fr": "Temps de réaction sur tirs rapprochés successifs.",
+      "objective_nl": "Reactietijd op opeenvolgende schoten dichtbij.",
+      "setup_fr": "GK en place. Coach à 5 m avec 8-10 ballons.",
+      "setup_nl": "Keeper staat. Coach op 5 m met 8-10 ballen.",
+      "instructions_fr": [
+        "Coach tire à rythme soutenu, chaque 2 s.",
+        "Alterner : gauche bas, droite mi-hauteur, lucarne, pieds.",
+        "GK doit rester debout et actif entre chaque tir.",
+        "10 ballons par série, 45 s récupération.",
+        "3 séries."
+      ],
+      "instructions_nl": [
+        "Coach schiet vlot, elke 2 s.",
+        "Afwisselen: links laag, rechts half, kruising, voeten.",
+        "Keeper blijft staan en actief tussen schoten.",
+        "10 ballen per serie, 45 s herstel.",
+        "3 series."
+      ],
+      "variants_fr": [
+        "Faire rebondir ballon sol avant tir.",
+        "Ajouter obstacle visuel temporaire."
+      ],
+      "variants_nl": [
+        "Bal op grond laten stuiten voor schot.",
+        "Tijdelijk visueel obstakel."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), Reflexes",
+      "image_url": "exercises/gk-02.png"
+    },
+    {
+      "id": "gk-03",
+      "category": "gardien",
+      "subcategory": "relance",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Relance main + pied",
+      "title_nl": "Opbouw met hand + voet",
+      "objective_fr": "Précision de la relance : main (courte), pied (longue).",
+      "objective_nl": "Precisie opbouw: hand (kort), voet (lang).",
+      "setup_fr": "GK dans ses 6 m. 3 appuis à 10, 20 et 30 m.",
+      "setup_nl": "Keeper in eigen 6 m. 3 steunen op 10, 20 en 30 m.",
+      "instructions_fr": [
+        "Relance main à appui proche (10 m) : précision à 2 m près.",
+        "Relance pied à appui moyen (20 m) : passe au sol.",
+        "Relance pied longue (30 m) : ballon aérien à cible mobile.",
+        "Alterner les 3 types à chaque tour.",
+        "10 relances par type."
+      ],
+      "instructions_nl": [
+        "Handworp naar dichte steun (10 m): precisie op 2 m.",
+        "Trap naar middelste steun (20 m): grondpass.",
+        "Lange trap (30 m): luchtbal naar bewegend doel.",
+        "3 types afwisselen elke ronde.",
+        "10 herhalingen per type."
+      ],
+      "variants_fr": [
+        "Ajouter pressing sur l'appui.",
+        "Imposer relance sous 4 s."
+      ],
+      "variants_nl": [
+        "Druk op steun toevoegen.",
+        "Opbouw binnen 4 s."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), Distribution",
+      "image_url": "exercises/gk-03.png"
+    },
+    {
+      "id": "gk-04",
+      "category": "gardien",
+      "subcategory": "duel",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "élevée",
+      "title_fr": "Sortie sur duel 1v1",
+      "title_nl": "Uittreden bij 1v1",
+      "objective_fr": "Gérer le duel face à attaquant lancé : sortir ou attendre.",
+      "objective_nl": "1v1 beheren tegen ingelopen aanvaller: uittreden of wachten.",
+      "setup_fr": "GK en place. Attaquant part à 15 m, ballon au pied.",
+      "setup_nl": "Keeper staat. Aanvaller start op 15 m, bal aan voet.",
+      "instructions_fr": [
+        "Attaquant part en conduite vers but.",
+        "GK évalue à quel moment sortir : angle, vitesse, surface au pied.",
+        "Principe : fermer angle à l'étoile (gros).",
+        "Varier vitesse de course attaquant.",
+        "10 duels par série, 3 séries."
+      ],
+      "instructions_nl": [
+        "Aanvaller dribbelt naar doel.",
+        "Keeper bepaalt wanneer uit te komen: hoek, snelheid, balpositie.",
+        "Principe: hoek sluiten als 'ster' (groot).",
+        "Variëer loopsnelheid aanvaller.",
+        "10 duels per serie, 3 series."
+      ],
+      "variants_fr": [
+        "Ajouter 2e attaquant en soutien (2v1).",
+        "Attaquant arrive après rebond coach."
+      ],
+      "variants_nl": [
+        "Voeg 2e aanvaller in steun toe (2v1).",
+        "Aanvaller komt na rebound coach."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), 1v1",
+      "image_url": "exercises/gk-04.png"
+    },
+    {
+      "id": "gk-05",
+      "category": "gardien",
+      "subcategory": "plongeon",
+      "age_range": "U11-Senior",
+      "duration": 8,
+      "players_min": 2,
+      "intensity": "moyenne",
+      "title_fr": "Plongeon latéral — bas",
+      "title_nl": "Zijwaartse duik — laag",
+      "objective_fr": "Technique du plongeon latéral sur ballon ras du sol.",
+      "objective_nl": "Techniek zijwaartse duik op laag schot.",
+      "setup_fr": "GK dans les 6 m, genoux fléchis, mains prêtes.",
+      "setup_nl": "Keeper in 6 m, knieën gebogen, handen klaar.",
+      "instructions_fr": [
+        "Coach sert ballon roulé à 2 m à gauche ou droite.",
+        "GK plonge jambe opposée pousse, main avant puis main arrière.",
+        "Atterrissage côté du ballon, amortir épaule.",
+        "10 plongeons par côté.",
+        "Coach corrige position mains et épaules."
+      ],
+      "instructions_nl": [
+        "Coach rolt bal op 2 m links of rechts.",
+        "Keeper duikt, tegenoverliggend been duwt, voorste hand dan achterste hand.",
+        "Landing op balkant, schouder dempen.",
+        "10 duiken per kant.",
+        "Coach corrigeert positie handen/schouders."
+      ],
+      "variants_fr": [
+        "Ballon aérien mi-hauteur.",
+        "Ballon de coach en multi-service (2 ballons successifs)."
+      ],
+      "variants_nl": [
+        "Halfhoge luchtbal.",
+        "Multi-service (2 ballen op rij)."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), Diving",
+      "image_url": "exercises/gk-05.png"
+    },
+    {
+      "id": "gk-06",
+      "category": "gardien",
+      "subcategory": "jeu au pied",
+      "age_range": "U13-Senior",
+      "duration": 10,
+      "players_min": 5,
+      "intensity": "moyenne",
+      "title_fr": "GK-joueur — construction",
+      "title_nl": "Keeper-veldspeler — opbouw",
+      "objective_fr": "GK impliqué dans construction avec les pieds, sous pression modérée.",
+      "objective_nl": "Keeper betrokken bij opbouw met voeten, onder matige druk.",
+      "setup_fr": "4 joueurs + GK dans moitié défensive. 2 presseurs adverses.",
+      "setup_nl": "4 spelers + keeper op eigen helft. 2 drukzetters.",
+      "instructions_fr": [
+        "GK reçoit ballon, joue avec les pieds uniquement.",
+        "Option 1 : passe courte à défenseur latéral.",
+        "Option 2 : passe longue à joueur en appel profond.",
+        "Presseurs tentent récupération.",
+        "Compter 10 constructions réussies / série."
+      ],
+      "instructions_nl": [
+        "Keeper krijgt bal, speelt enkel met voeten.",
+        "Optie 1: korte pass naar lateraal verdediger.",
+        "Optie 2: lange pass naar diepe steun.",
+        "Drukzetters proberen recuperatie.",
+        "10 geslaagde opbouwacties per serie."
+      ],
+      "variants_fr": [
+        "Réduire à 3v3 pour intensifier.",
+        "Imposer 2 touches max pour GK."
+      ],
+      "variants_nl": [
+        "Verklein naar 3v3 voor intensiteit.",
+        "Max 2 contacten voor keeper."
+      ],
+      "source": "RFEF — Fútbol sala, portero como jugador",
+      "image_url": "exercises/gk-06.png"
+    },
+    {
+      "id": "gk-07",
+      "category": "gardien",
+      "subcategory": "centres",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 3,
+      "intensity": "moyenne",
+      "title_fr": "Sortie sur centre aérien",
+      "title_nl": "Uittreden op voorzet",
+      "objective_fr": "Lecture de trajectoire, timing du saut, prise de balle ou déviation.",
+      "objective_nl": "Traject lezen, sprongtiming, bal vangen of weggeven.",
+      "setup_fr": "GK en place. Centreur à l'aile, 1 attaquant + 1 défenseur en zone.",
+      "setup_nl": "Keeper staat. Voorzetter op vleugel, 1 aanvaller + 1 verdediger in zone.",
+      "instructions_fr": [
+        "Centre aérien venant de l'aile.",
+        "GK évalue : sortir avec mains ou rester en ligne.",
+        "Si sortie : appel 'GK\\!' + saut + prise à 2 mains.",
+        "Si rester : couvrir ligne de but, anticiper tête.",
+        "Alterner centreur gauche / droit."
+      ],
+      "instructions_nl": [
+        "Luchtvoorzet vanaf vleugel.",
+        "Keeper bepaalt: met handen uit of op lijn blijven.",
+        "Bij uit: 'GK\\!' roepen + sprong + 2 handen vangen.",
+        "Bij blijven: doellijn dekken, kop anticiperen.",
+        "Voorzet afwisselend links/rechts."
+      ],
+      "variants_fr": [
+        "Ajouter 2e attaquant pour obstacle.",
+        "Varier hauteur du centre."
+      ],
+      "variants_nl": [
+        "2e aanvaller als obstakel.",
+        "Variëer hoogte voorzet."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), Crosses",
+      "image_url": "exercises/gk-07.png"
+    },
+    {
+      "id": "gk-08",
+      "category": "gardien",
+      "subcategory": "fatigue",
+      "age_range": "U15-Senior",
+      "duration": 10,
+      "players_min": 4,
+      "intensity": "élevée",
+      "title_fr": "Circuit GK haute intensité",
+      "title_nl": "Keeper-circuit hoge intensiteit",
+      "objective_fr": "Enchaîner actions rapides pour travailler résistance spécifique.",
+      "objective_nl": "Snelle acties opvolgen voor specifieke weerstand.",
+      "setup_fr": "GK en place. 3 stations : tir frontal, tir latéral, centre. Coaches en rotation.",
+      "setup_nl": "Keeper staat. 3 stations: schot centraal, zijdelings, voorzet. Coaches in rotatie.",
+      "instructions_fr": [
+        "Station 1 — Tir frontal (8 m), 5 tirs en 20 s.",
+        "Station 2 — Tir latéral (angle fermé), 5 tirs en 20 s.",
+        "Station 3 — Centre aérien + rebond, 5 actions en 30 s.",
+        "Pause 30 s entre stations, 2 min après circuit complet.",
+        "3 circuits complets."
+      ],
+      "instructions_nl": [
+        "Station 1 — Centraal schot (8 m), 5 schoten in 20 s.",
+        "Station 2 — Zijschot (gesloten hoek), 5 schoten in 20 s.",
+        "Station 3 — Luchtvoorzet + rebound, 5 acties in 30 s.",
+        "30 s pauze tussen stations, 2 min na volledig circuit.",
+        "3 volledige circuits."
+      ],
+      "variants_fr": [
+        "Ajouter récupération active (jongles).",
+        "Filmer pour analyser posture en fatigue."
+      ],
+      "variants_nl": [
+        "Actief herstel (jongleren).",
+        "Filmen voor houding bij vermoeidheid."
+      ],
+      "source": "FIFA Futsal Goalkeeper Manual (2023), Conditioning",
+      "image_url": "exercises/gk-08.png"
+    },
+    {
+      "id": "pv-01",
+      "category": "prevention",
+      "subcategory": "chevilles",
+      "age_range": "U11-Senior",
+      "duration": 8,
+      "players_min": 1,
+      "intensity": "faible",
+      "title_fr": "Proprioception chevilles",
+      "title_nl": "Proprioceptie enkels",
+      "objective_fr": "Prévenir entorses par renforcement neuromusculaire des chevilles.",
+      "objective_nl": "Verstuikingen voorkomen door neuromusculaire versterking van enkels.",
+      "setup_fr": "1 coussin ou bosu par joueur (ou surface instable). Mur à proximité pour appui.",
+      "setup_nl": "1 kussen of bosu per speler (of onstabiel oppervlak). Muur dichtbij voor steun.",
+      "instructions_fr": [
+        "Appui 1 pied 30 s chaque côté, yeux ouverts.",
+        "Idem yeux fermés.",
+        "Appui 1 pied + lancer/rattraper ballon.",
+        "Appui 1 pied + petites flexions genou.",
+        "Progression : ajouter déséquilibre par partenaire."
+      ],
+      "instructions_nl": [
+        "Sta op 1 voet 30 s elke kant, ogen open.",
+        "Idem ogen dicht.",
+        "1 voet + bal gooien/vangen.",
+        "1 voet + kleine kniebuigingen.",
+        "Progressie: partner verstoort balans."
+      ],
+      "variants_fr": [
+        "Enchaîner 3 exercices sans poser pied.",
+        "Faire en session récupération également."
+      ],
+      "variants_nl": [
+        "3 oefeningen aan elkaar zonder voet neerzetten.",
+        "Ook in hersteltraining opnemen."
+      ],
+      "source": "FIFA 11+ / UEFA Medical Committee",
+      "image_url": "exercises/pv-01.png"
+    },
+    {
+      "id": "pv-02",
+      "category": "prevention",
+      "subcategory": "core",
+      "age_range": "U11-Senior",
+      "duration": 10,
+      "players_min": 1,
+      "intensity": "moyenne",
+      "title_fr": "Gainage dynamique 360°",
+      "title_nl": "Dynamische core 360°",
+      "objective_fr": "Renforcer ceinture abdo-lombaire pour stabilité dans duels.",
+      "objective_nl": "Kern versterken voor stabiliteit in duels.",
+      "setup_fr": "Tapis ou surface propre. 1 ballon optionnel.",
+      "setup_nl": "Mat of schone ondergrond. 1 bal optioneel.",
+      "instructions_fr": [
+        "Planche frontale 30 s.",
+        "Planche latérale gauche 30 s, puis droite.",
+        "Planche + levée de bras alternée 30 s.",
+        "Pont + extension jambe 30 s.",
+        "2 tours complets, 30 s récupération entre tours."
+      ],
+      "instructions_nl": [
+        "Voorwaartse plank 30 s.",
+        "Zijplank links 30 s, dan rechts.",
+        "Plank + afwisselend arm opheffen 30 s.",
+        "Bruggetje + been strekken 30 s.",
+        "2 volledige rondes, 30 s pauze tussen rondes."
+      ],
+      "variants_fr": [
+        "Passer à 45 s par position.",
+        "Ajouter ballon à bout de bras."
+      ],
+      "variants_nl": [
+        "Verlengen naar 45 s per positie.",
+        "Bal aan gestrekte armen toevoegen."
+      ],
+      "source": "FIFA 11+, Core module",
+      "image_url": "exercises/pv-02.png"
+    },
+    {
+      "id": "pv-03",
+      "category": "prevention",
+      "subcategory": "ischios",
+      "age_range": "U13-Senior",
+      "duration": 8,
+      "players_min": 2,
+      "intensity": "moyenne",
+      "title_fr": "Nordic hamstring + activation",
+      "title_nl": "Nordic hamstring + activatie",
+      "objective_fr": "Prévenir blessures ischio-jambiers par travail excentrique.",
+      "objective_nl": "Hamstringblessures voorkomen door excentrisch werk.",
+      "setup_fr": "Paires, 1 joueur à genoux, 1 partenaire tient les chevilles.",
+      "setup_nl": "Paren, 1 speler op knieën, 1 partner houdt enkels vast.",
+      "instructions_fr": [
+        "Joueur en position agenouillée, tronc droit.",
+        "Se laisser tomber en avant en contrôlant la descente (excentrique).",
+        "Rattraper avec mains le plus bas possible, revenir en poussant.",
+        "5 répétitions, 3 séries.",
+        "Compléter : 30 s étirements dynamiques ischios."
+      ],
+      "instructions_nl": [
+        "Speler knielt, romp rechtop.",
+        "Voorwaarts laten vallen met controle (excentrisch).",
+        "Zo laag mogelijk met handen opvangen, duw terug omhoog.",
+        "5 herhalingen, 3 series.",
+        "Aanvullen: 30 s dynamische rek hamstrings."
+      ],
+      "variants_fr": [
+        "Augmenter à 6-8 répétitions.",
+        "Placer élastique pour assistance."
+      ],
+      "variants_nl": [
+        "Verhogen naar 6-8 herhalingen.",
+        "Elastiek ter ondersteuning."
+      ],
+      "source": "FIFA 11+ / Nordic hamstring exercise",
+      "image_url": "exercises/pv-03.png"
+    },
+    {
+      "id": "pv-04",
+      "category": "prevention",
+      "subcategory": "activation neurale",
+      "age_range": "U11-Senior",
+      "duration": 6,
+      "players_min": 4,
+      "intensity": "moyenne",
+      "title_fr": "Activation neuromusculaire pré-match",
+      "title_nl": "Neuromusculaire activatie voor wedstrijd",
+      "objective_fr": "Préparer tissu neural et musculaire pour l'effort à venir.",
+      "objective_nl": "Neurologisch en musculair weefsel voorbereiden op inspanning.",
+      "setup_fr": "Zone 20×10 m. Pas de ballon.",
+      "setup_nl": "Zone 20×10 m. Geen bal.",
+      "instructions_fr": [
+        "Talons-fesses 20 m, aller-retour 2 fois.",
+        "Montées de genoux 20 m, aller-retour 2 fois.",
+        "Pas chassés latéraux 20 m, alterner côtés.",
+        "Accélérations progressives 20 m : 50, 70, 85 % VMA.",
+        "3 x 10 squats dynamiques."
+      ],
+      "instructions_nl": [
+        "Hakken-billen 20 m, heen en terug 2 x.",
+        "Knieheffen 20 m, heen en terug 2 x.",
+        "Zijwaartse chassé 20 m, kanten afwisselen.",
+        "Progressieve versnellingen 20 m: 50, 70, 85 % max.",
+        "3 x 10 dynamische squats."
+      ],
+      "variants_fr": [
+        "Ajouter 5 min FIFA 11+ si pré-match officiel.",
+        "Terminer par 2 sprints max sur 15 m."
+      ],
+      "variants_nl": [
+        "5 min FIFA 11+ bij officiële match.",
+        "Afsluiten met 2 max sprints over 15 m."
+      ],
+      "source": "FIFA 11+ / UEFA pre-match activation",
+      "image_url": "exercises/pv-04.png"
+    }
+  ]
+}
