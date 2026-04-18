@@ -16,7 +16,12 @@ CSS @keyframes drive a 5 s infinite loop:
   55-75% zone pulse + hold, 75-85% fade back, 85-100% rest.
 Respects prefers-reduced-motion: reduce (static final state, no animation).
 """
-import json, math, os, sys, argparse
+import json, math, os, sys, argparse, html as _html
+
+def xe(s):
+    """Escape text for XML content/attributes."""
+    if s is None: return ''
+    return _html.escape(str(s), quote=True)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXOS_JSON = os.path.join(ROOT, 'data', 'exercises.json')
@@ -723,13 +728,13 @@ def render_svg(exo_id, exo_meta, anim):
     svg = (
       f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {tot_h}" '
       f'width="{W}" height="{tot_h}" preserveAspectRatio="xMidYMid meet" role="img" '
-      f'aria-label="{title}">'
+      f'aria-label="{xe(title)}">'
       f'{defs}'
       f'<g>{ "".join(body) }</g>'
       f'<g transform="translate(0,{H})">'
       f'<rect x="0" y="0" width="{W}" height="80" fill="#f5f5f7"/>'
-      f'<text x="20" y="32" fill="{TEXT_DARK}" font-size="22" font-weight="700">{title}</text>'
-      f'<text x="20" y="60" fill="#555" font-size="14" font-style="italic">{caption}</text>'
+      f'<text x="20" y="32" fill="{TEXT_DARK}" font-size="22" font-weight="700">{xe(title)}</text>'
+      f'<text x="20" y="60" fill="#555" font-size="14" font-style="italic">{xe(caption)}</text>'
       f'</g>'
       f'</svg>'
     )
