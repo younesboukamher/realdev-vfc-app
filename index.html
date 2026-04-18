@@ -2182,9 +2182,10 @@ window.setArchiveSeason = (season) => {
     S.archiveMode = true; S.archiveSeason = season;
     if (banner) banner.style.display = 'flex';
     if (lbl) lbl.textContent = 'Saison ' + season;
+    if (selector && selector.value !== season) selector.value = season;
     document.body.classList.add('archive-mode');
     try { localStorage.setItem('rdv_archive', season); } catch(_) {}
-    if (typeof toast === 'function') toast('️ Mode archive - ' + season + ' (lecture seule)');
+    if (typeof toast === 'function') toast('🗄️ Mode archive - ' + season + ' (lecture seule)');
   }
   _applyArchiveGating();
   if (typeof renderAll === 'function') renderAll();
@@ -2205,7 +2206,7 @@ function _applyArchiveGating() {
       'body.archive-mode button.status-btn,' +
       'body.archive-mode .rpe-btn,' +
       'body.archive-mode .rtp-check,' +
-      'body.archive-mode input:not(#season-selector),' +
+      'body.archive-mode input:not(#season-selector):not(#login-email):not(#login-pwd),' +
       'body.archive-mode select:not(#season-selector):not(#login-season),' +
       'body.archive-mode textarea { pointer-events: none !important; opacity: 0.5 !important; }';
     document.head.appendChild(s);
