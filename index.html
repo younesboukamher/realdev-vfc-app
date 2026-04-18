@@ -1645,11 +1645,23 @@ function generateMicrocycle(scouting) {
     <div class="topbar-right">
       <span class="top-badge" id="role-pill"></span>
       <span class="version-badge" id="version-badge">v1.12.0</span>
+      <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
+      <select id="season-selector" onchange="window.setArchiveSeason(this.value)" aria-label="Saison" style="background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
+        <option value="">Saison 2025-26</option>
+        <option value="2024-25">2024-25 (archive)</option>
+        <option value="2023-24">2023-24 (archive)</option>
+      </select>
       <button class="top-lang" data-lang="fr" onclick="setLang('fr',this)">FR</button>
       <button class="top-lang" data-lang="nl" onclick="setLang('nl',this)">NL</button>
       <button class="top-exit" onclick="window.doLogout()">↩</button>
     </div>
   </header>
+  <!-- FIX P2 #8 - Banniere archive (visible en mode saison passee) -->
+  <div id="archive-banner" role="status" aria-live="polite" style="display:none;background:linear-gradient(90deg,#B85042,#E7E8D1);color:#1a1a1a;padding:10px 18px;font:700 12px/1.3 var(--font);align-items:center;gap:10px;border-bottom:1px solid rgba(0,0,0,.1);">
+    <span style="font-size:16px;">🗄️</span>
+    <span>Mode archive — <span id="archive-label">Saison passee</span> · lecture seule (aucune modification possible)</span>
+    <button onclick="window.setArchiveSeason('')" style="margin-left:auto;background:rgba(0,0,0,.1);border:none;border-radius:4px;padding:4px 10px;font:600 11px/1 var(--font);cursor:pointer;color:#1a1a1a;">Revenir a la saison en cours</button>
+  </div>
 
   <div class="main">
 
@@ -2066,6 +2078,7 @@ const sb = createClient(
 /* ── État ── */
 const S = {
   user:null, role:null, profile:null, lang:'fr', season:'2025-26',
+  archiveMode:false, archiveSeason:null, // FIX P2 #8 - Season archive view-only
   players:[], matches:[], injuries:[], injHistory:[],
   presences:[], scouting:[], plans:{},
   planIdx:null, expanded:new Set(),
@@ -2153,6 +2166,62 @@ window.setLang = (lang, btn) => {
   if (typeof renderAll === 'function') renderAll();
 };
 
+// FIX P2 #8 - Season archive (view-only) : bascule en mode lecture seule
+window.setArchiveSeason = (season) => {
+  const banner = document.getElementById('archive-banner');
+  const lbl = document.getElementById('archive-label');
+  const selector = document.getElementById('season-selector');
+  if (!season || season === '') {
+    S.archiveMode = false; S.archiveSeason = null;
+    if (banner) banner.style.display = 'none';
+    document.body.classList.remove('archive-mode');
+    if (selector) selector.value = '';
+    try { localStorage.removeItem('rdv_archive'); } catch(_) {}
+    if (typeof toast === 'function') toast('✓ Retour saison en cours');
+  } else {
+    S.archiveMode = true; S.archiveSeason = season;
+    if (banner) banner.style.display = 'flex';
+    if (lbl) lbl.textContent = 'Saison ' + season;
+    document.body.classList.add('archive-mode');
+    try { localStorage.setItem('rdv_archive', season); } catch(_) {}
+    if (typeof toast === 'function') toast('️ Mode archive - ' + season + ' (lecture seule)');
+  }
+  _applyArchiveGating();
+  if (typeof renderAll === 'function') renderAll();
+};
+function _applyArchiveGating() {
+  let s = document.getElementById('archive-mode-style');
+  if (!s) {
+    s = document.createElement('style');
+    s.id = 'archive-mode-style';
+    s.textContent = 'body.archive-mode button[onclick*="save"],' +
+      'body.archive-mode button[onclick*="Save"],' +
+      'body.archive-mode button[onclick*="upsert"],' +
+      'body.archive-mode button[onclick*="delete"],' +
+      'body.archive-mode button[onclick*="Delete"],' +
+      'body.archive-mode button[onclick*="editDay"],' +
+      'body.archive-mode button[onclick*="editInj"],' +
+      'body.archive-mode button[onclick*="applyPlanTemplate"],' +
+      'body.archive-mode button.status-btn,' +
+      'body.archive-mode .rpe-btn,' +
+      'body.archive-mode .rtp-check,' +
+      'body.archive-mode input:not(#season-selector),' +
+      'body.archive-mode select:not(#season-selector):not(#login-season),' +
+      'body.archive-mode textarea { pointer-events: none !important; opacity: 0.5 !important; }';
+    document.head.appendChild(s);
+  }
+}
+try {
+  const savedArchive = localStorage.getItem('rdv_archive');
+  if (savedArchive) {
+    queueMicrotask(() => {
+      const sel = document.getElementById('season-selector');
+      if (sel) sel.value = savedArchive;
+      window.setArchiveSeason(savedArchive);
+    });
+  }
+} catch(_) {}
+
 // FIX P1 #2 — Modales : ESC + focus trap + rôle dialog + restitution du focus
 const _modalStack=[];
 function _trapFocus(el,e){
@@ -2235,7 +2304,8 @@ async function boot_app(user) {
   splash_off();
   $('scr-login').style.display='none';
   $('app').style.display='block';
-  const isStaff=['admin','coach','physio','gk'].includes(S.role);
+  // FIX P1 #3 - Role assistant-coach
+  const isStaff=['admin','coach','assistant','physio','gk'].includes(S.role);
   const _ns=$('nav-staff'), _np=$('nav-player');
   if(_ns) _ns.style.display=isStaff?'flex':'none';
   if(_np) _np.style.display=!isStaff?'flex':'none';
@@ -2466,6 +2536,50 @@ function renderHome() {
 }
 
 /* ════════ PRÉSENCES ════════ */
+// FIX P2 #7 - Attendance heatmap : matrice joueur x date (20 dernieres sessions)
+function _renderAttendanceHeatmap(rows){
+  const allDates=[...new Set(S.presences.map(p=>p.session_date))].sort().slice(-20);
+  if(!allDates.length || !rows.length) return '';
+  const colorFor = (st)=>{
+    if(st==='P') return '#10B981';
+    if(st==='B') return '#EF4444';
+    if(st==='R') return '#F59E0B';
+    if(st==='A') return '#6B7280';
+    return 'transparent';
+  };
+  const labelFor = (st)=>{
+    if(st==='P') return 'Present';
+    if(st==='B') return 'Blesse';
+    if(st==='R') return 'Retard';
+    if(st==='A') return 'Absent';
+    return 'Non pointe';
+  };
+  const headerCells = allDates.map(d=>`<th style="font:500 9px/1 var(--font);color:var(--tx3);padding:0 2px;height:60px;vertical-align:bottom;white-space:nowrap;"><div style="transform:rotate(-45deg);transform-origin:left bottom;">${fd(d)}</div></th>`).join('');
+  const bodyRows = rows.map(({pl,pct})=>{
+    const cells = allDates.map(d=>{
+      const p = S.presences.find(pp=>pp.player_id===pl.id && pp.session_date===d);
+      const st = p ? p.status : '';
+      const bg = colorFor(st);
+      const tip = pl.name + ' - ' + fd(d) + ' - ' + labelFor(st);
+      return `<td role="gridcell" aria-label="${tip}" title="${tip}" style="padding:0;"><div style="width:14px;height:14px;border-radius:2px;background:${bg};margin:2px;"></div></td>`;
+    }).join('');
+    const shortName = (pl.name||'').split(' ').slice(-1)[0] || pl.name;
+    return `<tr><td style="font:500 10px/1 var(--font);color:var(--tx2);padding:2px 6px 2px 0;text-align:right;white-space:nowrap;">${shortName}</td>${cells}</tr>`;
+  }).join('');
+  return `<div class="sec-title" style="margin:20px 0 8px;padding:0 18px;">Heatmap presence <span style="font:400 10px/1 var(--font);color:var(--tx3);margin-left:8px;">- ${allDates.length} dernieres sessions</span></div>
+    <div style="padding:8px 18px 16px;overflow-x:auto;">
+      <table role="grid" aria-label="Heatmap de presence" style="border-collapse:separate;border-spacing:0;">
+        <thead><tr><th style="height:60px;"></th>${headerCells}</tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;font:500 10px/1 var(--font);color:var(--tx3);">
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#10B981;"></span>Present</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#EF4444;"></span>Blesse</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#F59E0B;"></span>Retard</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#6B7280;"></span>Absent</span>
+      </div>
+    </div>`;
+}
 function renderPresences() {
   /* Pointer */
   const listEl=$('roster-list');
@@ -2532,7 +2646,7 @@ function renderPresences() {
       const c=pct>=80?'var(--brand)':pct>=60?'var(--warn)':'var(--danger)';
       return{pl,pct,tot,c};
     }).sort((a,b)=>b.pct-a.pct);
-    stEl.innerHTML=rows.map(({pl,pct,c,tot})=>`<div class="stat-line">
+    stEl.innerHTML=_renderAttendanceHeatmap(rows) + rows.map(({pl,pct,c,tot})=>`<div class="stat-line">
       <div class="stat-head">
         <span class="stat-nm">${pl.name}</span>
         <span class="stat-pct" style="color:${c};">${pct}% <span style="color:var(--tx3);font-weight:400;">(${tot})</span></span>
@@ -2704,6 +2818,112 @@ window.exportPlanningPDF = (mid)=>{
 };
 
 /* ════════ MATCHS ════════ */
+
+// FIX P2 #6 - Export Match PNG (fiche WhatsApp-ready, 1080x1080)
+window.exportMatchPNG = (mid) => {
+  const match = S.matches.find(m=>m.id===mid);
+  if(!match){ toast('✗ Match introuvable'); return; }
+  const activeInj = (S.injuries||[]).filter(i=>i.status==='active');
+  const injuredIds = new Set(activeInj.map(i=>i.player_id));
+  const available = (S.players||[]).filter(p=>!injuredIds.has(p.id));
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+  const g = ctx.createLinearGradient(0, 0, 0, 1080);
+  g.addColorStop(0, '#0B1437'); g.addColorStop(1, '#1E1148');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 1080, 1080);
+  ctx.fillStyle = '#F96167'; ctx.fillRect(0, 0, 1080, 8);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 44px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('RealDev Vilvoorde FC', 60, 100);
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '500 22px system-ui, -apple-system, sans-serif';
+  ctx.fillText((match.journee||'Match') + ' · ' + (S.season||'2025-26'), 60, 138);
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(60, 170, 960, 2);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 72px system-ui, -apple-system, sans-serif';
+  const home = match.is_home ? 'VFC' : (match.opponent||'Adversaire');
+  const away = match.is_home ? (match.opponent||'Adversaire') : 'VFC';
+  ctx.fillText(home, 270, 320);
+  ctx.fillStyle = '#F96167';
+  ctx.font = 'bold 56px system-ui, -apple-system, sans-serif';
+  ctx.fillText('vs', 540, 310);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 72px system-ui, -apple-system, sans-serif';
+  ctx.fillText(away, 810, 320);
+  const cardY = 400;
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  ctx.fillRect(60, cardY, 960, 140);
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '500 20px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('DATE', 100, cardY + 45);
+  ctx.fillText('LIEU', 400, cardY + 45);
+  ctx.fillText('KICK-OFF', 700, cardY + 45);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 30px system-ui, -apple-system, sans-serif';
+  let dateStr = match.match_date || '';
+  try { dateStr = new Date(match.match_date).toLocaleDateString('fr-BE', {day:'2-digit', month:'short', year:'numeric'}); } catch(_) {}
+  ctx.fillText(dateStr, 100, cardY + 95);
+  ctx.fillText(match.is_home ? 'Domicile' : 'Exterieur', 400, cardY + 95);
+  ctx.fillText(match.kickoff_time || '-', 700, cardY + 95);
+  const sY = 590;
+  ctx.fillStyle = '#10B981'; ctx.fillRect(60, sY, 470, 180);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 110px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(String(available.length), 295, sY + 115);
+  ctx.font = '600 24px system-ui, -apple-system, sans-serif';
+  ctx.fillText('DISPONIBLES', 295, sY + 155);
+  ctx.fillStyle = '#EF4444'; ctx.fillRect(550, sY, 470, 180);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 110px system-ui, -apple-system, sans-serif';
+  ctx.fillText(String(activeInj.length), 785, sY + 115);
+  ctx.font = '600 24px system-ui, -apple-system, sans-serif';
+  ctx.fillText('BLESSES', 785, sY + 155);
+  if(activeInj.length){
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('INDISPONIBILITES', 60, 820);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '500 22px system-ui, -apple-system, sans-serif';
+    const injNames = activeInj.slice(0, 6).map(i=>{
+      const p = S.players.find(pp=>pp.id===i.player_id);
+      return (p && p.name ? p.name : '?') + ' (' + (i.injury_type||'-') + ')';
+    });
+    injNames.forEach((n, idx)=>{
+      const col = idx % 2;
+      const row = Math.floor(idx / 2);
+      ctx.fillText('• ' + n, 60 + col * 500, 860 + row * 34);
+    });
+    if(activeInj.length > 6){
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillText('+ ' + (activeInj.length - 6) + ' autres', 60, 860 + Math.ceil(6/2) * 34);
+    }
+  }
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '500 16px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Genere le ' + new Date().toLocaleString('fr-BE') + ' · RealDev Vilvoorde FC', 540, 1040);
+  canvas.toBlob((blob)=>{
+    if(!blob){ toast('✗ Generation PNG echouee'); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const safeOpp = (match.opponent||'match').replace(/[^a-z0-9]+/gi,'_').toLowerCase();
+    a.download = 'fiche_' + safeOpp + '_' + (match.match_date||'').replace(/-/g,'') + '.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    toast('✓ Fiche PNG exportee');
+  }, 'image/png');
+};
+
 function renderMatches(){
   const el=$('matches-list');if(!el)return;
   el.innerHTML=[...S.matches].reverse().map(m=>matchRow(m)).join('');
@@ -2801,7 +3021,7 @@ function renderMedical(){
         const tot=inj.return_date&&inj.injury_date?Math.max(1,Math.round((new Date(inj.return_date)-new Date(inj.injury_date))/86400000)):null;
         const ela=inj.injury_date?Math.round((new Date()-new Date(inj.injury_date))/86400000):0;
         const pct=tot?Math.min(100,Math.round(ela/tot*100)):0;
-        const isStaff=['admin','coach','physio'].includes(S.role);
+        const isStaff=['admin','coach','assistant','physio'].includes(S.role);
         return`<div class="inj-card inj-stripe-${inj.severity}" onclick="openInjDetail('${inj.id}',false)">
           <div class="inj-card-inner">
             <div class="inj-header">
@@ -2849,7 +3069,7 @@ window.openInjDetail=(id,hist)=>{
   const inj=(hist?S.injHistory:S.injuries).find(i=>i.id===id);if(!inj)return;
   const name=inj.players?.name||'—';
   const proto=Array.isArray(inj.protocol)?inj.protocol:[];
-  const isStaff=['coach','admin','physio'].includes(S.role);
+  const isStaff=['coach','admin','assistant','physio'].includes(S.role);
   $('modal-inj-title').textContent=name+' — '+inj.type;
   $('modal-inj-body').innerHTML=`
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
@@ -3041,7 +3261,7 @@ async function renderPlanning(){
       ${analysis.consignes.map(c=>`<div class="analysis-item">${c}</div>`).join('')}
     </div>`:''}
     ${computeChargeAlert(plan.sessions||[])}
-    ${['coach','admin'].includes(S.role)?`<div style="padding:0 18px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+    ${['coach','admin','assistant'].includes(S.role)?`<div style="padding:0 18px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <span style="font:700 11px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-right:4px;">Template :</span>
       ${Object.entries(PLAN_TEMPLATES).map(([k,t])=>`<button class="btn btn-sm btn-outline" onclick="applyPlanTemplate('${match.id}','${k}')" title="${t.note}" aria-label="Template ${t.label}">${t.icon} ${t.label}</button>`).join('')}
     </div>`:''}
@@ -3051,13 +3271,14 @@ async function renderPlanning(){
       <div class="matchday-label">⚽ Jour du match</div>
       <div class="matchday-info">${match.opponent||''} · ${fd(match.match_date)}</div>
     </div>
-    ${['coach','admin'].includes(S.role)?`<div style="padding:14px 18px 0;">
+    ${['coach','admin','assistant'].includes(S.role)?`<div style="padding:14px 18px 0;">
       <label class="fl">Note de semaine</label>
       <textarea class="fi" style="min-height:60px;" placeholder="Tactique, gestion du groupe..."
         oninput="S.plans['${match.id}'].week_note=this.value">${plan.week_note||''}</textarea>
       <div style="display:flex;gap:6px;margin-top:10px;">
         <button class="btn btn-green" style="flex:2" onclick="savePlan('${match.id}')">Sauvegarder le planning</button>
-        <button class="btn btn-outline" style="flex:1" onclick="exportPlanningPDF('${match.id}')" aria-label="Exporter le planning en PDF">📄 Export PDF</button>
+        <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="exportPlanningPDF('${match.id}')" aria-label="Exporter le planning en PDF">📄 Export PDF</button>
+        <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="exportMatchPNG('${match.id}')" aria-label="Exporter la fiche match en PNG pour WhatsApp">🖼️ Fiche PNG</button>
       </div>
     </div><div style="height:16px;"></div>`:'<div style="height:16px;"></div>'}
   `;
@@ -3106,7 +3327,7 @@ function dayBlock(s,si,mid,absent){
       <div class="day-type-tag">${s.type||''}</div>
       <div class="day-pips">${pips}</div>
       <div class="rpe-pill" style="background:${c}22;color:${c};margin-left:auto;">RPE ${s.rpe_target||'—'}</div>
-      ${['coach','admin'].includes(S.role)?`<button class="btn btn-sm btn-outline" style="margin-left:6px;" onclick="event.stopPropagation();editDay('${mid}',${si})">Éditer</button>`:''}
+      ${['coach','admin','assistant'].includes(S.role)?`<button class="btn btn-sm btn-outline" style="margin-left:6px;" onclick="event.stopPropagation();editDay('${mid}',${si})">Éditer</button>`:''}
       <span style="color:var(--tx3);margin-left:6px;">${exp?'▲':'▼'}</span>
     </div>
     ${exp?`<div class="day-body">
@@ -3955,7 +4176,7 @@ function renderAnalyticsPlayer(playerName) {
 
 /* ─── Routeur principal renderStats ─── */
 function renderStats() {
-  const isStaff = ['admin','coach','physio','gk'].includes(S.role);
+  const isStaff = ['admin','coach','assistant','physio','gk'].includes(S.role);
 
   // Vue badge
   const badge = $('ana-view-badge');
