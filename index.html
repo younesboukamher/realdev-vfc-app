@@ -1,32 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-  <!-- ══ PWA Meta ══ -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0D1F3C">
-  <meta name="mobile-web-app-capable" content="yes">
-  
-  <!-- ══ Apple / iPhone ══ -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="RealDev VFC">
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/icon-120.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152.png">
-  <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/icon-167.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
-  
-  <!-- ══ Favicon ══ -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
-  <link rel="shortcut icon" href="favicon.ico">
-  
-  <!-- ══ SEO / Partage ══ -->
-  <meta name="description" content="RealDev Vilvoorde FC — Gestion staff 1ère Division Nationale">
-  <meta property="og:title" content="RealDev VFC Staff App">
-  <meta property="og:description" content="Plateforme de gestion du staff">
-  <meta property="og:image" content="assets/icons/icon-512.png">
+<meta charset="UTF-8"><!-- v12d -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#111318">
@@ -684,33 +659,65 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .pos-ala { color:var(--brand); }
 .pos-piv { color:var(--danger); }
 
-/* Boutons statut — grands, nets */
-.status-group { display:flex; gap:4px; flex-shrink:0; }
+/* FIX UX #6 — Accessibilité tactile : 44×44 minimum + focus-visible */
+.status-group { display:flex; gap:6px; flex-shrink:0; }
 .status-btn {
-  width:38px; height:38px; border-radius:10px; border:1.5px solid var(--sep2);
+  min-width:44px; min-height:44px; padding:6px 8px;
+  border-radius:10px; border:1.5px solid var(--sep2);
   background:transparent; color:var(--tx3);
-  font:700 11px/1 var(--font); cursor:pointer; transition:all .12s;
+  font:700 12px/1 var(--font); cursor:pointer; transition:all .15s;
   display:flex; align-items:center; justify-content:center;
 }
+.status-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.status-btn:hover { background:rgba(255,255,255,.04); }
 .status-btn.s-P { background:rgba(34,197,94,.15); border-color:rgba(34,197,94,.4); color:var(--brand); }
 .status-btn.s-R { background:rgba(245,158,11,.15); border-color:rgba(245,158,11,.4); color:var(--warn); }
 .status-btn.s-B { background:rgba(245,158,11,.15); border-color:rgba(245,158,11,.4); color:var(--warn); }
 .status-btn.s-E { background:rgba(59,130,246,.15); border-color:rgba(59,130,246,.4); color:var(--info); }
 
-/* Stepper RPE */
-.rpe-wrap { display:flex; align-items:center; gap:4px; margin-left:2px; }
+/* Stepper RPE — 44×44 */
+.rpe-wrap { display:flex; align-items:center; gap:6px; margin-left:2px; }
 .rpe-val  {
-  min-width:26px; text-align:center; font:700 13px/1 var(--font);
+  min-width:32px; text-align:center; font:700 14px/1 var(--font);
   color:var(--tx2);
 }
 .rpe-btn  {
-  width:26px; height:26px; border-radius:8px;
+  min-width:44px; min-height:44px; border-radius:10px;
   background:var(--ink3); border:1px solid var(--sep2); color:var(--tx2);
-  font:700 16px/1 var(--font); cursor:pointer;
+  font:700 18px/1 var(--font); cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  transition:all .1s;
+  transition:all .12s;
 }
-.rpe-btn:active { background:var(--ink4); }
+.rpe-btn:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.rpe-btn:hover { background:var(--ink4); }
+.rpe-btn:active { background:var(--ink4); transform:scale(.95); }
+
+/* FIX UX #7 — boutons filtre Squad */
+.sq-fil {
+  min-height:40px; padding:8px 14px; border-radius:10px;
+  background:var(--ink2); border:1px solid var(--sep2); color:var(--tx2);
+  font:600 12px/1 var(--font); cursor:pointer; transition:all .15s;
+}
+.sq-fil:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.sq-fil:hover { background:var(--ink3); }
+.sq-fil.on { background:rgba(34,197,94,.18); border-color:rgba(34,197,94,.5); color:var(--brand); }
+
+/* FIX UX #6 — Focus visible global sur tous les boutons */
+button:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .nb-btn:focus-visible, .mpill:focus-visible {
+  outline:2px solid var(--brand); outline-offset:2px;
+}
+
+/* FIX UX #8 — Validation inline des formulaires */
+.fi.invalid, .fs.invalid { border-color:var(--danger) !important; box-shadow:0 0 0 3px rgba(239,68,68,.1); }
+.field-error { color:var(--danger); font:600 11px/1.2 var(--font); margin-top:4px; display:block; }
+
+/* FIX UX #9 — Skeletons */
+.skeleton { background:linear-gradient(90deg,var(--ink2) 0%,var(--ink3) 50%,var(--ink2) 100%); background-size:200% 100%; animation:skel 1.2s ease-in-out infinite; border-radius:8px; }
+@keyframes skel { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+.skeleton-row { height:56px; margin:8px 18px; }
+
+/* FIX UX #10 — Status injured overlay in Planning squad-chips */
+.squad-chip.absent { opacity:.45; filter:grayscale(.6); cursor:not-allowed; }
 
 /* Historique/stats présences */
 .pres-scroll { overflow-x:auto; padding:0 18px 8px; }
@@ -1505,6 +1512,20 @@ function analyzeOpponent(scouting) {
   return result;
 }
 
+// FIX P1 #6 — Templates Planning (Standard / Récupération / Charge lourde)
+const PLAN_TEMPLATES = {
+  standard: { label:'Standard', icon:'📘', rpe:['5–6','7–8','6–7'], dur:[75,75,90], note:'Progression classique de la semaine' },
+  recovery: { label:'Récupération', icon:'🌿', rpe:['3–4','4–5','5'],   dur:[60,60,75], note:'Charge réduite après match difficile / voyage' },
+  heavy:    { label:'Charge lourde', icon:'🔥', rpe:['6–7','8','7–8'],  dur:[90,90,90], note:'Pré-saison / pic de travail physique' },
+};
+window.applyPlanTemplate = (mid, key) => {
+  const tpl = PLAN_TEMPLATES[key]; if(!tpl) return;
+  const p = S.plans[mid]; if(!p || !p.sessions) return;
+  if(!confirm(`Appliquer le template "${tpl.label}" ? Les RPE cibles et durées seront ajustés.`)) return;
+  p.sessions = p.sessions.map((s,i)=>({...s, rpe_target: tpl.rpe[i]||s.rpe_target, duration: tpl.dur[i]||s.duration}));
+  p.week_note = (p.week_note||'') + (p.week_note?'\n':'') + `[Template ${tpl.label}] ${tpl.note}`;
+  savePlan(mid).then(()=>renderPlanning());
+};
 function generateMicrocycle(scouting) {
   const analysis = analyzeOpponent(scouting);
 
@@ -1670,6 +1691,12 @@ function generateMicrocycle(scouting) {
         <div style="padding:0 18px 4px;">
           <button class="btn btn-outline btn-sm btn-block" onclick="window.setAllPresent()" style="font-weight:600">✅ Tous présents (hors blessés)</button>
         </div>
+        <!-- FIX P2 #3+#4 — Undo/Redo + Export CSV -->
+        <div style="padding:6px 18px 4px;display:flex;gap:6px;">
+          <button id="btn-pres-undo" class="btn btn-outline btn-sm" onclick="window.undoPresence()" aria-label="Annuler le dernier changement de présence" disabled style="flex:1">↶ Annuler</button>
+          <button id="btn-pres-redo" class="btn btn-outline btn-sm" onclick="window.redoPresence()" aria-label="Refaire le changement annulé" disabled style="flex:1">↷ Refaire</button>
+          <button class="btn btn-outline btn-sm" onclick="window.exportPresencesCSV()" aria-label="Exporter les présences en CSV" style="flex:1">📥 CSV</button>
+        </div>
         <div class="div" style="margin-top:8px;"></div>
         <div id="roster-list"></div>
         <div style="padding:14px 18px 0;">
@@ -1804,7 +1831,20 @@ function generateMicrocycle(scouting) {
         <button class="tab-btn" onclick="window.stab(this,'ts-disc')">Cartons</button>
         <button class="tab-btn" onclick="window.stab(this,'ts-goals')">Buts</button>
       </div>
-      <div id="ts-roster" class="tab-pane on"><div id="roster-eff"></div></div>
+      <!-- FIX UX #7 — Recherche + filtres Squad -->
+      <div id="ts-roster" class="tab-pane on">
+        <div class="squad-filter-bar" style="display:flex;gap:8px;align-items:center;padding:10px 18px 6px;flex-wrap:wrap;">
+          <input id="sq-search" type="search" placeholder="🔍 Rechercher un joueur…" aria-label="Rechercher un joueur"
+                 oninput="window.setSquadQuery(this.value)"
+                 style="flex:1;min-width:140px;padding:10px 12px;border-radius:10px;border:1px solid var(--sep2);background:var(--ink2);color:var(--tx1);font:500 13px/1 var(--font);outline:none;">
+          <div role="tablist" aria-label="Filtre joueurs" style="display:flex;gap:4px;">
+            <button class="sq-fil on" data-fil="all" onclick="window.setSquadFilter('all')" aria-pressed="true">Tous</button>
+            <button class="sq-fil" data-fil="avail" onclick="window.setSquadFilter('avail')" aria-pressed="false">Dispos</button>
+            <button class="sq-fil" data-fil="out" onclick="window.setSquadFilter('out')" aria-pressed="false">Absents</button>
+          </div>
+        </div>
+        <div id="roster-eff"></div>
+      </div>
       <div id="ts-disc"   class="tab-pane"><div id="disc-list"></div></div>
       <div id="ts-goals"  class="tab-pane"><div id="goals-list"></div></div>
     </div>
@@ -2113,14 +2153,52 @@ window.setLang = (lang, btn) => {
   if (typeof renderAll === 'function') renderAll();
 };
 
-window.open_modal = id => { $(id).classList.add('on'); document.body.style.overflow='hidden'; };
-window.close_modal= id => { $(id).classList.remove('on'); document.body.style.overflow=''; };
+// FIX P1 #2 — Modales : ESC + focus trap + rôle dialog + restitution du focus
+const _modalStack=[];
+function _trapFocus(el,e){
+  const fs=el.querySelectorAll('input,select,textarea,button,a[href],[tabindex]:not([tabindex="-1"])');
+  if(!fs.length) return;
+  const first=fs[0], last=fs[fs.length-1];
+  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+}
+function _onModalKey(e){
+  const top=_modalStack[_modalStack.length-1]; if(!top) return;
+  const el=document.getElementById(top.id); if(!el) return;
+  if(e.key==='Escape'){ e.preventDefault(); window.close_modal(top.id); }
+  else if(e.key==='Tab'){ _trapFocus(el,e); }
+}
+window.open_modal = id => {
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.add('on');
+  el.setAttribute('role','dialog');
+  el.setAttribute('aria-modal','true');
+  document.body.style.overflow='hidden';
+  _modalStack.push({id, prevFocus: document.activeElement});
+  if(_modalStack.length===1) document.addEventListener('keydown',_onModalKey);
+  setTimeout(()=>{ const f=el.querySelector('input:not([type="hidden"]),select,textarea,button'); if(f) f.focus(); },30);
+};
+window.close_modal= id => {
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.remove('on');
+  document.body.style.overflow='';
+  const idx=_modalStack.findIndex(m=>m.id===id);
+  if(idx>=0){
+    const ctx=_modalStack[idx];
+    _modalStack.splice(idx,1);
+    try{ ctx.prevFocus?.focus?.(); }catch(_){}
+  }
+  if(_modalStack.length===0) document.removeEventListener('keydown',_onModalKey);
+};
 
 /* ── Auth ── */
 window.doLogin = async () => {
-  const email=$('login-email').value.trim(), pwd=$('login-pwd').value;
+  const emailEl=$('login-email'), pwdEl=$('login-pwd');
+  const email=emailEl.value.trim(), pwd=pwdEl.value;
   const errEl=$('login-err'), btn=$('btn-login');
-  if (!email||!pwd) { errEl.textContent='Remplissez tous les champs'; return; }
+  // FIX P1 #1 — validation inline login
+  if (!email){ setFieldError(emailEl,'Email requis'); errEl.textContent='Remplissez tous les champs'; return; }
+  if (!pwd){ setFieldError(pwdEl,'Mot de passe requis'); errEl.textContent='Remplissez tous les champs'; return; }
   btn.disabled=true; btn.textContent='Connexion…'; errEl.textContent='';
   try {
     const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
@@ -2145,8 +2223,14 @@ async function boot_app(user) {
   S.user=user;
   S.season = ($('login-season')?.value) || '2025-2026';
   splash_on();
-  const {data:prof}=await sb.from('user_profiles').select('*,players(name,position)').eq('id',user.id).maybeSingle();
-  S.profile=prof||null; S.role=prof?.role||'player';
+  let prof=null;
+  try {
+    const r=await sb.from('user_profiles').select('*,players(name,position)').eq('id',user.id).maybeSingle();
+    prof=r?.data||null;
+  } catch(e){ console.warn('user_profiles load failed:',e); }
+  // FIX P0 #2 — fallback profile pour éviter crashes silencieux si row manquante
+  S.profile=prof||{id:user.id,role:'player',full_name:user.email||'Utilisateur',players:null};
+  S.role=(prof&&prof.role)||'player';
   await loadAll();
   splash_off();
   $('scr-login').style.display='none';
@@ -2183,7 +2267,10 @@ function rt() {
         sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
       ]);
       S.injuries=a.data||[]; S.injHistory=h.data||[];
+      // FIX P0 #5 (rt) — propager aux autres onglets
       renderHome(); renderMedical();
+      try{ renderSquad(); }catch(_){}
+      try{ if(typeof renderPlanning==='function') renderPlanning(); }catch(_){}
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'matches'},async()=>{
       const {data}=await sb.from('matches').select('*').order('match_date');
@@ -2196,8 +2283,60 @@ function rt() {
     .subscribe();
 }
 
-window.addEventListener('online', ()=>document.body.classList.remove('offline'));
+window.addEventListener('online', ()=>{ document.body.classList.remove('offline'); flushOfflineQueue(); });
 window.addEventListener('offline',()=>document.body.classList.add('offline'));
+
+// FIX P2 #5 — Offline sync via IndexedDB (file de présences en attente)
+const OFFLINE_DB='rdv-offline', OFFLINE_STORE='pending';
+function _openIdb(){
+  return new Promise((res,rej)=>{
+    if(!('indexedDB' in window)) return rej(new Error('IndexedDB indisponible'));
+    const req=indexedDB.open(OFFLINE_DB,1);
+    req.onupgradeneeded=()=>{ const db=req.result; if(!db.objectStoreNames.contains(OFFLINE_STORE)) db.createObjectStore(OFFLINE_STORE,{keyPath:'id',autoIncrement:true}); };
+    req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error);
+  });
+}
+async function queueOfflineOp(op){
+  try{
+    const db=await _openIdb();
+    return new Promise((res,rej)=>{
+      const tx=db.transaction(OFFLINE_STORE,'readwrite');
+      tx.objectStore(OFFLINE_STORE).add({...op, ts: Date.now()});
+      tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error);
+    });
+  }catch(e){ console.warn('queueOfflineOp failed:',e); return false; }
+}
+async function flushOfflineQueue(){
+  try{
+    const db=await _openIdb();
+    const items=await new Promise((res,rej)=>{
+      const tx=db.transaction(OFFLINE_STORE,'readonly');
+      const req=tx.objectStore(OFFLINE_STORE).getAll();
+      req.onsuccess=()=>res(req.result||[]); req.onerror=()=>rej(req.error);
+    });
+    if(!items.length) return;
+    toast(`🔄 Sync ${items.length} action(s) en attente…`);
+    let ok=0;
+    for(const it of items){
+      try{
+        if(it.kind==='presences.upsert'){
+          const{error}=await sb.from('presences').upsert(it.rows,{onConflict:'player_id,session_date,session_type'});
+          if(error) throw error;
+        }
+        // Delete from IDB
+        await new Promise((res,rej)=>{
+          const tx=db.transaction(OFFLINE_STORE,'readwrite');
+          tx.objectStore(OFFLINE_STORE).delete(it.id);
+          tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error);
+        });
+        ok++;
+      }catch(e){ console.warn('flush item failed:',e); /* garde pour prochaine tentative */ }
+    }
+    if(ok){ toast(`✓ ${ok} action(s) synchronisée(s)`); const{data}=await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300); S.presences=data||[]; renderPresences(); renderHome(); }
+  }catch(e){ console.warn('flushOfflineQueue error:',e); }
+}
+// Tente flush au démarrage si en ligne
+window.addEventListener('load',()=>{ if(navigator.onLine) setTimeout(flushOfflineQueue,1500); });
 
 /* ── Navigation ── */
 const PAGE_NAMES=()=>({home:msg('home'),presences:msg('presences'),matchs:msg('matchs'),medical:msg('medical'),planning:msg('planning'),squad:msg('squad'),profile:msg('profile'),stats:'Stats'});
@@ -2435,21 +2574,133 @@ window.adjRpe=(pid,d)=>{
 };
 
 window.savePresences=async()=>{
-  const date=$('pres-date').value, type=$('pres-type').value;
-  if(!date){toast('⚠ Date requise');return;}
+  const dateEl=$('pres-date');
+  const date=dateEl.value, type=$('pres-type').value;
+  if(!date){ setFieldError(dateEl,'Date requise'); toast('⚠ Date requise'); return; }
   const rows=S.players.map(p=>({
     player_id:p.id, session_date:date, session_type:type,
     status:S.presStatus[p.id]||'P', rpe:S.presRpe[p.id]||null,
   }));
+  // FIX P2 #5 — si offline, file d'attente
+  if(!navigator.onLine){
+    const ok=await queueOfflineOp({kind:'presences.upsert', rows});
+    toast(ok?'📥 Enregistré hors-ligne — sync à la reconnexion':'✗ Échec file d\'attente offline');
+    if(ok){ S.presStatus={}; S.presRpe={}; S.presUndo=[]; S.presRedo=[]; renderPresences(); }
+    return;
+  }
   try{
     const{error}=await sb.from('presences').upsert(rows,{onConflict:'player_id,session_date,session_type'});
     if(error)throw error;
-    S.presStatus={}; S.presRpe={};
+    S.presStatus={}; S.presRpe={}; S.presUndo=[]; S.presRedo=[];
     const{data}=await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300);
     S.presences=data||[];
     renderPresences(); renderHome();
     toast(msg('saved'));
-  }catch(e){toast('✗ '+e.message);}
+  }catch(e){
+    // En cas d'erreur réseau, on file aussi
+    if(e && /network|fetch|failed/i.test(e.message||'')){
+      const ok=await queueOfflineOp({kind:'presences.upsert', rows});
+      toast(ok?'📥 Réseau indisponible — mis en file':'✗ '+e.message);
+      if(ok){ S.presStatus={}; S.presRpe={}; renderPresences(); }
+    } else toast('✗ '+e.message);
+  }
+};
+
+// FIX P2 #4 — Undo/Redo présences (30 derniers changements)
+S.presUndo = S.presUndo || [];
+S.presRedo = S.presRedo || [];
+const _origSetStatus = window.setStatus;
+window.setStatus = (pid,s)=>{
+  const prev=S.presStatus[pid]||'P';
+  if(prev!==s){ S.presUndo.push({type:'status',pid,prev,next:s}); if(S.presUndo.length>30) S.presUndo.shift(); S.presRedo=[]; }
+  _origSetStatus(pid,s);
+  _refreshUndoRedoUI();
+};
+const _origAdjRpe = window.adjRpe;
+window.adjRpe = (pid,d)=>{
+  const prev=S.presRpe[pid]||0;
+  _origAdjRpe(pid,d);
+  const next=S.presRpe[pid]||0;
+  if(prev!==next){ S.presUndo.push({type:'rpe',pid,prev,next}); if(S.presUndo.length>30) S.presUndo.shift(); S.presRedo=[]; }
+  _refreshUndoRedoUI();
+};
+window.undoPresence = ()=>{
+  const a=S.presUndo.pop(); if(!a){ toast('Rien à annuler'); return; }
+  if(a.type==='status'){ S.presStatus[a.pid]=a.prev; }
+  else if(a.type==='rpe'){ S.presRpe[a.pid]=a.prev; }
+  S.presRedo.push(a);
+  renderPresences(); _refreshUndoRedoUI();
+};
+window.redoPresence = ()=>{
+  const a=S.presRedo.pop(); if(!a){ toast('Rien à refaire'); return; }
+  if(a.type==='status'){ S.presStatus[a.pid]=a.next; }
+  else if(a.type==='rpe'){ S.presRpe[a.pid]=a.next; }
+  S.presUndo.push(a);
+  renderPresences(); _refreshUndoRedoUI();
+};
+function _refreshUndoRedoUI(){
+  const u=$('btn-pres-undo'), r=$('btn-pres-redo');
+  if(u){ u.disabled=!S.presUndo.length; u.setAttribute('aria-disabled', !S.presUndo.length); }
+  if(r){ r.disabled=!S.presRedo.length; r.setAttribute('aria-disabled', !S.presRedo.length); }
+}
+
+// FIX P2 #3 — Export CSV des présences
+window.exportPresencesCSV = ()=>{
+  if(!S.presences?.length){ toast('Aucune présence à exporter'); return; }
+  const rows=[['Date','Joueur','Position','Type','Statut','RPE']];
+  S.presences.forEach(p=>{
+    const nm = p.players?.name || S.players.find(sp=>sp.id===p.player_id)?.name || p.player_id;
+    const po = p.players?.position || S.players.find(sp=>sp.id===p.player_id)?.position || '';
+    rows.push([p.session_date||'', nm, po, p.session_type||'', p.status||'', p.rpe||'']);
+  });
+  const csv=rows.map(r=>r.map(c=>{
+    const s=(c==null?'':String(c)).replace(/"/g,'""');
+    return /[",;\n]/.test(s)?`"${s}"`:s;
+  }).join(';')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`presences_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),500);
+  toast('✓ Présences exportées');
+};
+
+// FIX P2 #2 — Export Planning PDF (fenêtre d'impression formatée)
+window.exportPlanningPDF = (mid)=>{
+  const plan=S.plans[mid]; if(!plan){ toast('Aucun planning à exporter'); return; }
+  const match=S.matches.find(m=>m.id===mid); if(!match){ toast('Match introuvable'); return; }
+  const loads=(plan.sessions||[]).map(s=>({n:s.dayName||s.label||s.type, rpe:rpeNum(s.rpe_target), dur:s.duration||75}));
+  const avg=loads.length?loads.reduce((a,l)=>a+l.rpe,0)/loads.length:0;
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>Planning ${match.opponent}</title>
+    <style>
+      body{font-family:-apple-system,Segoe UI,sans-serif;color:#0B1929;padding:24px;max-width:720px;margin:auto;}
+      h1{color:#10B981;margin:0 0 6px;font-size:22px;}
+      .meta{color:#6B7280;font-size:12px;margin-bottom:16px;}
+      .day{border-left:4px solid #10B981;padding:10px 14px;margin:10px 0;background:#F9FAFB;border-radius:4px;page-break-inside:avoid;}
+      .day h2{margin:0 0 4px;font-size:16px;}
+      .rpe{display:inline-block;padding:2px 8px;background:#10B981;color:#fff;border-radius:3px;font-size:11px;margin-left:8px;}
+      .ex{margin:6px 0;padding-left:16px;border-left:2px solid #E5E7EB;}
+      .footer{margin-top:20px;font-size:11px;color:#6B7280;border-top:1px solid #E5E7EB;padding-top:10px;}
+      @media print { body{padding:10px;} }
+    </style></head><body>
+    <h1>Planning hebdo — ${match.is_home?'VFC vs '+match.opponent:match.opponent+' vs VFC'}</h1>
+    <div class="meta">Match : ${fd(match.match_date)||'—'} · ${match.is_home?'Domicile':'Extérieur'} · Journée ${match.journee||'?'} · RPE moyen ${avg.toFixed(1)}</div>
+    ${(plan.sessions||[]).map(s=>`<div class="day">
+      <h2>${s.dayName||s.label||s.type}<span class="rpe">RPE ${s.rpe_target||'?'} · ${s.duration||75} min</span></h2>
+      <div style="color:#374151;font-size:13px;margin-bottom:6px;">${s.objectif||''}</div>
+      ${(s.focus||[]).length?`<div style="font-size:11px;color:#6B7280;margin-bottom:6px;">Focus : ${(s.focus||[]).join(' · ')}</div>`:''}
+      ${(s.exercises||[]).map((ex,i)=>`<div class="ex"><strong>${i+1}. ${ex.name||''}</strong><br><span style="color:#6B7280;font-size:12px;">${ex.detail||''}</span></div>`).join('')}
+      ${s.notes?`<div style="margin-top:8px;font-size:12px;color:#6B7280;font-style:italic;">📝 ${s.notes}</div>`:''}
+    </div>`).join('')}
+    ${plan.week_note?`<div style="margin-top:14px;padding:10px;background:#FEF3C7;border-radius:4px;font-size:12px;"><strong>Note de semaine :</strong> ${plan.week_note.replace(/\n/g,'<br>')}</div>`:''}
+    <div class="footer">Généré le ${new Date().toLocaleString('fr-BE')} — RealDev Vilvoorde FC</div>
+    <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
+  </body></html>`;
+  const w=window.open('', '_blank', 'width=800,height=900');
+  if(!w){ toast('✗ Pop-up bloqué — autorise les pop-ups'); return; }
+  w.document.write(html); w.document.close();
+  toast('✓ Export PDF lancé');
 };
 
 /* ════════ MATCHS ════════ */
@@ -2615,7 +2866,16 @@ window.openInjDetail=(id,hist)=>{
     ${inj.treatment?sf('Traitement',inj.treatment):''}
     ${inj.matches_missed?sf('Matchs manqués',inj.matches_missed):''}
     ${proto.length?`<div class="sheet-section-title">Protocole de retour</div>
-      ${proto.map(s=>`<div class="proto-step-card"><div class="proto-step-ph">${s.phase}</div><div class="proto-step-ds">${s.desc}</div></div>`).join('')}`:''}
+      ${proto.map((s,i)=>`<div class="proto-step-card ${s.done?'rtp-done':''}">
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${!hist&&isStaff?`<button class="rtp-check" onclick="toggleRtpStep('${id}',${i})" aria-label="${s.done?'Étape validée':'Valider cette étape'}" style="width:28px;height:28px;min-width:28px;border-radius:50%;border:2px solid ${s.done?'var(--brand)':'var(--sep2)'};background:${s.done?'var(--brand)':'transparent'};color:#fff;cursor:pointer;font-weight:700;flex-shrink:0;">${s.done?'✓':''}</button>`:(s.done?'<span style="color:var(--brand);font-weight:700;">✓</span>':'')}
+          <div style="flex:1">
+            <div class="proto-step-ph">${s.phase||'Phase '+(i+1)}${s.done_at?` <span style="font-weight:400;color:var(--tx3);font-size:10px;">· validé ${fd(s.done_at)}</span>`:''}</div>
+            <div class="proto-step-ds">${s.desc||''}</div>
+          </div>
+        </div>
+      </div>`).join('')}
+      ${!hist&&isStaff?(()=>{ const done=proto.filter(s=>s.done).length; const pct=Math.round(done/proto.length*100); return `<div style="margin:10px 0;"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:4px;"><span>Progression RTP</span><span>${done}/${proto.length} · ${pct}%</span></div><div class="stat-bg"><div class="stat-fill" style="width:${pct}%;background:var(--brand);"></div></div></div>`; })():''}`:''}
     ${inj.notes?sf('Notes',inj.notes):''}
     ${!hist&&isStaff?`<div class="btn-row" style="margin-top:16px;">
       <button class="btn btn-outline" style="flex:1;" onclick="close_modal('modal-inj');editInj('${id}')">Modifier</button>
@@ -2626,6 +2886,23 @@ window.openInjDetail=(id,hist)=>{
 };
 const sf=(l,v)=>`<div class="sheet-field"><strong>${l}</strong><p>${v}</p></div>`;
 
+// FIX P2 #1 — Return-to-play : cochage d'étapes avec date
+window.toggleRtpStep = async (injId, idx) => {
+  const inj = S.injuries.find(i=>i.id===injId); if(!inj) return;
+  const proto = Array.isArray(inj.protocol) ? inj.protocol.map(p=>({...p})) : [];
+  if(!proto[idx]) return;
+  proto[idx].done = !proto[idx].done;
+  proto[idx].done_at = proto[idx].done ? new Date().toISOString().split('T')[0] : null;
+  try{
+    const{error}=await sb.from('injuries').update({protocol:proto}).eq('id',injId);
+    if(error) throw error;
+    inj.protocol = proto;
+    // Re-render modal
+    const hist=false; openInjDetail(injId,hist);
+    renderMedical();
+    toast(proto[idx].done ? '✓ Étape validée' : 'Étape réinitialisée');
+  }catch(e){ toast('✗ '+e.message); }
+};
 window.confirmHeal=(id,pid,name)=>{if(!confirm(`Marquer ${name} comme guéri ?`))return;doHeal(id,pid);};
 async function doHeal(id,pid){
   await sb.from('injuries').update({is_active:false,healed_at:new Date().toISOString().split('T')[0]}).eq('id',id);
@@ -2636,7 +2913,12 @@ async function doHeal(id,pid){
   ]);
   S.injuries=a.data||[]; S.injHistory=h.data||[];
   const{data}=await sb.from('players').select('*').order('number'); S.players=data||[];
-  renderMedical(); renderHome(); renderSquad(); toast(msg('healed'));
+  // FIX P0 #5 — cohérence cross-tab lors d'une guérison
+  renderMedical(); renderHome(); renderSquad();
+  try{ if(typeof renderPlanning==='function') renderPlanning(); }catch(_){}
+  try{ if(typeof renderAttendance==='function') renderAttendance(); }catch(_){}
+  try{ if(typeof renderCoachAnalytics==='function') renderCoachAnalytics(); }catch(_){}
+  toast(msg('healed'));
 }
 
 /* Formulaire blessure */
@@ -2676,9 +2958,26 @@ window.editInj=id=>{
   stab(document.querySelectorAll('#pg-medical .tab-btn')[1],'ti-declare');
   window.scrollTo(0,0);
 };
+// FIX P1 #1 — validation inline (focus + surlignage + message sous le champ)
+function clearFieldError(el){ if(!el) return; el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); const n=el.nextElementSibling; if(n && n.classList?.contains('field-error')) n.remove(); }
+function setFieldError(el,msg){
+  if(!el) return;
+  el.classList.add('invalid');
+  el.setAttribute('aria-invalid','true');
+  const nxt=el.nextElementSibling;
+  if(nxt && nxt.classList?.contains('field-error')) nxt.textContent=msg;
+  else{ const s=document.createElement('div'); s.className='field-error'; s.textContent=msg; el.parentNode.insertBefore(s,el.nextSibling); }
+  el.addEventListener('input',()=>clearFieldError(el),{once:true});
+  el.addEventListener('change',()=>clearFieldError(el),{once:true});
+  try{ el.focus(); }catch(_){}
+}
 window.saveInj=async()=>{
-  const type=$('inj-type').value.trim();if(!type){toast('⚠ Diagnostic requis');return;}
-  const ps=$('inj-player');const pid=ps.options[ps.selectedIndex]?.dataset.id;if(!pid){toast('⚠ Sélectionnez un joueur');return;}
+  const typeEl=$('inj-type');
+  const type=typeEl.value.trim();
+  if(!type){ setFieldError(typeEl,'Diagnostic requis'); toast('⚠ Diagnostic requis'); return; }
+  const ps=$('inj-player');
+  const pid=ps.options[ps.selectedIndex]?.dataset.id;
+  if(!pid){ setFieldError(ps,'Sélectionnez un joueur'); toast('⚠ Sélectionnez un joueur'); return; }
   const payload={player_id:pid,type,severity:$('inj-grav').value,status:$('inj-status').value,
     injury_date:$('inj-date').value,return_date:$('inj-retour').value||null,
     mechanism:$('inj-mech').value,anatomy_zone:$('inj-zone').value,exam:$('inj-exam').value,
@@ -2694,7 +2993,11 @@ window.saveInj=async()=>{
     ]);
     S.injuries=a.data||[]; S.injHistory=h.data||[];
     const{data}=await sb.from('players').select('*').order('number');S.players=data||[];
+    // FIX P0 #5 — cohérence cross-tab : refresh planning + présences + analytics
     clearInjForm();renderMedical();renderHome();renderSquad();
+    try{ if(typeof renderPlanning==='function') renderPlanning(); }catch(_){}
+    try{ if(typeof renderAttendance==='function') renderAttendance(); }catch(_){}
+    try{ if(typeof renderCoachAnalytics==='function') renderCoachAnalytics(); }catch(_){}
     stab(document.querySelector('#pg-medical .tab-btn'),'ti-active');
   }catch(e){toast('✗ '+e.message);}
 };
@@ -2737,6 +3040,11 @@ async function renderPlanning(){
       <div class="analysis-title">🧠 Adaptations face à ${match.opponent||'cet adversaire'}</div>
       ${analysis.consignes.map(c=>`<div class="analysis-item">${c}</div>`).join('')}
     </div>`:''}
+    ${computeChargeAlert(plan.sessions||[])}
+    ${['coach','admin'].includes(S.role)?`<div style="padding:0 18px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+      <span style="font:700 11px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-right:4px;">Template :</span>
+      ${Object.entries(PLAN_TEMPLATES).map(([k,t])=>`<button class="btn btn-sm btn-outline" onclick="applyPlanTemplate('${match.id}','${k}')" title="${t.note}" aria-label="Template ${t.label}">${t.icon} ${t.label}</button>`).join('')}
+    </div>`:''}
     <div style="padding:0 18px 10px;font:700 12px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);">Programme de la semaine</div>
     ${(plan.sessions||[]).map((s,si)=>dayBlock(s,si,match.id,absent)).join('')}
     <div class="matchday-row">
@@ -2747,12 +3055,45 @@ async function renderPlanning(){
       <label class="fl">Note de semaine</label>
       <textarea class="fi" style="min-height:60px;" placeholder="Tactique, gestion du groupe..."
         oninput="S.plans['${match.id}'].week_note=this.value">${plan.week_note||''}</textarea>
-      <button class="btn btn-green btn-block" style="margin-top:10px;" onclick="savePlan('${match.id}')">Sauvegarder le planning</button>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-green" style="flex:2" onclick="savePlan('${match.id}')">Sauvegarder le planning</button>
+        <button class="btn btn-outline" style="flex:1" onclick="exportPlanningPDF('${match.id}')" aria-label="Exporter le planning en PDF">📄 Export PDF</button>
+      </div>
     </div><div style="height:16px;"></div>`:'<div style="height:16px;"></div>'}
   `;
   window.S=S;
 }
 
+// FIX P1 #5 — Analytics RPE + alertes charge hebdo
+function rpeNum(r){
+  if(typeof r==='number') return r;
+  const s=(r||'').toString();
+  const m=s.match(/(\d+)/g); if(!m||!m.length) return 0;
+  return m.map(Number).reduce((a,b)=>a+b,0)/m.length;
+}
+function computeChargeAlert(sessions){
+  if(!sessions || !sessions.length) return '';
+  const loads=sessions.map(s=>({n:s.dayName||s.label||s.type, rpe:rpeNum(s.rpe_target), dur:s.duration||75}));
+  const sum=loads.reduce((a,l)=>a+l.rpe*l.dur,0);
+  const avg=loads.reduce((a,l)=>a+l.rpe,0)/loads.length;
+  const high=loads.filter(l=>l.rpe>=7).length;
+  let tone='ok', title='Charge hebdo équilibrée', icon='✅';
+  if(avg>=7 || high>=2){ tone='warn'; title='Charge hebdo élevée'; icon='⚠️'; }
+  if(avg>=8 || high>=3){ tone='danger'; title='Risque de surcharge'; icon='🚨'; }
+  const color=tone==='danger'?'var(--danger)':tone==='warn'?'var(--warn)':'var(--brand)';
+  const bg=tone==='danger'?'rgba(239,68,68,.08)':tone==='warn'?'rgba(245,158,11,.08)':'rgba(16,185,129,.08)';
+  const tips=[];
+  if(tone==='danger') tips.push('Réduis la durée ou RPE d\'une séance intense');
+  if(tone==='warn') tips.push('Intercale une séance récupération (RPE 3–4)');
+  if(tone==='ok') tips.push('Profil cohérent — maintiens l\'alternance');
+  return `<div class="analysis-card" style="border-left:4px solid ${color};background:${bg};">
+    <div class="analysis-title">${icon} ${title} · RPE moyen ${avg.toFixed(1)} · Charge ${Math.round(sum)}</div>
+    <div class="analysis-item" style="display:flex;gap:6px;flex-wrap:wrap;">
+      ${loads.map(l=>`<span style="font:600 11px/1 var(--font);padding:4px 8px;border-radius:4px;background:${l.rpe>=7?'rgba(239,68,68,.18)':l.rpe>=5?'rgba(245,158,11,.18)':'rgba(16,185,129,.18)'};color:${l.rpe>=7?'var(--danger)':l.rpe>=5?'var(--warn)':'var(--brand)'};">${l.n} · RPE ${l.rpe.toFixed(1)}</span>`).join('')}
+    </div>
+    ${tips.map(t=>`<div class="analysis-item">💡 ${t}</div>`).join('')}
+  </div>`;
+}
 function dayBlock(s,si,mid,absent){
   const COL={lundi:'#9333ea',mardi:'var(--danger)',mercredi:'var(--info)'};
   const c=COL[s.type]||'var(--tx3)';
@@ -2793,13 +3134,27 @@ function dayBlock(s,si,mid,absent){
 
 window.toggleDay=(mid,si)=>{const k=mid+'_'+si;S.expanded.has(k)?S.expanded.delete(k):S.expanded.add(k);renderPlanning();};
 window.setPlanIdx=idx=>{S.planIdx=idx;renderPlanning();};
+// FIX P0 #4 — savePlan simplifié : id persisté + erreurs explicites + rollback silencieux
 window.savePlan=async mid=>{
-  const plan=S.plans[mid];if(!plan)return;
+  const plan=S.plans[mid];
+  if(!plan){ console.warn('savePlan: no plan for', mid); return; }
+  const payload={match_id:mid,sessions:plan.sessions||[],week_note:plan.week_note||''};
   try{
-    const p={match_id:mid,sessions:plan.sessions,week_note:plan.week_note||''};
-    const{data,error}=plan.id?await sb.from('training_plans').update(p).eq('id',plan.id).select().single():await sb.from('training_plans').insert(p).select().single();
-    if(error)throw error;S.plans[mid]={...plan,...data};toast('Planning sauvegardé ✓');
-  }catch(e){toast('✗ '+e.message);}
+    let resp;
+    if(plan.id){
+      resp=await sb.from('training_plans').update(payload).eq('id',plan.id).select().single();
+    } else {
+      resp=await sb.from('training_plans').insert(payload).select().single();
+    }
+    if(resp.error) throw resp.error;
+    if(!resp.data) throw new Error('Supabase a retourné aucune donnée');
+    // Merge en préservant les sessions locales + nouvel id
+    S.plans[mid]={...plan, id:resp.data.id, updated_at:resp.data.updated_at};
+    toast('Planning sauvegardé ✓');
+  }catch(e){
+    console.error('savePlan error:', e);
+    toast('✗ Sauvegarde planning : '+(e.message||'erreur inconnue'));
+  }
 };
 window.editDay=(mid,si)=>{
   const s=S.plans[mid]?.sessions[si];if(!s)return;
@@ -2848,8 +3203,19 @@ window.deleteDay=async(mid,si)=>{
 /* ════════ SQUAD ════════ */
 function renderSquad(){
   const sb2=s=>({Disponible:'chip-green',Blessé:'chip-red',Suspendu:'chip-amber',Incertain:'chip-amber'})[s]||'chip-muted';
-  $('roster-eff').innerHTML=S.players.map(p=>`<div class="player-row">
-    <div class="av ${avClass(p.position)}">${initials(p.name)}</div>
+  // FIX BUG #1 — playerAvatar() utilisé dans les 3 sections Squad (photos Looker)
+  // + FIX UX #7 — Recherche / filtre joueurs
+  const sqQ=(S._sqQuery||'').toLowerCase();
+  const sqF=S._sqFilter||'all';
+  const sqFilter=p=>{
+    if(sqQ && !(p.name||'').toLowerCase().includes(sqQ)) return false;
+    if(sqF==='avail' && p.status!=='Disponible') return false;
+    if(sqF==='out' && (p.status==='Disponible'||!p.status)) return false;
+    return true;
+  };
+  const filtered=S.players.filter(sqFilter);
+  const rosterHTML=filtered.map(p=>`<div class="player-row" data-player-id="${p.id}">
+    ${playerAvatar(p,'md')}
     <div class="player-info">
       <div class="player-name">${p.name}</div>
       <div class="player-meta"><span class="roster-pos pos-${posClass(p.position)}">${p.position}</span> · ${p.nationality||'—'} · ⚽ ${p.goals||0} · 🅰 ${p.assists||0}</div>
@@ -2860,9 +3226,10 @@ function renderSquad(){
     </div>
     <div class="player-num">${p.number||'—'}</div>
   </div>`).join('');
+  $('roster-eff').innerHTML=rosterHTML||emptyState('🔍','Aucun joueur correspondant','Réinitialiser','window.resetSquadFilter()');
 
-  $('disc-list').innerHTML=[...S.players].filter(p=>p.yellow_cards>0||p.red_cards>0).sort((a,b)=>b.yellow_cards-a.yellow_cards).map(p=>`<div class="player-row">
-    <div class="av ${avClass(p.position)}">${initials(p.name)}</div>
+  $('disc-list').innerHTML=[...S.players].filter(p=>p.yellow_cards>0||p.red_cards>0).sort((a,b)=>b.yellow_cards-a.yellow_cards).map(p=>`<div class="player-row" data-player-id="${p.id}">
+    ${playerAvatar(p,'md')}
     <div class="player-info"><div class="player-name">${p.name}</div><div class="player-meta pos-${posClass(p.position)}">${p.position}</div></div>
     <div style="display:flex;gap:5px;align-items:center;">
       ${p.yellow_cards?`<span class="chip chip-amber">🟨 ${p.yellow_cards}</span>`:''}
@@ -2874,7 +3241,7 @@ function renderSquad(){
   const maxG=Math.max(...S.players.map(p=>p.goals||0),1);
   $('goals-list').innerHTML=[...S.players].sort((a,b)=>(b.goals||0)-(a.goals||0)).map((p,i)=>`<div class="goals-row">
     <div class="goals-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
-    <div class="av ${avClass(p.position)} av-sm">${initials(p.name)}</div>
+    ${playerAvatar(p,'sm')}
     <div class="goals-info">
       <div class="goals-name">${p.name}</div>
       <div class="roster-pos pos-${posClass(p.position)}" style="font-size:10px;">${p.position}</div>
@@ -2937,7 +3304,23 @@ function renderProfile(){
 }
 
 /* ── Utils ── */
-function emptyState(icon,text){return`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-sub">${text}</div></div>`;}
+// FIX UX #11 — emptyState enrichi : CTA optionnel
+function emptyState(icon,text,ctaLabel,ctaAction){
+  const cta=ctaLabel&&ctaAction?`<button class="btn btn-green btn-sm" style="margin-top:12px;" onclick="${ctaAction}">${ctaLabel}</button>`:'';
+  return`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-sub">${text}</div>${cta}</div>`;
+}
+// FIX UX #7 — handlers Squad filter/recherche
+window.setSquadQuery=(v)=>{S._sqQuery=v;renderSquad();};
+window.setSquadFilter=(f)=>{
+  S._sqFilter=f;
+  document.querySelectorAll('.sq-fil').forEach(b=>{
+    const on=b.dataset.fil===f;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',on?'true':'false');
+  });
+  renderSquad();
+};
+window.resetSquadFilter=()=>{S._sqQuery='';S._sqFilter='all';const s=$('sq-search');if(s)s.value='';window.setSquadFilter('all');};
 function populateSel(){
   const ps=$('inj-player');
   if(ps) ps.innerHTML=S.players.map(p=>`<option value="${p.name}" data-id="${p.id}">${p.name} (${p.position})</option>`).join('');
@@ -3097,6 +3480,7 @@ function rankAvatarHTML(player) {
 
 /* ─── Helpers ─── */
 const teamAvg = key => {
+  if(!window.LOOKER_DATA?.players?.length) return 0;
   const vals = LOOKER_DATA.players.filter(p => p.shots_on > 0 || key==='rating').map(p => p[key]||0);
   return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
 };
@@ -3185,6 +3569,7 @@ function renderAnalyticsCoach() {
 
 /* ─── Classement global ─── */
 function renderCoachRanking() {
+  if(!window.LOOKER_DATA?.players?.length) return '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-sub">Classement indisponible.</div></div>';
   const players = [...LOOKER_DATA.players].sort((a,b) => {
     const av=a[_anaSort.key]||0, bv=b[_anaSort.key]||0;
     return (bv-av)*_anaSort.dir;
@@ -3324,7 +3709,9 @@ function renderCoachInsights() {
 
 /* ─── Stats Attaque ─── */
 function renderCoachAttack() {
+  if(!window.LOOKER_DATA?.players?.length) return '<div class="empty"><div class="empty-icon">⚽</div><div class="empty-sub">Aucune statistique attaque.</div></div>';
   const players = [...LOOKER_DATA.players].filter(p=>p.shots_on>0);
+  if(!players.length) return '<div class="empty"><div class="empty-icon">⚽</div><div class="empty-sub">Pas encore de données d\'attaque.</div></div>';
   const maxG = Math.max(...players.map(p=>p.goals));
   const maxA = Math.max(...players.map(p=>p.assists));
   const maxS = Math.max(...players.map(p=>p.shots_on));
@@ -3380,6 +3767,8 @@ function renderCoachAttack() {
 
 /* ─── Discipline ─── */
 function renderCoachDiscipline() {
+  // FIX P0 #3 — guard LOOKER_DATA
+  if(!window.LOOKER_DATA?.players?.length) return '<div class="empty"><div class="empty-icon">📊</div><div class="empty-sub">Aucune donnée Looker disponible.</div></div>';
   const players = LOOKER_DATA.players;
   const atRisk = players.filter(p => p.yellow >= 3);
   const clean  = players.filter(p => p.yellow === 0);
@@ -3453,10 +3842,15 @@ function renderCoachDiscipline() {
 
 /* ─── Vue Joueur : profil individuel ─── */
 function renderAnalyticsPlayer(playerName) {
+  // FIX P0 #3 — guard LOOKER_DATA
+  if(!window.LOOKER_DATA?.players?.length){ const el=$('ana-player-content'); if(el) el.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-sub">Aucune donnée joueur disponible.</div></div>'; return; }
+  const safeName=(playerName||'').toString();
+  const pnParts=safeName.split(' ');
+  const pnLast=pnParts.length?pnParts[pnParts.length-1]:'';
   const player = LOOKER_DATA.players.find(p =>
-    p.name === playerName ||
-    S.profile?.players?.name?.includes(playerName.split(' ').slice(-1)[0])
-  ) || LOOKER_DATA.players.find(p => S.profile?.players?.name?.includes(p.short.split(' ').slice(-1)[0]))
+    p.name === safeName ||
+    (S.profile?.players?.name||'').includes(pnLast)
+  ) || LOOKER_DATA.players.find(p => (S.profile?.players?.name||'').includes(p.short.split(' ').slice(-1)[0]))
     || LOOKER_DATA.players[0];
 
   if (!player) { $('ana-player-content').innerHTML = '<div style="padding:20px;text-align:center;color:var(--tx3)">Profil non trouvé</div>'; return; }
@@ -3627,6 +4021,7 @@ window.syncStats = async () => {
   const btn = $('stats-sync-btn');
   if (btn) btn.classList.add('syncing');
   try {
+    if(!window.LOOKER_DATA?.players?.length){ toast('Aucune donnée Looker à synchroniser'); if(btn) btn.classList.remove('syncing'); return; }
     let updated = 0;
     for (const ps of LOOKER_DATA.players) {
       const player = S.players.find(p =>
