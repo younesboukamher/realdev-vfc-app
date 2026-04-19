@@ -346,6 +346,21 @@ body.offline #offline-bar { display:block; }
   padding-bottom:calc(var(--navbar-h) + var(--safe-b));
 }
 
+/* N1 — "Plus" drawer */
+.more-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; padding:8px 4px 14px; }
+.more-item {
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  gap:6px; padding:16px 10px 14px; background:var(--ink2); border:1px solid var(--sep2);
+  border-radius:14px; color:var(--tx1); cursor:pointer;
+  transition:background .15s, border-color .15s, transform .1s;
+}
+.more-item:hover { background:var(--ink3); border-color:var(--sep); }
+.more-item:active { transform:scale(.97); }
+.more-item .more-ic { color:var(--brand); }
+.more-item .more-lbl { font:700 13px/1.2 var(--font); color:var(--tx1); text-align:center; }
+.more-item .more-sub { font:500 10px/1.3 var(--font); color:var(--tx3); text-align:center; }
+@media (max-width:400px) { .more-grid { grid-template-columns:1fr 1fr; } }
+
 /* ── Bottom navbar ── */
 .navbar {
   position:fixed; bottom:0; left:0; right:0;
@@ -2397,10 +2412,13 @@ function generateMicrocycle(scouting) {
 
   </div><!-- main -->
 
-  <!-- Bottom nav — staff -->
+  <!-- Bottom nav — staff — N1 : 5 items + Plus -->
   <nav class="navbar" id="nav-staff" style="display:none;">
     <button class="nb-tab on" onclick="window.nav('home',this)" data-p="home">
       <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21V15C9 14.4477 9.44772 14 10 14H14C14.5523 14 15 14.4477 15 15V21M9 21H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="nb-label" data-t="home">Accueil</span>
+    </button>
+    <button class="nb-tab" onclick="window.nav('planning',this)" data-p="planning">
+      <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9H21M8 2V6M16 2V6M7 13H9M11 13H13M15 13H17M7 17H9M11 17H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="nb-label" data-t="planning">Planning</span>
     </button>
     <button class="nb-tab" onclick="window.nav('presences',this)" data-p="presences">
       <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="nb-label" data-t="presences">Présences</span>
@@ -2408,19 +2426,35 @@ function generateMicrocycle(scouting) {
     <button class="nb-tab" onclick="window.nav('matchs',this)" data-p="matchs">
       <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 3C12 3 9 7 9 12C9 17 12 21 12 21M12 3C12 3 15 7 15 12C15 17 12 21 12 21M3.5 8.5H20.5M3.5 15.5H20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="nb-label" data-t="matchs">Matchs</span>
     </button>
-    <button class="nb-tab" onclick="window.nav('medical',this)" data-p="medical">
-      <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3H15V7H19C19.5523 7 20 7.44772 20 8V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V8C4 7.44772 4.44772 7 5 7H9V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 11V16M9.5 13.5H14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="nb-label" data-t="medical">Medical</span>
-    </button>
-    <button class="nb-tab" onclick="window.nav('planning',this)" data-p="planning">
-      <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9H21M8 2V6M16 2V6M7 13H9M11 13H13M15 13H17M7 17H9M11 17H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="nb-label" data-t="planning">Planning</span>
-    </button>
-    <button class="nb-tab" onclick="window.nav('squad',this)" data-p="squad">
-      <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 20C3 17.2386 5.68629 15 9 15M21 20C21 17.2386 18.3137 15 15 15M12 21C8.68629 21 6 18.7614 6 16C6 13.2386 8.68629 11 12 11C15.3137 11 18 13.2386 18 16C18 18.7614 15.3137 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="nb-label" data-t="squad">Squad</span>
-    </button>
-    <button class="nb-tab" onclick="window.nav('stats',this)" data-p="stats">
-      <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3V21H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 16L11 11L14 14L19 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="nb-label">Stats</span>
+    <button class="nb-tab" onclick="window.openMore(this)" data-p="more" aria-haspopup="dialog" aria-expanded="false">
+      <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg></div><span class="nb-label">Plus</span>
     </button>
   </nav>
+
+  <!-- N1 — Drawer "Plus" : Medical / Squad / Stats -->
+  <div class="overlay" id="modal-more" onclick="if(event.target===this)close_modal('modal-more')">
+    <div class="sheet" style="max-width:460px;">
+      <button class="sheet-close" onclick="window.close_modal('modal-more')">✕</button>
+      <div class="sheet-title">Plus d’options</div>
+      <div class="more-grid">
+        <button class="more-item" onclick="window.navFromMore('medical')">
+          <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 3H15V7H19C19.5523 7 20 7.44772 20 8V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V8C4 7.44772 4.44772 7 5 7H9V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 11V16M9.5 13.5H14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div class="more-lbl">Medical</div>
+          <div class="more-sub">Blessures, retour</div>
+        </button>
+        <button class="more-item" onclick="window.navFromMore('squad')">
+          <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 20C3 17.2386 5.68629 15 9 15M21 20C21 17.2386 18.3137 15 15 15M12 21C8.68629 21 6 18.7614 6 16C6 13.2386 8.68629 11 12 11C15.3137 11 18 13.2386 18 16C18 18.7614 15.3137 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div class="more-lbl">Effectif</div>
+          <div class="more-sub">Joueurs, cartons, buts</div>
+        </button>
+        <button class="more-item" onclick="window.navFromMore('stats')">
+          <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 3V21H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 16L11 11L14 14L19 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="more-lbl">Analytics</div>
+          <div class="more-sub">Data Science Dashboard</div>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Bottom nav — joueur -->
   <nav class="navbar" id="nav-player" style="display:none;">
@@ -2993,13 +3027,34 @@ window.nav = (name, btn) => {
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   $('pg-'+name)?.classList.add('on');
   document.querySelectorAll('.nb-tab').forEach(t=>t.classList.remove('on'));
-  btn?.classList.add('on');
+  // N1 — Si la page appartient au drawer "Plus", surligne l'onglet Plus
+  const MORE_PAGES = ['medical','squad','stats'];
+  if (btn) {
+    btn.classList.add('on');
+  } else if (MORE_PAGES.includes(name)) {
+    const moreBtn = document.querySelector('.nb-tab[data-p="more"]');
+    if (moreBtn) moreBtn.classList.add('on');
+  } else {
+    const byPage = document.querySelector('.nb-tab[data-p="' + name + '"]');
+    if (byPage) byPage.classList.add('on');
+  }
   $('hud-pg').textContent=PAGE_NAMES()[name]||name;
   window.scrollTo(0,0);
   document.querySelector('.main')?.scrollTo(0,0);
   if (name==='planning') renderPlanning();
   if (name==='profile') renderProfile();
   if (name==='stats') renderStats();
+};
+// N1 — Drawer "Plus"
+window.openMore = (btn) => {
+  if (btn) btn.setAttribute('aria-expanded','true');
+  window.open_modal('modal-more');
+};
+window.navFromMore = (name) => {
+  window.close_modal('modal-more');
+  const moreBtn = document.querySelector('.nb-tab[data-p="more"]');
+  if (moreBtn) moreBtn.setAttribute('aria-expanded','false');
+  window.nav(name);
 };
 
 window.stab = (el, targetId) => {
