@@ -779,6 +779,23 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .sq10-age{font:700 11px/1 var(--font);opacity:.85;}
 .sq10-empty{font:600 11px/1.3 var(--font);opacity:.7;padding:6px 0;text-align:center;}
 
+/* Of7: Install prompt PWA */
+.of7-wrap{position:fixed;bottom:12px;left:12px;right:12px;z-index:100;background:linear-gradient(135deg,#065A82,#1C7293);color:#fff;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 30px rgba(6,90,130,.4);animation:of7-slide-in .35s cubic-bezier(.16,1,.3,1);}
+@keyframes of7-slide-in{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.of7-icon{font-size:28px;line-height:1;flex-shrink:0;}
+.of7-body{flex:1;min-width:0;}
+.of7-title{font:800 13px/1.2 var(--font);margin-bottom:3px;}
+.of7-sub{font:500 11px/1.4 var(--font);opacity:.92;}
+.of7-actions{display:flex;gap:6px;flex-shrink:0;}
+.of7-btn{padding:7px 12px;background:#fff;color:#065A82;border:none;border-radius:8px;font:800 11px/1 var(--font);cursor:pointer;}
+.of7-btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);}
+.of7-btn:hover{filter:brightness(1.1);}
+@media (max-width: 480px){
+  .of7-wrap{flex-direction:column;align-items:stretch;gap:8px;}
+  .of7-icon{display:none;}
+  .of7-actions{justify-content:flex-end;}
+}
+
 /* Pl9: Export ICS Planning */
 .pl9-bar{display:flex;gap:8px;padding:8px 14px 0;align-items:center;flex-wrap:wrap;}
 .pl9-btn{padding:6px 12px;background:var(--ink2);border:1px solid var(--sep2);border-radius:8px;font:700 11px/1.2 var(--font);color:var(--tx1);cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
@@ -9387,6 +9404,76 @@ function renderCoachGoals() {
 }
 
 /* ── Boot ── */
+// Of7 — Install prompt PWA (Android beforeinstallprompt + iOS Share instructions)
+(function(){
+  try{
+    const DISMISSED_KEY = 'rdv_install_dismissed';
+    const TS_KEY = 'rdv_install_last_ts';
+    if(localStorage.getItem(DISMISSED_KEY) === 'true') return;
+    const isStandalone = (typeof navigator !== 'undefined' && navigator.standalone === true) ||
+                         (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches);
+    if(isStandalone) return;
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    // Show after 8s to avoid harassing on load
+    let deferredPrompt = null;
+    const showBanner = (mode) => {
+      if(document.getElementById('of7-banner')) return;
+      const wrap = document.createElement('div');
+      wrap.id = 'of7-banner';
+      wrap.className = 'of7-wrap';
+      let title, sub, actions;
+      if(mode === 'android'){
+        title = 'Installer RealDev VFC';
+        sub = 'Ajoutez l\'app a votre ecran d\'accueil pour un acces rapide.';
+        actions = '<button type="button" class="of7-btn ghost" id="of7-dismiss">Plus tard</button>'
+               + '<button type="button" class="of7-btn" id="of7-install">Installer</button>';
+      } else {
+        title = 'Installer sur l\'ecran d\'accueil';
+        sub = 'Safari : touchez Partager 📤 puis « Sur l\'ecran d\'accueil ».';
+        actions = '<button type="button" class="of7-btn" id="of7-dismiss">OK, compris</button>';
+      }
+      wrap.innerHTML = '<div class="of7-icon">📱</div>'
+        +'<div class="of7-body"><div class="of7-title">'+title+'</div><div class="of7-sub">'+sub+'</div></div>'
+        +'<div class="of7-actions">'+actions+'</div>';
+      document.body.appendChild(wrap);
+      const dismissBtn = document.getElementById('of7-dismiss');
+      if(dismissBtn){
+        dismissBtn.addEventListener('click', () => {
+          localStorage.setItem(DISMISSED_KEY, 'true');
+          wrap.remove();
+        });
+      }
+      const installBtn = document.getElementById('of7-install');
+      if(installBtn){
+        installBtn.addEventListener('click', async () => {
+          if(!deferredPrompt){ wrap.remove(); return; }
+          deferredPrompt.prompt();
+          try{
+            const choice = await deferredPrompt.userChoice;
+            if(choice && choice.outcome === 'accepted'){
+              localStorage.setItem(DISMISSED_KEY, 'true');
+            }
+          }catch(_){}
+          deferredPrompt = null;
+          wrap.remove();
+        });
+      }
+    };
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      setTimeout(() => showBanner('android'), 8000);
+    });
+    // iOS has no beforeinstallprompt — show instructions directly
+    if(isIOS){
+      setTimeout(() => {
+        if(!deferredPrompt) showBanner('ios');
+      }, 8000);
+    }
+  }catch(e){ console.warn('of7 install prompt',e); }
+})();
+
 async function boot(){
   splash_on();
   try {
