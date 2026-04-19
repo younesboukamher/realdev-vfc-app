@@ -3468,7 +3468,9 @@ async function boot_app(user) {
   const _ns=$('nav-staff'), _np=$('nav-player');
   if(_ns) _ns.style.display=isStaff?'flex':'none';
   if(_np) _np.style.display=!isStaff?'flex':'none';
-  $('role-pill').textContent=S.role.toUpperCase();
+  const _roleIcons = {admin:'👑', coach:'🧢', assistant:'🧢', physio:'🏥', gk:'🧤', player:'🎽'};
+  const _ri = _roleIcons[S.role] || '👤';
+  $('role-pill').textContent = _ri + ' ' + S.role.toUpperCase();
   try { renderAll(); } catch(e){ console.error('renderAll error:', e); toast('Erreur chargement: '+e.message); }
   if (!window.__rt) { window.__rt=true; try { rt(); } catch(e){ console.error('rt error:', e); } }
 }
