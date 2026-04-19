@@ -506,6 +506,38 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
   border:1px solid rgba(34,197,94,.2); border-radius:var(--r-xl);
   padding:20px; position:relative; overflow:hidden;
 }
+/* H1 — Hero Next Game XL variant */
+.match-hero.xl {
+  margin:14px 18px 10px;
+  padding:22px 20px 20px;
+  background:linear-gradient(135deg, #14251a 0%, #1b2e24 55%, #1c2c24 100%);
+  box-shadow:0 8px 30px rgba(0,0,0,.25), 0 0 0 1px rgba(34,197,94,.18) inset;
+}
+.match-hero.xl .match-tag { font-size:11px; margin-bottom:16px; }
+.match-hero.xl .match-teams { margin-bottom:16px; gap:10px; }
+.match-hero.xl .match-team-name { font-size:22px; letter-spacing:-.5px; }
+.match-hero.xl .match-sep { font-size:22px; opacity:.55; }
+.match-hero.xl .match-countdown { font-size:28px; margin-top:12px; }
+.match-hero.xl .match-venue-row {
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.06);
+}
+.match-hero.xl .match-venue-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:999px; padding:5px 12px;
+  font:600 12px/1 var(--font); color:var(--tx2); letter-spacing:.2px;
+}
+.match-hero.xl .match-cta-row {
+  display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;
+}
+.match-hero.xl .match-cta-row .btn { flex:1; min-width:140px; }
+@media (max-width:480px) {
+  .match-hero.xl { padding:18px 16px 16px; margin:12px 14px 8px; }
+  .match-hero.xl .match-team-name { font-size:19px; }
+  .match-hero.xl .match-countdown { font-size:24px; }
+}
+
 .match-hero::before {
   content:''; position:absolute; top:0; left:0; right:0;
   height:1px; background:linear-gradient(90deg, var(--brand), transparent);
@@ -2111,8 +2143,9 @@ function generateMicrocycle(scouting) {
 
     <!-- ACCUEIL -->
     <div class="pg on" id="pg-home">
-      <div id="home-kpis" style="padding:12px 18px 0;"></div>
+      <!-- H1 — Hero 'Prochain match' XL en premier -->
       <div id="home-match"></div>
+      <div id="home-kpis" style="padding:6px 18px 0;"></div>
       <div class="sec" style="padding-top:16px;"><div class="sec-title" data-t="alerts">Alertes</div></div>
       <div id="home-alerts"></div>
       <div class="sec">
@@ -3054,30 +3087,40 @@ function renderHome() {
   }
   $('home-kpis').innerHTML = kpiHtml;
 
-  /* Prochain match */
-  const nxt=S.matches.find(m=>!m.result);
+  /* Prochain match — H1 Hero XL */
+  const nxt = S.matches.find(m => !m.result);
   if (nxt) {
-    const sc=S.scouting.find(s=>s.opponent_name?.toLowerCase().includes((nxt.opponent||'').split(' ')[0].toLowerCase()));
-    let cnt='';
-    if (nxt.match_date) { const d=Math.round((new Date(nxt.match_date)-new Date())/86400000); cnt=d===0?msg('today'):d===1?msg('tomorrow'):d>0?`Dans ${d} jours`:''; }
-    const absents=S.injuries.map(i=>`<span class="absent-pill">${(i.players?.name||'').split(' ')[1]||''} 🩺</span>`).join('');
-    $('home-match').innerHTML=`<div class="match-hero">
-      <div class="match-tag"><div class="match-tag-dot"></div>Prochain match · ${nxt.journee||''} · ${fd(nxt.match_date)}</div>
+    const sc = S.scouting.find(s => s.opponent_name?.toLowerCase().includes((nxt.opponent || '').split(' ')[0].toLowerCase()));
+    let cnt = '';
+    if (nxt.match_date) {
+      const d = Math.round((new Date(nxt.match_date) - new Date()) / 86400000);
+      cnt = d === 0 ? msg('today') : d === 1 ? msg('tomorrow') : d > 0 ? (`J−${d}`) : '';
+    }
+    const kickoff = nxt.kickoff_time || nxt.time || '';
+    const venue = nxt.venue || (nxt.is_home ? 'Domicile' : 'Extérieur');
+    const absents = S.injuries.map(i => `<span class="absent-pill">${(i.players?.name || '').split(' ')[1] || ''} 🩺</span>`).join('');
+    const canConvoc = ['admin','coach','assistant'].includes(S.role);
+    $('home-match').innerHTML = `<div class="match-hero xl">
+      <div class="match-tag"><div class="match-tag-dot"></div>Prochain match · ${nxt.journee || ''} · ${fd(nxt.match_date)}${kickoff ? ' · ' + kickoff : ''}</div>
       <div class="match-teams">
-        <div class="match-team-name ${nxt.is_home?'home':''}">${nxt.is_home?'Vilvoorde':nxt.opponent}</div>
+        <div class="match-team-name ${nxt.is_home ? 'home' : ''}">${nxt.is_home ? 'Vilvoorde' : nxt.opponent}</div>
         <div class="match-sep">vs</div>
-        <div class="match-team-name ${!nxt.is_home?'home':''}">${nxt.is_home?nxt.opponent:'Vilvoorde'}</div>
+        <div class="match-team-name ${!nxt.is_home ? 'home' : ''}">${nxt.is_home ? nxt.opponent : 'Vilvoorde'}</div>
       </div>
-      <div class="match-infos">
-        <span class="match-info-item">${nxt.is_home?msg('home_venue'):msg('away_venue')}</span>
-        ${sc?`<span class="match-info-item">· ${sc.system||''}</span>`:''}
-        ${sc?.key_player?`<span class="match-info-item">· 🎯 ${sc.key_player}</span>`:''}
+      ${cnt ? `<div class="match-countdown">${cnt}</div>` : ''}
+      <div class="match-venue-row">
+        <span class="match-venue-pill">${nxt.is_home ? '🏠 ' + (venue) : '✈️ ' + (venue)}</span>
+        ${sc?.system ? `<span class="match-venue-pill">📋 ${sc.system}</span>` : ''}
+        ${sc?.key_player ? `<span class="match-venue-pill">🎯 ${sc.key_player}</span>` : ''}
       </div>
-      ${cnt?`<div class="match-countdown">${cnt}</div>`:''}
-      ${absents?`<div class="match-absents"><div class="match-absents-title" data-t="absent">Absents</div>${absents}</div>`:''}
+      ${absents ? `<div class="match-absents"><div class="match-absents-title" data-t="absent">Absents</div>${absents}</div>` : ''}
+      ${canConvoc ? `<div class="match-cta-row">
+        <button class="btn btn-green" onclick="window.nav('planning',document.querySelector('[data-p=planning]'));window.setPlanIdx(${S.matches.indexOf(nxt)});" aria-label="Préparer la convocation pour ce match">Préparer la convocation</button>
+        <button class="btn btn-outline" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" aria-label="Voir les détails du match">Détails</button>
+      </div>` : ''}
     </div>`;
   } else {
-    $('home-match').innerHTML=`<div class="match-hero"><div class="match-tag">Aucun match programmé</div></div>`;
+    $('home-match').innerHTML = `<div class="match-hero xl"><div class="match-tag">Aucun match programmé</div></div>`;
   }
 
   /* Alertes — dédupliquées */
