@@ -779,6 +779,19 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .sq10-age{font:700 11px/1 var(--font);opacity:.85;}
 .sq10-empty{font:600 11px/1.3 var(--font);opacity:.7;padding:6px 0;text-align:center;}
 
+/* Pd7: Templates PDF custom */
+.pd7-tpl-row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.pd7-tpl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.pd7-tpl-lbl{font:700 12px/1 var(--font);color:var(--tx1);text-transform:uppercase;letter-spacing:.5px;flex:1;}
+.pd7-tpl-list{display:flex;flex-wrap:wrap;gap:6px;}
+.pd7-tpl-btn{padding:6px 10px;background:var(--bg);border:1px solid var(--line);color:var(--tx2);border-radius:6px;font:600 11px/1 var(--font);cursor:pointer;display:inline-flex;gap:4px;align-items:center;}
+.pd7-tpl-btn:hover{background:var(--brand-dim);color:var(--brand);border-color:var(--brand);}
+.pd7-tpl-btn .pd7-x{color:var(--danger);font-weight:700;padding:0 2px;opacity:.6;}
+.pd7-tpl-btn .pd7-x:hover{opacity:1;}
+.pd7-tpl-save{padding:6px 10px;background:var(--brand-dim);border:1px dashed var(--brand);color:var(--brand);border-radius:6px;font:700 11px/1 var(--font);cursor:pointer;}
+.pd7-tpl-save:hover{background:var(--brand);color:#fff;}
+.pd7-tpl-empty{font:500 11px/1.3 var(--font);color:var(--tx3);font-style:italic;}
+
 /* H9: Quick actions FAB Home */
 .h9-fab-wrap{position:fixed;bottom:86px;right:16px;z-index:80;display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;}
 .h9-fab-main{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand-dark,#15803d));color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 8px 20px rgba(22,163,74,.4);display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.16,1,.3,1);}
@@ -4675,6 +4688,21 @@ window.renderPdfOptsBody = function(){
   const el = document.getElementById('pdf-opts-grid');
   if(!el) return;
   const o = window._pdfOptsDraft || window.getPdfOpts();
+  // Pd7 — Templates section (top)
+  const tplList = window.pd7ListTemplates();
+  const tplBtns = tplList.length
+    ? tplList.map(name =>
+        '<span class="pd7-tpl-btn">'
+        +'<span onclick="window.pd7LoadTemplate(\''+name.replace(/'/g,"\\'")+'\')" style="cursor:pointer;">📑 '+name+'</span>'
+        +'<span class="pd7-x" onclick="window.pd7DeleteTemplate(\''+name.replace(/'/g,"\\'")+'\')" title="Supprimer ce template">✕</span>'
+        +'</span>'
+      ).join('')
+    : '<span class="pd7-tpl-empty">Aucun template sauve — configure tes options ci-dessous puis sauvegarde</span>';
+  const tplRow = '<div class="pd7-tpl-row">'
+    +'<div class="pd7-tpl-head"><span class="pd7-tpl-lbl">💾 Templates</span>'
+    +'<button type="button" class="pd7-tpl-save" onclick="window.pd7SaveCurrent()">+ Sauver config actuelle</button></div>'
+    +'<div class="pd7-tpl-list">'+tplBtns+'</div>'
+  +'</div>';
   const row = (lbl, sub, key, choices)=>{
     const btns = choices.map(c=>{
       const on = (String(o[key]) === String(c.v)) ? 'on' : '';
@@ -4687,6 +4715,7 @@ window.renderPdfOptsBody = function(){
     +'</div>';
   };
   el.innerHTML = [
+    tplRow,
     row('Langue', 'Contenu bilingue ou langue unique',
       'lang', [{v:'fr',lbl:'FR seul'},{v:'nl',lbl:'NL seul'},{v:'both',lbl:'Les deux'}]),
     row('Illustrations (SVG)', 'Schemas tactiques dans chaque exercice',
@@ -4705,6 +4734,47 @@ window.confirmPdfOpts = function(){
   if(mid && typeof window.exportPlanningPDF==='function'){
     window.exportPlanningPDF(mid, o);
   }
+};
+
+// Pd7 — Templates PDF custom (localStorage rdv_pdf_tpl_<name>)
+window.pd7ListTemplates = function(){
+  try{
+    const out = [];
+    for(let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith('rdv_pdf_tpl_')) out.push(k.slice('rdv_pdf_tpl_'.length));
+    }
+    return out.sort();
+  }catch(_){ return []; }
+};
+window.pd7SaveCurrent = function(){
+  const o = window._pdfOptsDraft || window.getPdfOpts();
+  const name = (prompt('Nom du template (ex: Match dom, Sans SVG, Letter FR)', '') || '').trim();
+  if(!name) return;
+  if(name.length > 32){ if(typeof toast==='function') toast('Nom trop long (max 32)'); return; }
+  try{
+    localStorage.setItem('rdv_pdf_tpl_'+name, JSON.stringify(o));
+    if(typeof toast === 'function') toast('Template "'+name+'" sauve');
+    window.renderPdfOptsBody();
+  }catch(e){ console.warn('pd7SaveCurrent',e); }
+};
+window.pd7LoadTemplate = function(name){
+  try{
+    const raw = localStorage.getItem('rdv_pdf_tpl_'+name);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    window._pdfOptsDraft = Object.assign({}, window._pdfOptsDefaults, parsed);
+    if(typeof toast === 'function') toast('Template "'+name+'" charge');
+    window.renderPdfOptsBody();
+  }catch(e){ console.warn('pd7LoadTemplate',e); }
+};
+window.pd7DeleteTemplate = function(name){
+  try{
+    if(!confirm('Supprimer le template "'+name+'" ?')) return;
+    localStorage.removeItem('rdv_pdf_tpl_'+name);
+    if(typeof toast === 'function') toast('Template supprime');
+    window.renderPdfOptsBody();
+  }catch(e){ console.warn('pd7DeleteTemplate',e); }
 };
 
 // P8 — Export CSV presences (1 ligne par joueur/date/statut)
