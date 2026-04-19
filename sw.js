@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v21'; // bumped — export PDF v3.1 (PWA standalone fallback overlay)
-const APP_VERSION = '1.12.7';
+const CACHE = 'rdv-v22'; // bumped — fix(pdf): declare window.APP_VERSION to prevent ReferenceError in cover template
+const APP_VERSION = '1.12.8';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
