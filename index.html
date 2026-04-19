@@ -760,6 +760,20 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Pr6: form change password dans profil */
+.pwd-form{margin:0 18px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;}
+.pwd-form-title{font:700 13px/1 var(--font);color:var(--tx1);margin-bottom:4px;}
+.pwd-form-sub{font:500 11px/1.4 var(--font);color:var(--tx3);margin-bottom:12px;}
+.pwd-form .field{margin-bottom:10px;}
+.pwd-form .field-label{font:600 11px/1 var(--font);color:var(--tx2);margin-bottom:4px;display:block;}
+.pwd-form input[type="password"]{width:100%;box-sizing:border-box;padding:9px 11px;background:var(--bg);border:1px solid var(--line);border-radius:8px;font:500 13px/1 var(--font);color:var(--tx1);}
+.pwd-form input[type="password"]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-dim);}
+.pwd-form .pwd-err{font:600 11px/1.3 var(--font);color:var(--danger);margin-top:6px;min-height:14px;}
+.pwd-form .pwd-err:empty{display:none;}
+.pwd-form .pwd-submit{width:100%;padding:10px;background:var(--brand);color:#fff;border:none;border-radius:8px;font:700 12px/1 var(--font);cursor:pointer;}
+.pwd-form .pwd-submit:disabled{opacity:.5;cursor:not-allowed;}
+.pwd-form .pwd-submit:hover:not(:disabled){filter:brightness(1.05);}
+
 /* N2: badges notification bottom-nav */
 .nb-tab{position:relative;}
 .nb-badge{position:absolute;top:3px;right:calc(50% - 22px);min-width:16px;height:16px;padding:0 4px;display:flex;align-items:center;justify-content:center;background:var(--danger,#ef4444);color:#fff;border-radius:999px;font:800 9px/1 var(--font);border:2px solid var(--bg,#0b0e14);pointer-events:none;z-index:2;}
@@ -6547,7 +6561,7 @@ function renderProfile(){
   const el=$('profile-content');
   const player=S.players.find(p=>p.id===S.profile.player_id);
   if(!player){
-    el.innerHTML=`<div class="sec"><div class="sec-title">Mon profil</div></div>`+emptyState('👤','Profil non lié au joueur. Contactez le coach.');
+    el.innerHTML=`<div class="sec"><div class="sec-title">Mon profil</div></div>`+emptyState('👤','Profil non lié au joueur. Contactez le coach.')+window.renderPasswordFormHTML();
     return;
   }
   const myP=S.presences.filter(p=>p.player_id===player.id);
@@ -6584,9 +6598,60 @@ function renderProfile(){
     ${myI.length?`<div class="sec"><div class="sec-title">Blessures</div></div>${myI.map(i=>`<div class="inj-card inj-stripe-${i.severity}" style="margin:0 18px 8px;" onclick="openInjDetail('${i.id}',${!i.is_active})">
       <div class="inj-card-inner"><div class="inj-player">${i.type}</div><div class="inj-dates"><span>${fd(i.injury_date)}</span><span>${i.severity}</span><span>${i.is_active?'En cours':'Guéri '+fd(i.healed_at)}</span></div></div>
     </div>`).join('')}`:''}
+    ${window.renderPasswordFormHTML()}
     <div style="height:16px;"></div>
   `;
 }
+
+// Pr6 — Formulaire changement mot de passe
+window.renderPasswordFormHTML = function(){
+  return `<div class="sec"><div class="sec-title">Mot de passe</div></div>
+    <form class="pwd-form" id="pwd-form" onsubmit="event.preventDefault();window.changePassword()">
+      <div class="pwd-form-title">Changer le mot de passe</div>
+      <div class="pwd-form-sub">Votre nouveau mot de passe doit contenir au moins 8 caractères.</div>
+      <div class="field"><label class="field-label" for="pwd-old">Mot de passe actuel</label>
+        <input type="password" id="pwd-old" autocomplete="current-password" required></div>
+      <div class="field"><label class="field-label" for="pwd-new">Nouveau mot de passe</label>
+        <input type="password" id="pwd-new" autocomplete="new-password" minlength="8" required></div>
+      <div class="field"><label class="field-label" for="pwd-confirm">Confirmer le nouveau mot de passe</label>
+        <input type="password" id="pwd-confirm" autocomplete="new-password" minlength="8" required></div>
+      <div class="pwd-err" id="pwd-err"></div>
+      <button type="submit" class="pwd-submit" id="pwd-submit">Changer le mot de passe</button>
+    </form>`;
+};
+
+window.changePassword = async function(){
+  const oldP = document.getElementById('pwd-old');
+  const newP = document.getElementById('pwd-new');
+  const cfP  = document.getElementById('pwd-confirm');
+  const err  = document.getElementById('pwd-err');
+  const btn  = document.getElementById('pwd-submit');
+  if(!oldP || !newP || !cfP || !err || !btn) return;
+  err.textContent = '';
+  const old = oldP.value, nw = newP.value, cf = cfP.value;
+  if(nw.length < 8){ err.textContent = 'Le nouveau mot de passe doit contenir au moins 8 caracteres.'; return; }
+  if(nw !== cf){ err.textContent = 'Les deux nouveaux mots de passe ne correspondent pas.'; return; }
+  if(nw === old){ err.textContent = 'Le nouveau mot de passe doit etre different de l\'ancien.'; return; }
+  const email = (S.user && S.user.email) || (S.profile && S.profile.email);
+  if(!email){ err.textContent = 'Session non identifiee. Reconnectez-vous.'; return; }
+  btn.disabled = true; btn.textContent = 'Verification...';
+  try{
+    // Verify old password first
+    const { error: verifyErr } = await sb.auth.signInWithPassword({ email, password: old });
+    if(verifyErr){ err.textContent = 'Mot de passe actuel incorrect.'; btn.disabled=false; btn.textContent='Changer le mot de passe'; return; }
+    btn.textContent = 'Mise a jour...';
+    const { error: upErr } = await sb.auth.updateUser({ password: nw });
+    if(upErr){ err.textContent = upErr.message || 'Echec de la mise a jour.'; btn.disabled=false; btn.textContent='Changer le mot de passe'; return; }
+    oldP.value=''; newP.value=''; cfP.value='';
+    if(typeof toast==='function') toast('\u2705 Mot de passe mis a jour');
+    btn.disabled = false; btn.textContent = 'Changer le mot de passe';
+  }catch(e){
+    console.warn('changePassword failed', e);
+    err.textContent = 'Erreur reseau. Reessayez.';
+    btn.disabled = false; btn.textContent = 'Changer le mot de passe';
+  }
+};
+
 
 /* ── Utils ── */
 // FIX UX #11 — emptyState enrichi : CTA optionnel
