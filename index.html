@@ -743,6 +743,43 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* Sq1: Fiche joueur 360 */
+.sheet.sheet-full{max-width:720px;width:100%;max-height:calc(100dvh - 20px);}
+.p360-hero{display:flex;gap:14px;align-items:center;padding:6px 4px 16px;border-bottom:1px solid var(--sep2);margin-bottom:14px;}
+.p360-hero-img,.p360-hero-av{width:84px;height:84px;border-radius:50%;object-fit:cover;object-position:center top;border:2px solid var(--sep2);flex-shrink:0;}
+.p360-hero-av{display:flex;align-items:center;justify-content:center;font:700 28px/1 var(--font);color:#fff;}
+.p360-hero-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+.p360-hero-name{font:800 20px/1.2 var(--font);color:var(--tx1);word-break:break-word;}
+.p360-hero-sub{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font:600 12px/1 var(--font);color:var(--tx3);}
+.p360-hero-num{background:var(--brand-dim);color:var(--brand);padding:4px 10px;border-radius:999px;font:800 13px/1 var(--font);}
+.p360-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.p360-stat{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:10px 8px;text-align:center;}
+.p360-stat-num{font:800 22px/1 var(--font);color:var(--tx1);margin-bottom:4px;}
+.p360-stat-lbl{font:600 10px/1 var(--font);color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;}
+.p360-sec{margin-bottom:18px;}
+.p360-sec-title{font:700 11px/1 var(--font);color:var(--brand);text-transform:uppercase;letter-spacing:.8px;margin:0 0 8px;display:flex;align-items:center;gap:6px;}
+.p360-sec-title .count{background:var(--ink3);color:var(--tx2);padding:2px 8px;border-radius:999px;font:700 10px/1 var(--font);}
+.p360-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:var(--ink2);margin-bottom:5px;}
+.p360-row-left{flex:1;min-width:0;}
+.p360-row-meta{font:500 11px/1.3 var(--font);color:var(--tx3);}
+.p360-row-title{font:600 13px/1.3 var(--font);color:var(--tx1);}
+.p360-empty{font:500 12px/1.4 var(--font);color:var(--tx3);text-align:center;padding:14px;background:var(--ink2);border-radius:8px;}
+.p360-spark{display:flex;gap:3px;align-items:flex-end;height:30px;padding:4px 0;}
+.p360-spark-bar{flex:1;min-width:6px;height:100%;border-radius:2px;background:var(--ink3);}
+.p360-spark-bar.p{background:var(--brand);}
+.p360-spark-bar.a{background:var(--danger);}
+.p360-spark-bar.b{background:var(--warn);}
+.p360-spark-bar.r{background:var(--info);}
+.p360-spark-lgnd{display:flex;gap:10px;font:500 10px/1 var(--font);color:var(--tx3);margin-top:6px;flex-wrap:wrap;}
+.p360-spark-lgnd .d{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:middle;margin-right:3px;}
+.p360-actions{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 6px;}
+@media (max-width:520px){
+  .p360-stats{grid-template-columns:repeat(2,1fr);}
+  .p360-hero-img,.p360-hero-av{width:64px;height:64px;}
+  .p360-hero-av{font-size:22px;}
+  .p360-hero-name{font-size:18px;}
+}
+
 /* M2: chip-picker joueurs (Encoder) */
 .pl-chip-wrap{display:flex;flex-direction:column;gap:6px;}
 .pl-chip-list{display:flex;flex-wrap:wrap;gap:6px;min-height:4px;}
@@ -2654,6 +2691,14 @@ window.saveInj()">Enregistrer</button>
     <button class="sheet-close" onclick="window.close_modal('modal-ex-custom')">✕</button>
     <div class="sheet-title">Exercice personnalisé</div>
     <div id="modal-ex-custom-body"></div>
+  </div>
+</div>
+
+<!-- Sq1 — Fiche joueur 360 (modal fullscreen) -->
+<div class="overlay" id="modal-p360" onclick="if(event.target===this)close_modal('modal-p360')">
+  <div class="sheet sheet-full" role="document">
+    <button class="sheet-close" onclick="window.close_modal('modal-p360')" aria-label="Fermer">✕</button>
+    <div id="modal-p360-body"></div>
   </div>
 </div>
 
@@ -5623,6 +5668,125 @@ window.moveExInEdit = (m,i,idx,dir)=>{
   bs2ScheduleAutosave();
 };
 
+/* Sq1 - Fiche joueur 360 */
+window.openPlayerDetail = function(playerId){
+  if(!playerId) return;
+  const p = (S.players||[]).find(x=>x.id===playerId);
+  if(!p){ try{ typeof toast==='function' && toast('Joueur introuvable'); }catch(_){ } return; }
+  window.renderPlayerDetail(p);
+  window.open_modal('modal-p360');
+};
+
+window.renderPlayerDetail = function(p){
+  const body = $('modal-p360-body'); if(!body) return;
+  const lp = typeof findLookerPlayer==='function' ? findLookerPlayer(p) : null;
+  const avatar = (lp && lp.photo)
+    ? '<img class="p360-hero-img" src="'+lp.photo+'" alt="'+(p.name||'')+'" onerror="this.style.display=\'none\'">'
+    : '<div class="p360-hero-av '+avClass(p.position)+'">'+initials(p.name||'?')+'</div>';
+
+  const pres = (S.presences||[]).filter(x=>x.player_id===p.id);
+  const total = pres.length;
+  const nP = pres.filter(x=>x.status==='P').length;
+  const pct = total ? Math.round(nP/total*100) : 0;
+  const injAll = [].concat(S.injuries||[], S.injHistory||[]).filter(i=>i.player_id===p.id);
+  const injActive = injAll.filter(i=>i.is_active);
+  const rpeVals = pres.map(x=>Number(x.rpe)||0).filter(v=>v>0);
+  const rpeAvg = rpeVals.length ? (rpeVals.reduce((a,b)=>a+b,0)/rpeVals.length) : 0;
+
+  const lastName = (p.name||'').toLowerCase().split(' ').slice(-1)[0]||'';
+  const playedMatches = lastName ? (S.matches||[]).filter(m=>{
+    const hay = ((m.scorers||'')+' '+(m.cards||'')).toLowerCase();
+    return hay.includes(lastName);
+  }).length : 0;
+
+  const status = p.status || 'Disponible';
+  const statusCls = ({'Disponible':'chip-green','Bless\u00e9':'chip-red','Suspendu':'chip-amber','Incertain':'chip-amber'})[status] || 'chip-muted';
+
+  const last = pres.slice().sort((a,b)=>new Date(b.session_date||0)-new Date(a.session_date||0)).slice(0,20).reverse();
+  const spark = last.length
+    ? '<div class="p360-spark">'+last.map(x=>{
+        const cls = x.status==='P'?'p':x.status==='A'?'a':x.status==='B'?'b':x.status==='R'?'r':'';
+        return '<div class="p360-spark-bar '+cls+'" title="'+(fd(x.session_date)||'')+' - '+x.status+'"></div>';
+      }).join('')+'</div>'
+      +'<div class="p360-spark-lgnd"><span><span class="d" style="background:var(--brand)"></span>Pr\u00e9sent</span><span><span class="d" style="background:var(--danger)"></span>Absent</span><span><span class="d" style="background:var(--warn)"></span>Bless\u00e9</span><span><span class="d" style="background:var(--info)"></span>Repos</span></div>'
+    : '<div class="p360-empty">Aucune pr\u00e9sence enregistr\u00e9e</div>';
+
+  const recent = pres.slice().sort((a,b)=>new Date(b.session_date||0)-new Date(a.session_date||0)).slice(0,6);
+  const recentHTML = recent.length ? recent.map(x=>{
+    const chip = x.status==='P'?'chip-green':x.status==='A'?'chip-red':x.status==='B'?'chip-amber':'chip-blue';
+    return '<div class="p360-row"><div class="p360-row-left"><div class="p360-row-title">'+(x.session_type||'')+(x.rpe?' \u00b7 RPE '+x.rpe:'')+'</div><div class="p360-row-meta">'+(fd(x.session_date)||'')+'</div></div><span class="chip '+chip+'">'+x.status+'</span></div>';
+  }).join('') : '<div class="p360-empty">Aucune pr\u00e9sence</div>';
+
+  const injList = injActive.slice().concat(injAll.filter(i=>!i.is_active).slice(0,3));
+  const injHTML = injList.length ? injList.map(i=>{
+    const tone = i.is_active ? 'chip-red' : 'chip-muted';
+    const lbl = i.is_active ? 'En cours' : ('Gu\u00e9ri '+(fd(i.healed_at)||'?'));
+    return '<div class="p360-row"><div class="p360-row-left"><div class="p360-row-title">'+(i.type||'Blessure')+'</div><div class="p360-row-meta">'+(fd(i.injury_date)||'')+(i.severity?' \u00b7 '+i.severity:'')+'</div></div><span class="chip '+tone+'">'+lbl+'</span></div>';
+  }).join('') : '<div class="p360-empty">Aucune blessure enregistr\u00e9e</div>';
+
+  const nat = p.nationality || '\u2014';
+  const birth = p.birthdate ? fd(p.birthdate) : '';
+  const contact = (p.email||p.phone) ? '<div class="p360-row-meta">'+(p.phone?('\u260e '+p.phone):'')+(p.email?((p.phone?' \u00b7 ':'')+'\u2709 '+p.email):'')+'</div>' : '';
+
+  const canEdit = ['coach','admin','assistant'].includes(S.role);
+  const actions = canEdit ? '<div class="p360-actions">'
+    + '<button class="btn btn-sm btn-outline" onclick="window.close_modal(\'modal-p360\');window.openNewInjFor&&window.openNewInjFor(\''+p.id+'\')">\ud83e\ude79 D\u00e9clarer blessure</button>'
+    + '</div>' : '';
+
+  body.innerHTML = ''
+    +'<div class="p360-hero">'
+      + avatar
+      +'<div class="p360-hero-main">'
+        +'<div class="p360-hero-name">'+(p.name||'?')+'</div>'
+        +'<div class="p360-hero-sub">'
+          +'<span class="roster-pos pos-'+posClass(p.position)+'">'+(p.position||'\u2014')+'</span>'
+          +(p.number!=null?'<span class="p360-hero-num">N\u00b0 '+p.number+'</span>':'')
+          +'<span>'+nat+'</span>'
+          +(birth?'<span>\ud83c\udf82 '+birth+'</span>':'')
+          +'<span class="chip '+statusCls+'">'+status+'</span>'
+        +'</div>'
+        + contact
+      +'</div>'
+    +'</div>'
+    + actions
+    +'<div class="p360-stats">'
+      +'<div class="p360-stat"><div class="p360-stat-num" style="color:var(--brand)">'+(p.goals||0)+'</div><div class="p360-stat-lbl">Buts</div></div>'
+      +'<div class="p360-stat"><div class="p360-stat-num">'+(p.assists||0)+'</div><div class="p360-stat-lbl">Assists</div></div>'
+      +'<div class="p360-stat"><div class="p360-stat-num">'+pct+'%</div><div class="p360-stat-lbl">Pr\u00e9sence</div></div>'
+      +'<div class="p360-stat"><div class="p360-stat-num" style="color:var(--warn)">'+(p.yellow_cards||0)+'<span style="font-size:14px;color:var(--tx3)"> / </span><span style="color:var(--danger)">'+(p.red_cards||0)+'</span></div><div class="p360-stat-lbl">Cartons J/R</div></div>'
+    +'</div>'
+    +'<div class="p360-sec">'
+      +'<h4 class="p360-sec-title">\ud83d\udcca Pr\u00e9sences r\u00e9centes <span class="count">'+total+'</span></h4>'
+      + spark
+    +'</div>'
+    +'<div class="p360-sec">'
+      +'<h4 class="p360-sec-title">\ud83d\udcc5 Derni\u00e8res s\u00e9ances</h4>'
+      + recentHTML
+    +'</div>'
+    +'<div class="p360-sec">'
+      +'<h4 class="p360-sec-title">\ud83e\ude79 Blessures <span class="count">'+injAll.length+'</span></h4>'
+      + injHTML
+    +'</div>'
+    +'<div class="p360-sec">'
+      +'<h4 class="p360-sec-title">\u2139 Infos</h4>'
+      +'<div class="p360-row"><div class="p360-row-left">'
+        +'<div class="p360-row-title">Matchs jou\u00e9s (estim\u00e9)</div>'
+        +'<div class="p360-row-meta">'+playedMatches+' match(s) tra\u00e7\u00e9s via buteurs/cartons</div>'
+      +'</div></div>'
+      + (rpeAvg>0 ? '<div class="p360-row"><div class="p360-row-left"><div class="p360-row-title">RPE moyen</div><div class="p360-row-meta">'+rpeAvg.toFixed(1)+' sur '+rpeVals.length+' s\u00e9ance(s)</div></div></div>' : '')
+    +'</div>';
+};
+
+window.openNewInjFor = function(playerId){
+  try {
+    if(typeof window.openNewInj==='function') window.openNewInj();
+    const sel = $('inj-player'); if(sel){
+      const p = (S.players||[]).find(x=>x.id===playerId);
+      if(p) sel.value = p.name;
+    }
+  } catch(e){ console.warn('openNewInjFor failed:', e); }
+};
+
 /* ════════ SQUAD ════════ */
 function renderSquad(){
   const sb2=s=>({Disponible:'chip-green',Blessé:'chip-red',Suspendu:'chip-amber',Incertain:'chip-amber'})[s]||'chip-muted';
@@ -5637,7 +5801,7 @@ function renderSquad(){
     return true;
   };
   const filtered=S.players.filter(sqFilter);
-  const rosterHTML=filtered.map(p=>`<div class="player-row" data-player-id="${p.id}">
+  const rosterHTML=filtered.map(p=>`<div class="player-row" data-player-id="${p.id}" onclick="window.openPlayerDetail('${p.id}')" style="cursor:pointer;" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.openPlayerDetail('${p.id}');}">
     ${playerAvatar(p,'md')}
     <div class="player-info">
       <div class="player-name">${p.name}</div>
@@ -5651,7 +5815,7 @@ function renderSquad(){
   </div>`).join('');
   $('roster-eff').innerHTML=rosterHTML||emptyState('🔍','Aucun joueur correspondant','Réinitialiser','window.resetSquadFilter()');
 
-  $('disc-list').innerHTML=[...S.players].filter(p=>p.yellow_cards>0||p.red_cards>0).sort((a,b)=>b.yellow_cards-a.yellow_cards).map(p=>`<div class="player-row" data-player-id="${p.id}">
+  $('disc-list').innerHTML=[...S.players].filter(p=>p.yellow_cards>0||p.red_cards>0).sort((a,b)=>b.yellow_cards-a.yellow_cards).map(p=>`<div class="player-row" data-player-id="${p.id}" onclick="window.openPlayerDetail('${p.id}')" style="cursor:pointer;" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.openPlayerDetail('${p.id}');}">
     ${playerAvatar(p,'md')}
     <div class="player-info"><div class="player-name">${p.name}</div><div class="player-meta pos-${posClass(p.position)}">${p.position}</div></div>
     <div style="display:flex;gap:5px;align-items:center;">
@@ -5662,7 +5826,7 @@ function renderSquad(){
   </div>`).join('')||emptyState('🏅','Aucun carton cette saison');
 
   const maxG=Math.max(...S.players.map(p=>p.goals||0),1);
-  $('goals-list').innerHTML=[...S.players].sort((a,b)=>(b.goals||0)-(a.goals||0)).map((p,i)=>`<div class="goals-row">
+  $('goals-list').innerHTML=[...S.players].sort((a,b)=>(b.goals||0)-(a.goals||0)).map((p,i)=>`<div class="goals-row" onclick="window.openPlayerDetail('${p.id}')" style="cursor:pointer;" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.openPlayerDetail('${p.id}');}">
     <div class="goals-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
     ${playerAvatar(p,'sm')}
     <div class="goals-info">
