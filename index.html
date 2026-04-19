@@ -760,6 +760,17 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* N2: badges notification bottom-nav */
+.nb-tab{position:relative;}
+.nb-badge{position:absolute;top:3px;right:calc(50% - 22px);min-width:16px;height:16px;padding:0 4px;display:flex;align-items:center;justify-content:center;background:var(--danger,#ef4444);color:#fff;border-radius:999px;font:800 9px/1 var(--font);border:2px solid var(--bg,#0b0e14);pointer-events:none;z-index:2;}
+.nb-badge[hidden]{display:none!important;}
+.nb-badge.dot{min-width:10px;width:10px;height:10px;padding:0;font-size:0;}
+.nb-badge.amber{background:var(--warn,#f59e0b);}
+.more-item{position:relative;}
+.more-badge{position:absolute;top:8px;right:8px;min-width:18px;height:18px;padding:0 5px;display:flex;align-items:center;justify-content:center;background:var(--danger,#ef4444);color:#fff;border-radius:999px;font:800 10px/1 var(--font);z-index:2;}
+.more-badge[hidden]{display:none!important;}
+.more-badge.amber{background:var(--warn,#f59e0b);}
+
 /* Of3+Of2: bouton force-sync + badge en topbar */
 .sync-pending-btn{display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.45);color:#fbbf24;font:700 11px/1 var(--font);padding:4px 8px;border-radius:999px;cursor:pointer;transition:all .15s;}
 .sync-pending-btn:hover{background:rgba(245,158,11,.28);transform:scale(1.02);}
@@ -2688,13 +2699,13 @@ window.saveInj()">Enregistrer</button>
     </button>
     <button class="nb-tab" onclick="window.nav('presences',this)" data-p="presences">
       <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="nb-label" data-t="presences">Présences</span>
-    </button>
+    <span class="nb-badge dot" id="nb-b-presences" hidden></span></button>
     <button class="nb-tab" onclick="window.nav('matchs',this)" data-p="matchs">
       <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 3C12 3 9 7 9 12C9 17 12 21 12 21M12 3C12 3 15 7 15 12C15 17 12 21 12 21M3.5 8.5H20.5M3.5 15.5H20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="nb-label" data-t="matchs">Matchs</span>
-    </button>
+    <span class="nb-badge dot" id="nb-b-matchs" hidden></span></button>
     <button class="nb-tab" onclick="window.openMore(this)" data-p="more" aria-haspopup="dialog" aria-expanded="false">
       <div class="nb-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg></div><span class="nb-label">Plus</span>
-    </button>
+    <span class="nb-badge" id="nb-b-more" hidden>0</span></button>
   </nav>
 
   <!-- N1 — Drawer "Plus" : Medical / Squad / Stats -->
@@ -2707,7 +2718,7 @@ window.saveInj()">Enregistrer</button>
           <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 3H15V7H19C19.5523 7 20 7.44772 20 8V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V8C4 7.44772 4.44772 7 5 7H9V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 11V16M9.5 13.5H14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
           <div class="more-lbl">Medical</div>
           <div class="more-sub">Blessures, retour</div>
-        </button>
+        <span class="more-badge" id="more-b-medical" hidden>0</span></button>
         <button class="more-item" onclick="window.navFromMore('squad')">
           <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="7" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 20C3 17.2386 5.68629 15 9 15M21 20C21 17.2386 18.3137 15 15 15M12 21C8.68629 21 6 18.7614 6 16C6 13.2386 8.68629 11 12 11C15.3137 11 18 13.2386 18 16C18 18.7614 15.3137 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
           <div class="more-lbl">Effectif</div>
@@ -3389,12 +3400,61 @@ window.addEventListener('online', ()=>window.renderSyncBadge());
 window.addEventListener('offline', ()=>window.renderSyncBadge());
 // Refresh periodique (toutes les 15s)
 setInterval(()=>{ try{ window.renderSyncBadge(); }catch(_){} }, 15000);
+setInterval(()=>{ try{ window.renderNavBadges(); }catch(_){} }, 60000);
 
 // Tente flush au démarrage si en ligne
 window.addEventListener('load',()=>{ if(navigator.onLine) setTimeout(flushOfflineQueue,1500); setTimeout(()=>window.renderSyncBadge && window.renderSyncBadge(), 500); });
 
 /* ── Navigation ── */
 const PAGE_NAMES=()=>({home:msg('home'),presences:msg('presences'),matchs:msg('matchs'),medical:msg('medical'),planning:msg('planning'),squad:msg('squad'),profile:msg('profile'),stats:'Stats'});
+
+// N2 — Notification badges bottom-nav
+window.renderNavBadges = function(){
+  try{
+    const today = new Date().toISOString().slice(0,10);
+    const now = new Date();
+    // Rule 1: Presences — seance programmee pour aujourd'hui mais pas encore de pointage
+    const todaySessions = (S.sessions||[]).filter(s=>s.date===today);
+    const pointedToday = (S.presences||[]).some(pr=>pr.date===today || pr.session_date===today);
+    const presBadge = document.getElementById('nb-b-presences');
+    if(presBadge){
+      const show = todaySessions.length > 0 && !pointedToday;
+      presBadge.hidden = !show;
+    }
+    // Rule 2: Matchs — prochain match < 48h sans lineup
+    const upcoming = (S.matches||[]).filter(m=>!m.result && m.match_date).sort((a,b)=>new Date(a.match_date)-new Date(b.match_date));
+    const nxt = upcoming[0];
+    const matchBadge = document.getElementById('nb-b-matchs');
+    if(matchBadge){
+      let show = false;
+      if(nxt){
+        const dt = new Date(nxt.match_date);
+        const hours = (dt - now) / 3600000;
+        const hasLineup = nxt.lineup && (nxt.lineup.starters||[]).some(s=>s && s.player_id);
+        show = hours >= 0 && hours < 48 && !hasLineup;
+      }
+      matchBadge.hidden = !show;
+    }
+    // Rule 3: Medical — blessures actives (compteur dans drawer Plus + dot sur Plus)
+    const injActive = (S.injuries||[]).filter(i=>i.is_active===true || i.status==='active').length;
+    const moreBtn = document.getElementById('nb-b-more');
+    const medMore = document.getElementById('more-b-medical');
+    if(medMore){
+      if(injActive > 0){ medMore.hidden = false; medMore.textContent = String(injActive); }
+      else{ medMore.hidden = true; }
+    }
+    // Aggregate count on "Plus" badge (medical injuries only for now)
+    if(moreBtn){
+      if(injActive > 0){
+        moreBtn.hidden = false;
+        moreBtn.textContent = String(injActive);
+        moreBtn.classList.remove('dot');
+      } else {
+        moreBtn.hidden = true;
+      }
+    }
+  }catch(e){ console.warn('renderNavBadges failed',e); }
+};
 
 // N3 — Sous-titre topbar contextuel par page
 window.renderTopbarSub = function(pageName){
@@ -3489,6 +3549,7 @@ window.nav = (name, btn) => {
   }
   $('hud-pg').textContent=PAGE_NAMES()[name]||name;
   try{ window.renderTopbarSub && window.renderTopbarSub(name); }catch(_){}
+  try{ window.renderNavBadges && window.renderNavBadges(); }catch(_){}
   window.scrollTo(0,0);
   document.querySelector('.main')?.scrollTo(0,0);
   if (name==='planning') renderPlanning();
@@ -3531,6 +3592,7 @@ function applyTranslations() {
   const activePg = document.querySelector('.pg.on')?.id?.replace('pg-','');
   if (activePg) $('hud-pg').textContent = PAGE_NAMES()[activePg] || activePg;
   try{ window.renderTopbarSub && window.renderTopbarSub(activePg); }catch(_){}
+  try{ window.renderNavBadges && window.renderNavBadges(); }catch(_){}
   // Bouton save session
   const saveBtn = document.querySelector('[onclick="savePresences()"]');
   if (saveBtn) saveBtn.textContent = msg('save_session');
