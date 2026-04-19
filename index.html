@@ -779,6 +779,44 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .sq10-age{font:700 11px/1 var(--font);opacity:.85;}
 .sq10-empty{font:600 11px/1.3 var(--font);opacity:.7;padding:6px 0;text-align:center;}
 
+/* Pl2: Vue calendaire mois Planning */
+.pl2-toggle{display:inline-flex;background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:3px;gap:2px;}
+.pl2-tog-btn{padding:6px 12px;background:transparent;border:none;color:var(--tx2);font:700 11px/1.2 var(--font);border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+.pl2-tog-btn.on{background:var(--brand);color:#fff;}
+.pl2-tog-btn:hover:not(.on){background:var(--card);color:var(--tx1);}
+.pl2-cal-wrap{padding:12px 14px;}
+.pl2-cal-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.pl2-cal-nav{width:34px;height:34px;border:1px solid var(--sep2);background:var(--ink2);border-radius:8px;cursor:pointer;font:700 16px/1 var(--font);color:var(--tx1);}
+.pl2-cal-nav:hover{background:var(--brand-dim);color:var(--brand);border-color:var(--brand);}
+.pl2-cal-title{flex:1;text-align:center;font:800 14px/1.2 var(--font);color:var(--tx1);text-transform:capitalize;}
+.pl2-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.pl2-cal-dow{font:700 10px/1 var(--font);text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);text-align:center;padding:6px 0;}
+.pl2-cal-day{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 4px;min-height:66px;cursor:pointer;position:relative;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,background .15s;}
+.pl2-cal-day:hover{border-color:var(--brand);background:var(--brand-dim);}
+.pl2-cal-day.off{opacity:.35;background:var(--bg);cursor:default;}
+.pl2-cal-day.off:hover{border-color:var(--line);background:var(--bg);}
+.pl2-cal-day.today{border:2px solid var(--brand);box-shadow:0 0 0 2px var(--brand-dim);}
+.pl2-cal-day.past{opacity:.72;}
+.pl2-cal-date{font:800 12px/1 var(--font);color:var(--tx1);text-align:center;}
+.pl2-cal-day.today .pl2-cal-date{color:var(--brand);}
+.pl2-cal-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;min-height:8px;}
+.pl2-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.pl2-dot.tech{background:#2563eb;}
+.pl2-dot.phys{background:#f59e0b;}
+.pl2-dot.tact{background:#7c3aed;}
+.pl2-dot.match{background:#ef4444;width:9px;height:9px;}
+.pl2-dot.other{background:#6b7280;}
+.pl2-cal-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding:8px 12px;background:var(--ink2);border-radius:8px;font:600 10px/1.3 var(--font);color:var(--tx2);}
+.pl2-cal-legend-item{display:inline-flex;align-items:center;gap:5px;}
+/* Modal preview */
+.pl2-prev-body{padding:14px 18px;}
+.pl2-prev-date{font:800 13px/1.2 var(--font);color:var(--tx2);margin-bottom:8px;text-transform:capitalize;}
+.pl2-prev-item{padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--card);cursor:pointer;}
+.pl2-prev-item:hover{background:var(--brand-dim);border-color:var(--brand);}
+.pl2-prev-item-title{font:700 12px/1.3 var(--font);color:var(--tx1);display:flex;align-items:center;gap:6px;}
+.pl2-prev-item-sub{font:500 11px/1.3 var(--font);color:var(--tx3);margin-top:3px;}
+.pl2-prev-empty{font:500 12px/1.4 var(--font);color:var(--tx3);text-align:center;padding:16px;}
+
 /* Pd7: Templates PDF custom */
 .pd7-tpl-row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
 .pd7-tpl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
@@ -2887,9 +2925,14 @@ window.saveInj()">Enregistrer</button>
     <!-- PLANNING -->
     <div class="pg" id="pg-planning">
       <div class="pl9-bar">
-        <button type="button" class="pl9-btn" onclick="window.pl9ExportICS && window.pl9ExportICS()" title="Exporter seances + matchs 60j au format ICS">📅 Exporter calendrier (.ics)</button>
+        <div class="pl2-toggle" role="tablist" aria-label="Vue planning">
+          <button type="button" class="pl2-tog-btn on" data-pl2-view="list" onclick="window.pl2SetView('list')" aria-pressed="true">📋 Liste</button>
+          <button type="button" class="pl2-tog-btn" data-pl2-view="cal" onclick="window.pl2SetView('cal')" aria-pressed="false">📆 Calendrier</button>
+        </div>
+        <button type="button" class="pl9-btn" onclick="window.pl9ExportICS && window.pl9ExportICS()" title="Exporter seances + matchs 60j au format ICS" style="margin-left:auto;">📅 Export .ics</button>
       </div>
       <div id="planning-content"></div>
+      <div id="pl2-cal-content" style="display:none;"></div>
     </div>
 
     <!-- SQUAD -->
@@ -3918,6 +3961,8 @@ window.renderTopbarSub = function(pageName){
 window.nav = (name, btn) => {
   // H9: cleanup FAB on nav away from home
   if(name !== 'home' && window.h9CleanupFab) window.h9CleanupFab();
+  // Pl2: apply persisted calendar view on nav to planning
+  if(name === 'planning'){ setTimeout(() => { try{ window.pl2ApplyPersistedView && window.pl2ApplyPersistedView(); }catch(_){} }, 60); }
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   $('pg-'+name)?.classList.add('on');
   document.querySelectorAll('.nb-tab').forEach(t=>t.classList.remove('on'));
@@ -6399,6 +6444,178 @@ window.saveInj=async()=>{
 };
 
 /* ════════ PLANNING ════════ */
+// Pl2 — Vue calendaire mois Planning
+window._pl2CalMonth = null; // Date first-day-of-month currently displayed
+
+window.pl2GetView = function(){
+  try{
+    const v = localStorage.getItem('rdv_planning_view');
+    return (v === 'cal') ? 'cal' : 'list';
+  }catch(_){ return 'list'; }
+};
+
+window.pl2SetView = function(v){
+  try{ localStorage.setItem('rdv_planning_view', v); }catch(_){}
+  const listEl = document.getElementById('planning-content');
+  const calEl = document.getElementById('pl2-cal-content');
+  const btns = document.querySelectorAll('[data-pl2-view]');
+  btns.forEach(b => {
+    const on = b.getAttribute('data-pl2-view') === v;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on);
+  });
+  if(v === 'cal'){
+    if(listEl) listEl.style.display = 'none';
+    if(calEl) calEl.style.display = 'block';
+    window.pl2RenderCal();
+  } else {
+    if(listEl) listEl.style.display = '';
+    if(calEl) calEl.style.display = 'none';
+  }
+};
+
+window.pl2TypeClass = function(type){
+  const tn = (type||'').toLowerCase();
+  if(tn.includes('tech')) return 'tech';
+  if(tn.includes('phys')) return 'phys';
+  if(tn.includes('tact')) return 'tact';
+  return 'other';
+};
+
+window.pl2BuildMonthData = function(first){
+  // Map ISO date (YYYY-MM-DD) -> { sessions:[{plan, idx, session, mid}], matches:[m] }
+  const map = {};
+  const iso = (d) => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  (S.matches||[]).forEach(m => {
+    if(!m || !m.match_date) return;
+    const k = String(m.match_date).slice(0,10);
+    if(!map[k]) map[k] = { sessions:[], matches:[] };
+    map[k].matches.push(m);
+    const plan = S.plans && S.plans[m.id];
+    if(plan && plan.sessions){
+      plan.sessions.forEach((s, idx) => {
+        if(!s) return;
+        const d = s.date || s.session_date;
+        if(!d) return;
+        const sk = String(d).slice(0,10);
+        if(!map[sk]) map[sk] = { sessions:[], matches:[] };
+        map[sk].sessions.push({ mid: m.id, idx, session: s, match: m });
+      });
+    }
+  });
+  return map;
+};
+
+window.pl2RenderCal = function(){
+  const el = document.getElementById('pl2-cal-content');
+  if(!el) return;
+  const now = new Date();
+  if(!window._pl2CalMonth){
+    window._pl2CalMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+  const first = window._pl2CalMonth;
+  const monthLabel = first.toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+  const dowLabels = ['L','M','M','J','V','S','D'];
+  const data = window.pl2BuildMonthData(first);
+  // Build grid: start from Monday of week containing day 1
+  const startDow = (first.getDay() + 6) % 7; // Mon=0
+  const gridStart = new Date(first.getTime() - startDow*86400000);
+  const cells = [];
+  for(let i = 0; i < 42; i++){
+    const d = new Date(gridStart.getTime() + i*86400000);
+    const inMonth = d.getMonth() === first.getMonth();
+    const isToday = d.toDateString() === now.toDateString();
+    const isPast = d < new Date(now.getFullYear(), now.getMonth(), now.getDate()) && !isToday;
+    const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const dayData = data[iso] || { sessions:[], matches:[] };
+    const dots = [];
+    dayData.sessions.slice(0,4).forEach(s => {
+      dots.push('<span class="pl2-dot '+window.pl2TypeClass(s.session.type)+'"></span>');
+    });
+    dayData.matches.forEach(() => { dots.push('<span class="pl2-dot match"></span>'); });
+    const cls = ['pl2-cal-day'];
+    if(!inMonth) cls.push('off');
+    if(isToday) cls.push('today');
+    if(isPast && inMonth) cls.push('past');
+    const onclick = inMonth ? 'onclick="window.pl2OpenPreview(\''+iso+'\')"' : '';
+    cells.push('<div class="'+cls.join(' ')+'" '+onclick+'>'
+      +'<div class="pl2-cal-date">'+d.getDate()+'</div>'
+      +'<div class="pl2-cal-dots">'+dots.join('')+'</div>'
+    +'</div>');
+  }
+  const dowHead = dowLabels.map(l => '<div class="pl2-cal-dow">'+l+'</div>').join('');
+  el.innerHTML = '<div class="pl2-cal-wrap">'
+    +'<div class="pl2-cal-head">'
+      +'<button type="button" class="pl2-cal-nav" onclick="window.pl2PrevMonth()" aria-label="Mois precedent">‹</button>'
+      +'<div class="pl2-cal-title">'+monthLabel+'</div>'
+      +'<button type="button" class="pl2-cal-nav" onclick="window.pl2NextMonth()" aria-label="Mois suivant">›</button>'
+    +'</div>'
+    +'<div class="pl2-cal-grid">'+dowHead+cells.join('')+'</div>'
+    +'<div class="pl2-cal-legend">'
+      +'<span class="pl2-cal-legend-item"><span class="pl2-dot tech"></span>Technique</span>'
+      +'<span class="pl2-cal-legend-item"><span class="pl2-dot phys"></span>Physique</span>'
+      +'<span class="pl2-cal-legend-item"><span class="pl2-dot tact"></span>Tactique</span>'
+      +'<span class="pl2-cal-legend-item"><span class="pl2-dot other"></span>Autre</span>'
+      +'<span class="pl2-cal-legend-item"><span class="pl2-dot match"></span>Match</span>'
+    +'</div>'
+  +'</div>';
+};
+
+window.pl2PrevMonth = function(){
+  const m = window._pl2CalMonth || new Date();
+  window._pl2CalMonth = new Date(m.getFullYear(), m.getMonth()-1, 1);
+  window.pl2RenderCal();
+};
+window.pl2NextMonth = function(){
+  const m = window._pl2CalMonth || new Date();
+  window._pl2CalMonth = new Date(m.getFullYear(), m.getMonth()+1, 1);
+  window.pl2RenderCal();
+};
+
+window.pl2OpenPreview = function(iso){
+  const el = document.getElementById('pl2-prev-body');
+  const titleEl = document.getElementById('pl2-prev-title');
+  if(!el) return;
+  const data = window.pl2BuildMonthData(new Date());
+  const d = new Date(iso+'T12:00:00');
+  const dateLbl = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const dayData = data[iso] || { sessions:[], matches:[] };
+  const parts = [];
+  parts.push('<div class="pl2-prev-date">📅 '+dateLbl+'</div>');
+  if(!dayData.sessions.length && !dayData.matches.length){
+    parts.push('<div class="pl2-prev-empty">Rien de prevu ce jour</div>');
+  } else {
+    dayData.matches.forEach(m => {
+      const title = m.is_home ? 'Vilvoorde vs '+(m.opponent||'?') : (m.opponent||'?')+' vs Vilvoorde';
+      parts.push('<div class="pl2-prev-item" onclick="window.pl2GoToMatch(\''+m.id+'\')"><div class="pl2-prev-item-title">⚽ '+title+'</div><div class="pl2-prev-item-sub">Journee '+(m.journee||'?')+' · '+(m.is_home?'Domicile':'Exterieur')+'</div></div>');
+    });
+    dayData.sessions.forEach(s => {
+      const type = s.session.type || 'Seance';
+      const title = s.session.title || type;
+      const notes = (s.session.notes||'').slice(0,80);
+      parts.push('<div class="pl2-prev-item" onclick="window.pl2GoToMatch(\''+s.mid+'\')"><div class="pl2-prev-item-title"><span class="pl2-dot '+window.pl2TypeClass(type)+'"></span>'+title+'</div><div class="pl2-prev-item-sub">'+type+(notes?' — '+notes:'')+'</div></div>');
+    });
+  }
+  el.innerHTML = parts.join('');
+  if(titleEl) titleEl.textContent = 'Apercu — '+dateLbl;
+  try{ open_modal('modal-pl2-prev'); }catch(_){}
+};
+
+window.pl2GoToMatch = function(mid){
+  try{ close_modal('modal-pl2-prev'); }catch(_){}
+  const idx = (S.matches||[]).findIndex(m => m.id === mid);
+  if(idx >= 0 && window.setPlanIdx){
+    window.pl2SetView('list');
+    window.setPlanIdx(idx);
+  }
+};
+
+// Apply persisted view on first render
+window.pl2ApplyPersistedView = function(){
+  const v = window.pl2GetView();
+  if(v === 'cal') window.pl2SetView('cal');
+};
+
 async function renderPlanning(){
   const el=$('planning-content');if(!el)return;
   if(S.planIdx===null){const i=S.matches.findIndex(m=>!m.result);S.planIdx=i>=0?i:S.matches.length-1;}
@@ -9770,6 +9987,19 @@ window.applyUpdate = () => {
     <div class="pdf-opts-footer">
       <button class="btn btn-outline" onclick="close_modal('modal-pdf-opts')">Annuler</button>
       <button class="btn btn-green" onclick="window.confirmPdfOpts()">Exporter PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pl2: Modal preview journee calendrier -->
+<div class="modal" id="modal-pl2-prev" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pl2-prev-title">
+  <div class="modal-sheet" role="document">
+    <div class="modal-head">
+      <div class="modal-title" id="pl2-prev-title">Apercu journee</div>
+      <button class="modal-close" aria-label="Fermer" onclick="close_modal('modal-pl2-prev')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="pl2-prev-body" id="pl2-prev-body"></div>
     </div>
   </div>
 </div>
