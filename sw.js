@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v24'; // bumped — feat(sprint2): workshop Med2+Ex2+Ex1+M2+Sq1+Med1+M1+M3
-const APP_VERSION = '1.14.0';
+const CACHE = 'rdv-v25'; // bumped — feat(sprint3): M3bis+N3+M8+Sq4+Of3Of2+N2+Pr6+An2+Pl1
+const APP_VERSION = '1.15.0';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
