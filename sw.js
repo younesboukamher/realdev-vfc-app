@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v19'; // bumped — export PDF v2 (détails complets bilingue)
-const APP_VERSION = '1.12.5';
+const CACHE = 'rdv-v20'; // bumped — export PDF v3 (mise en page lisible + marges + bandeau couleur)
+const APP_VERSION = '1.12.6';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {

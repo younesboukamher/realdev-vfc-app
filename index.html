@@ -2043,7 +2043,7 @@ function generateMicrocycle(scouting) {
     </div>
     <div class="topbar-right">
       <span class="top-badge" id="role-pill"></span>
-      <span class="version-badge" id="version-badge">v1.12.5</span>
+      <span class="version-badge" id="version-badge">v1.12.6</span>
       <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
       <select id="season-selector" onchange="window.setArchiveSeason(this.value)" aria-label="Saison" style="background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
         <option value="">Saison 2025-26</option>
@@ -3225,480 +3225,588 @@ window.exportPresencesCSV = ()=>{
   toast('✓ Présences exportées');
 };
 
-// FIX P2 #2 — Export Planning PDF (v2 : détails complets bilingue + thumbnails + présences)
-// Remplace l'export minimaliste par un document A4 complet :
-//  - Couverture : logo, sommaire, tableau charge, note de semaine
-//  - Une section par séance avec metrics live + présences dérivées
-//  - Pour chaque exo : thumb PNG, titre FR+NL, setup/instructions/variants/source
-//  - Footer signé RealDev Vilvoorde
-window.exportPlanningPDF = async (mid)=>{
-  const plan = S.plans[mid]; if(!plan){ toast('Aucun planning à exporter'); return; }
-  const match = S.matches.find(m=>m.id===mid); if(!match){ toast('Match introuvable'); return; }
+// FIX P2 #2 — Export Planning PDF (v3 : mise en page lisible + marges + bandeau couleur-jour)
+window.exportPlanningPDF = async (mid) => {
+  const match = S.matches.find(m => m.id === mid);
+  if (!match) { toast('Match introuvable'); return; }
+  const plan = (S.plans || {})[mid];
+  if (!plan || !Array.isArray(plan.sessions) || plan.sessions.length === 0) {
+    toast('Aucune séance planifiée pour ce match'); return;
+  }
 
-  // Open window synchronously (iOS pop-up blocker requires user-gesture)
-  const w = window.open('about:blank','_blank','width=800,height=900');
-  if(!w){ toast('✗ Pop-up bloqué — autorise les pop-ups'); return; }
-  try {
-    w.document.write('<!doctype html><meta charset="utf-8"><title>Préparation…</title>'
-      +'<style>body{font-family:-apple-system,Segoe UI,sans-serif;text-align:center;padding:60px;color:#0B1929;background:#fff;}'
-      +'.sp{display:inline-block;width:32px;height:32px;border:3px solid #E5E7EB;border-top-color:#10B981;border-radius:50%;animation:sp 1s linear infinite;margin-bottom:14px;}'
-      +'@keyframes sp{to{transform:rotate(360deg)}}</style>'
-      +'<div class="sp"></div><div>Préparation du PDF…</div>'
-      +'<div style="color:#6B7280;font-size:12px;margin-top:6px;">Chargement des exercices et images</div>');
-    w.document.close();
-  } catch(e){}
-
-  toast('⏳ Génération du PDF…');
+  // 1. Popup ouvert SYNC (iOS pop-up blocker)
+  const w = window.open('', '_blank', 'width=900,height=1200');
+  if (!w) { toast('Pop-up bloqué — autorise les pop-ups'); return; }
+  w.document.open();
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Planning…</title><style>body{font-family:-apple-system,Helvetica,Arial,sans-serif;padding:60px;text-align:center;color:#666}.spin{display:inline-block;width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#16a34a;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}</style></head><body><div class="spin"></div><p>Préparation du planning…</p></body></html>');
+  w.document.close();
 
   try {
-    // 1) Exercise DB
-    const db = await (typeof loadExerciseDB==='function' ? loadExerciseDB() : Promise.resolve(window.EXERCISE_DB||{exercises:[],categories:[]}));
-    const exIdx = {}; (db.exercises||[]).forEach(e=>{ exIdx[e.id] = e; });
-    const catLabel = (key)=>{
-      const c = (db.categories||[]).find(c=>c.key===key);
-      return c ? (c.label_fr||key) : key;
-    };
+    // 2. DB exos
+    const db = await loadExerciseDB();
+    const EX = {}; (db.exercises || []).forEach(e => { EX[e.id] = e; });
 
-    // 2) Collect all images to embed as base64
-    const imgUrls = new Set();
-    if(window.location) imgUrls.add('assets/logo.png');
-    (plan.sessions||[]).forEach(s=>{
-      (s.exercises||[]).forEach(ex=>{
-        const full = exIdx[ex.id];
-        const u = (full && full.image_url) || ex.image_url;
-        if(u) imgUrls.add(u);
-      });
-    });
-
-    const imgCache = {};
-    await Promise.all([...imgUrls].map(async (url)=>{
-      try {
-        const r = await fetch(url, {cache:'force-cache'});
-        if(!r.ok) return;
-        const blob = await r.blob();
-        imgCache[url] = await new Promise((resolve,reject)=>{
-          const fr = new FileReader();
-          fr.onload = ()=> resolve(fr.result);
-          fr.onerror = reject;
-          fr.readAsDataURL(blob);
-        });
-      } catch(e){ /* image optional */ }
-    }));
-
-    // 3) Dérive la date d'une séance depuis match_date + session.type
-    const matchDate = match.match_date ? new Date(match.match_date + 'T00:00:00') : null;
-    const dayIdxOfType = {dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6};
-    const dayNameFull = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
-    const sessionDate = (type)=>{
-      if(!matchDate || !isFinite(matchDate.getTime())) return null;
-      const trainDow = dayIdxOfType[(type||'').toLowerCase()];
-      if(trainDow === undefined) return null;
-      const matchDow = matchDate.getDay();
-      let diff = matchDow - trainDow;
-      if(diff <= 0) diff += 7; // training day in the week before the match
-      const d = new Date(matchDate.getTime());
-      d.setDate(matchDate.getDate() - diff);
-      return d.toISOString().slice(0,10);
-    };
-
-    // 4) Présences
-    const presencesFor = (session)=>{
-      const date = sessionDate(session.type);
-      if(!date) return null;
-      const rows = (S.presences||[]).filter(p=> p.session_date === date);
-      if(!rows.length) return { date, present:0, total:0, absents:[], items:[] };
-      const present = rows.filter(p=> p.status==='P' || p.status==='present' || p.status==='Present').length;
-      const absents = rows.filter(p=> p.status==='A' || p.status==='absent' || p.status==='Absent')
-        .map(p=> (p.players && p.players.name) || p.player_name || '—');
-      return { date, present, total: rows.length, absents, items: rows };
-    };
-
-    // 5) Helpers
-    const esc = (s)=> String(s==null?'':s)
+    // 3. Helpers
+    const esc = (s) => String(s == null ? '' : s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    const fdLong = (iso)=>{
-      if(!iso) return '';
-      try { return new Date(iso+'T00:00:00').toLocaleDateString('fr-BE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); }
-      catch(e){ return iso; }
+
+    const dayIdxOfType = { dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6 };
+    const DAY_LBL_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    const fdLong = (iso) => {
+      if (!iso) return '';
+      const d = new Date(iso + 'T12:00:00');
+      return `${DAY_LBL_FR[d.getDay()]} ${d.getDate()} ${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}`;
     };
-    const rpeN = (r)=>{
-      if(typeof r==='number') return r;
-      const s=(r||'').toString(); const m=s.match(/(\d+(?:\.\d+)?)/g);
-      if(!m||!m.length) return 0;
-      return m.map(Number).reduce((a,b)=>a+b,0)/m.length;
+    const fdShort = (iso) => {
+      if (!iso) return '';
+      const d = new Date(iso + 'T12:00:00');
+      return `${d.getDate()} ${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}`;
+    };
+    const rpeN = (rpe) => {
+      if (rpe == null) return 5;
+      const m = String(rpe).match(/\d+(?:\.\d+)?/g);
+      if (!m) return 5;
+      if (m.length >= 2) return (parseFloat(m[0]) + parseFloat(m[1])) / 2;
+      return parseFloat(m[0]);
+    };
+    const sessionDate = (type) => {
+      if (!match.match_date) return '';
+      const matchD = new Date(match.match_date + 'T12:00:00');
+      const matchDow = matchD.getDay();
+      const t = (type || '').toLowerCase();
+      const trainDow = dayIdxOfType[t];
+      if (trainDow == null) return '';
+      let diff = matchDow - trainDow;
+      if (diff <= 0) diff += 7;
+      const d = new Date(matchD);
+      d.setDate(d.getDate() - diff);
+      const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${dd}`;
+    };
+    const dayColor = (type) => {
+      const t = (type || '').toLowerCase();
+      return ({
+        lundi:    { main:'#16a34a', dark:'#15803d', soft:'#f0fdf4', onSoft:'#166534' },
+        mardi:    { main:'#ea580c', dark:'#c2410c', soft:'#fff7ed', onSoft:'#9a3412' },
+        mercredi: { main:'#2563eb', dark:'#1d4ed8', soft:'#eff6ff', onSoft:'#1e40af' },
+        jeudi:    { main:'#8b5cf6', dark:'#6d28d9', soft:'#f5f3ff', onSoft:'#5b21b6' },
+        vendredi: { main:'#db2777', dark:'#be185d', soft:'#fdf2f8', onSoft:'#9d174d' },
+        samedi:   { main:'#475569', dark:'#334155', soft:'#f1f5f9', onSoft:'#334155' },
+        dimanche: { main:'#dc2626', dark:'#b91c1c', soft:'#fef2f2', onSoft:'#991b1b' }
+      })[t] || { main:'#16a34a', dark:'#15803d', soft:'#f0fdf4', onSoft:'#166534' };
+    };
+    const catChipClass = (cat) => 'chip-cat-' + String(cat || 'other').toLowerCase().replace(/[^a-z]/g,'');
+
+    const presencesFor = (sess) => {
+      const date = sessionDate(sess.type);
+      const rows = (S.presences || []).filter(p => p.session_date === date && p.session_type === sess.type);
+      const total = rows.length;
+      const present = rows.filter(r => r.status === 'P').length;
+      const absents = rows.filter(r => r.status !== 'P').map(r => ({
+        name: r.players?.name || '—',
+        position: r.players?.position || ''
+      }));
+      return { date, total, present, absents };
     };
 
-    // 6) Cover data
-    const sessions = plan.sessions||[];
-    const loads = sessions.map(s=>({ n:s.dayName||s.label||s.type, rpe:rpeN(s.rpe_target), dur:s.duration||75 }));
-    const avgRpe = loads.length ? loads.reduce((a,l)=>a+l.rpe,0)/loads.length : 0;
-    const totalDur = loads.reduce((a,l)=>a+l.dur,0);
-    const totalLoad = loads.reduce((a,l)=>a+Math.round(l.rpe*l.dur),0);
-    const logoB64 = imgCache['assets/logo.png'] || '';
-    const matchLabel = match.is_home ? ('Vilvoorde vs '+(match.opponent||'?')) : ((match.opponent||'?')+' vs Vilvoorde');
-    const matchMeta = [
-      fdLong(match.match_date),
-      match.kickoff_time ? 'Coup d\u2019envoi '+match.kickoff_time : '',
-      match.is_home ? 'Domicile' : 'Extérieur',
-      match.journee ? 'Journée '+match.journee : ''
-    ].filter(Boolean).join(' · ');
-
-    // 7) Render helpers
-    const renderChip = (catKey)=>{
-      const label = catLabel(catKey);
-      return `<span class="chip chip-${esc(catKey)}">${esc(label)}</span>`;
+    // 4. Embed images base64
+    const imgCache = {};
+    const fetchImgAsDataUri = async (url) => {
+      if (!url) return '';
+      if (imgCache[url] !== undefined) return imgCache[url];
+      try {
+        const r = await fetch(url, { cache: 'force-cache' });
+        if (!r.ok) { imgCache[url] = ''; return ''; }
+        const blob = await r.blob();
+        const reader = new FileReader();
+        const dataUri = await new Promise((res, rej) => {
+          reader.onload = () => res(reader.result);
+          reader.onerror = rej;
+          reader.readAsDataURL(blob);
+        });
+        imgCache[url] = dataUri;
+        return dataUri;
+      } catch (e) { imgCache[url] = ''; return ''; }
     };
 
-    const renderExercise = (exSess, idx)=>{
-      const full = exIdx[exSess.id] || {};
-      const title_fr = full.title_fr || exSess.name || '(sans titre)';
-      const title_nl = full.title_nl || '';
-      const cat = full.category || exSess.category || '';
-      const sub = full.subcategory || '';
-      const dur = exSess.duration || full.duration || '?';
-      const pmin = full.players_min || '';
-      const age = full.age_range || '';
-      const inten = full.intensity || '';
-      const objF = full.objective_fr || exSess.detail || '';
-      const objN = full.objective_nl || '';
-      const setF = full.setup_fr || '';
-      const setN = full.setup_nl || '';
-      const insF = full.instructions_fr || [];
-      const insN = full.instructions_nl || [];
-      const varF = full.variants_fr || [];
-      const varN = full.variants_nl || [];
-      const src  = full.source || '';
-      const imgUrl = full.image_url || exSess.image_url;
-      const thumb = imgUrl && imgCache[imgUrl] ? imgCache[imgUrl] : '';
+    const logoDataUri = await fetchImgAsDataUri('assets/logo.png');
 
-      const metaBits = [];
-      if(sub) metaBits.push('📂 '+esc(sub));
-      metaBits.push('⏱ '+esc(dur)+' min');
-      if(pmin) metaBits.push('👥 '+esc(pmin)+'+ joueurs');
-      if(age) metaBits.push('🎯 '+esc(age));
-      if(inten) metaBits.push('🔥 '+esc(inten));
+    // Pré-fetch thumbs
+    const thumbPromises = [];
+    plan.sessions.forEach(sess => {
+      (sess.exercises || []).forEach(ex => {
+        const full = EX[ex.id] || ex;
+        if (full.image_url) thumbPromises.push(fetchImgAsDataUri(full.image_url));
+      });
+    });
+    await Promise.all(thumbPromises);
 
-      return `<div class="exercise">
-        <div class="ex-head">
-          ${thumb ? `<img class="ex-thumb" src="${thumb}" alt="">` : '<div class="ex-thumb"></div>'}
-          <div class="ex-title">
-            <div><strong>${idx}. ${esc(title_fr)}</strong> ${cat ? renderChip(cat) : ''}</div>
-            ${title_nl ? `<div class="nl">${esc(title_nl)}</div>` : ''}
-            <div class="section-meta">${metaBits.join(' · ')}</div>
+    // 5. Compute totals
+    const chargeAU = (s) => Math.round((s.duration || 0) * rpeN(s.rpe_target) * (1 + 0.1 * (s.exercises || []).length));
+    const totalDur = plan.sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+    const totalAU = plan.sessions.reduce((sum, s) => sum + chargeAU(s), 0);
+    const avgRpe = plan.sessions.length
+      ? (plan.sessions.reduce((sum, s) => sum + rpeN(s.rpe_target), 0) / plan.sessions.length).toFixed(1)
+      : '—';
+
+    // 6. Render cover
+    const matchTitle = (match.is_home ? 'vs ' : '@ ') + esc(match.opponent || '—');
+    const matchSub = `Journée ${esc(match.journee || '—')} · ${match.is_home ? 'Domicile' : 'Extérieur'}`;
+    const matchDateLine = fdLong(match.match_date) + (match.kickoff_time ? ` — ${esc(match.kickoff_time)}` : '');
+
+    let summaryHtml = '';
+    plan.sessions.forEach(sess => {
+      const c = dayColor(sess.type);
+      const rpe = esc(sess.rpe_target || '—');
+      const nbEx = (sess.exercises || []).length;
+      const dur = sess.duration || 0;
+      summaryHtml += `
+        <div class="summary-card">
+          <div class="band" style="background:${c.main}"></div>
+          <div class="body">
+            <span class="day">${esc(sess.label || sess.dayName || sess.type)}</span>
+            <span class="meta">${nbEx} exos · ${dur} min · RPE ${rpe}</span>
           </div>
+        </div>`;
+    });
+
+    let chargeRows = '';
+    plan.sessions.forEach(sess => {
+      chargeRows += `<tr>
+        <td>${esc(sess.label || sess.dayName || sess.type)}</td>
+        <td>${sess.duration || 0} min</td>
+        <td>${esc(sess.rpe_target || '—')}</td>
+        <td class="au">${chargeAU(sess)}</td>
+      </tr>`;
+    });
+
+    const weekNoteHtml = plan.week_note ? `
+      <div class="week-note">
+        <div class="bar"></div>
+        <div class="content">
+          <strong class="title">Note de semaine</strong>
+          ${esc(plan.week_note).replace(/\n/g, '<br>')}
         </div>
-        ${objF ? `<div class="ex-sec"><strong>Objectif :</strong> ${esc(objF)}${objN ? `<div class="nl">${esc(objN)}</div>`:''}</div>` : ''}
-        ${setF ? `<div class="ex-sec"><strong>Setup :</strong> ${esc(setF)}${setN ? `<div class="nl">${esc(setN)}</div>`:''}</div>` : ''}
-        ${insF.length ? `<div class="ex-sec"><strong>Instructions :</strong>
-          <ol class="instructions">${insF.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>
-          ${insN.length ? `<ol class="instructions nl">${insN.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>` : ''}
-        </div>` : ''}
-        ${varF.length ? `<div class="ex-sec"><strong>Variantes :</strong>
-          <ul class="variants">${varF.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>
-          ${varN.length ? `<ul class="variants nl">${varN.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>` : ''}
-        </div>` : ''}
-        ${src ? `<div class="src">📖 ${esc(src)}</div>` : ''}
-      </div>`;
-    };
+      </div>` : '';
 
-    const renderSession = (s, si)=>{
-      const sumEx = (s.exercises||[]).reduce((a,e)=>a+(parseInt(e.duration)||0),0);
-      const sessDur = parseInt(s.duration)||0;
-      const diff = sumEx - sessDur;
-      const warnMet = sessDur>0 && Math.abs(diff)>10;
-      const pres = presencesFor(s);
-      const focus = (s.focus||[]).filter(Boolean);
-      const dayDate = sessionDate(s.type);
-      return `<div class="session">
-        <h2>${esc(s.dayName||s.label||s.type)}${s.label && s.dayName && s.label!==s.dayName ? ' <span class="sub">'+esc(s.label)+'</span>' : ''}
-          <span class="chip chip-dur">${esc(sessDur||75)} min</span>
-          <span class="chip chip-rpe">RPE ${esc(s.rpe_target||'?')}</span>
-        </h2>
-        <div class="section-meta">${dayDate ? '📅 '+esc(fdLong(dayDate))+' · ' : ''}${focus.length ? 'Focus : '+focus.map(esc).join(', ') : ''}</div>
-        ${s.objectif ? `<div class="sess-obj"><strong>Objectif :</strong> ${esc(s.objectif)}</div>` : ''}
-        <div class="metrics">
-          <span class="metric-box">⏱ Exos : <strong>${sumEx}</strong> min</span>
-          <span class="metric-box">🗓 Séance : <strong>${sessDur||75}</strong> min</span>
-          ${warnMet ? `<span class="metric-box metric-warn">⚠ ${diff>0?'+':''}${diff} min</span>` : ''}
-          <span class="metric-box">Charge : <strong>${Math.round(rpeN(s.rpe_target)*(sessDur||75))}</strong> AU</span>
+    const coverLogoHtml = logoDataUri
+      ? `<img class="cover-logo" src="${logoDataUri}" alt="RealDev Vilvoorde">`
+      : '';
+
+    const cover = `
+      <div class="cover">
+        ${coverLogoHtml}
+        <div class="cover-club">RealDev Vilvoorde</div>
+        <h1 class="cover-title">${matchTitle}</h1>
+        <div class="cover-sub">${matchSub}</div>
+        <div class="cover-date">${esc(matchDateLine)}</div>
+
+        <div class="cover-section-title">Sommaire des séances</div>
+        ${summaryHtml}
+
+        <div class="cover-section-title">Charge hebdomadaire</div>
+        <table class="charge-table">
+          <tr><th>Séance</th><th>Durée</th><th>RPE cible</th><th>Charge (AU)</th></tr>
+          ${chargeRows}
+          <tr class="total">
+            <td>Total / Moyenne</td>
+            <td>${totalDur} min</td>
+            <td>${avgRpe} moy</td>
+            <td class="au">${totalAU} AU</td>
+          </tr>
+        </table>
+
+        ${weekNoteHtml}
+
+        <div class="cover-footer">
+          RealDev Vilvoorde · Planning hebdomadaire<br>
+          Document généré le ${new Date().toLocaleString('fr-FR')} — App v${APP_VERSION || '1.0'}
         </div>
-        ${pres && pres.total>0 ? `<div class="pres">
-          👥 <strong>${pres.present}/${pres.total}</strong> présents (${esc(pres.date)})
-          ${pres.absents.length ? `<div class="pres-absent">Absents : ${pres.absents.map(esc).join(', ')}</div>` : ''}
-        </div>` : ''}
-        <h3>Exercices (${(s.exercises||[]).length})</h3>
-        ${(s.exercises||[]).length ? (s.exercises||[]).map((ex,i)=>renderExercise(ex,i+1)).join('') : '<div class="muted">Aucun exercice renseigné.</div>'}
-        ${s.notes ? `<div class="sess-notes"><strong>📝 Notes :</strong> ${esc(s.notes).replace(/\n/g,'<br>')}</div>` : ''}
       </div>`;
-    };
 
-    // 8) Full HTML document
-    const appVer = (typeof APP_VERSION!=='undefined') ? APP_VERSION : 'v?';
-    const genDate = new Date().toLocaleString('fr-BE');
-    const docTitle = `Planning ${matchLabel} — ${match.match_date||''}`;
+    // 7. Render sessions
+    let sessionsHtml = '';
+    plan.sessions.forEach((sess, sIdx) => {
+      const c = dayColor(sess.type);
+      const dayKey = (sess.type || '').toLowerCase();
+      const presences = presencesFor(sess);
+      const dateDer = presences.date ? fdShort(presences.date) : '';
+      const rpe = esc(sess.rpe_target || '—');
+      const dur = sess.duration || 0;
+      const exos = sess.exercises || [];
+      const sumExoMin = exos.reduce((s, e) => s + (e.duration || 0), 0);
+      const au = chargeAU(sess);
+      const dayLabelShort = DAY_LBL_FR[dayIdxOfType[dayKey]] || sess.dayName || sess.type || '';
+      const sessLabelRight = (sess.label || '').replace(new RegExp('^' + dayLabelShort + '\\s*·?\\s*', 'i'), '') || sess.type;
 
-    const html = `<!doctype html><html lang="fr"><head>
-<meta charset="utf-8">
-<title>${esc(docTitle)}</title>
-<style>
-@page { size: A4; margin: 15mm 14mm 18mm 14mm; }
-* { box-sizing: border-box; }
-body { font-family: -apple-system, "Segoe UI", Arial, sans-serif; color: #0B1929; font-size: 10.5pt; line-height: 1.42; margin: 0; background: #fff; }
-h1 { color: #10B981; font-size: 22pt; margin: 0 0 4px; font-weight: 800; letter-spacing: -0.5px; }
-h2 { color: #0B1929; font-size: 14pt; margin: 14px 0 6px; border-bottom: 2px solid #10B981; padding-bottom: 4px; font-weight: 700; }
-h3 { color: #0B1929; font-size: 11.5pt; margin: 10px 0 4px; font-weight: 700; }
-.muted { color: #6B7280; }
-.small { font-size: 9pt; }
-.sub { font-size: 11pt; font-weight: 500; color: #6B7280; margin-left: 6px; }
-.nl { color: #6B7280; font-style: italic; font-size: 9pt; margin-top: 1px; }
-.cover { page-break-after: always; }
-.cover-head { display: flex; gap: 16px; align-items: center; padding-bottom: 10px; border-bottom: 3px solid #10B981; }
-.cover-logo { width: 68px; height: 68px; object-fit: contain; flex-shrink: 0; }
-.cover-title { flex: 1; }
-.cover-title .match { font-size: 14pt; color: #0B1929; font-weight: 700; margin-top: 2px; }
-.cover-title .meta { color: #6B7280; font-size: 10pt; margin-top: 2px; }
-.session { page-break-before: always; }
-.session:first-of-type { page-break-before: auto; }
-.exercise { page-break-inside: avoid; margin: 10px 0; padding: 9px 10px; border: 1px solid #E5E7EB; border-radius: 5px; background: #FAFBFC; }
-.ex-head { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
-.ex-thumb { width: 82px; height: 62px; object-fit: cover; border-radius: 4px; background: #F3F4F6; flex-shrink: 0; border: 1px solid #E5E7EB; }
-.ex-title { flex: 1; min-width: 0; }
-.ex-title strong { font-size: 11pt; }
-.ex-sec { margin-top: 5px; font-size: 10pt; }
-.ex-sec strong { color: #0B1929; }
-.chip { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 8.5pt; font-weight: 600; vertical-align: middle; margin-left: 4px; }
-.chip-warmup { background: #FEF3C7; color: #92400E; }
-.chip-technique { background: #DBEAFE; color: #1E40AF; }
-.chip-tactique { background: #FEE2E2; color: #991B1B; }
-.chip-ssg { background: #D1FAE5; color: #065F46; }
-.chip-finition { background: #E9D5FF; color: #6B21A8; }
-.chip-setpieces { background: #FCE7F3; color: #9F1239; }
-.chip-defense { background: #DBEAFE; color: #1E3A8A; }
-.chip-gardien { background: #FEDCAF; color: #9A3412; }
-.chip-prevention { background: #CFFAFE; color: #155E75; }
-.chip-dur { background: #10B981; color: #fff; margin-left: 8px; }
-.chip-rpe { background: #F59E0B; color: #fff; }
-.section-meta { color: #6B7280; font-size: 9pt; margin: 3px 0 4px; }
-.sess-obj { margin: 6px 0; font-size: 10pt; }
-.metrics { margin: 4px 0 8px; }
-.metric-box { display: inline-block; padding: 3px 8px; background: #F3F4F6; border-radius: 3px; font-size: 9pt; margin-right: 5px; }
-.metric-box strong { color: #0B1929; }
-.metric-warn { background: #FEF3C7; color: #92400E; }
-ol.instructions { margin: 3px 0 3px 20px; padding: 0; }
-ol.instructions li { margin: 2px 0; font-size: 10pt; }
-ol.instructions.nl li { font-size: 9pt; color: #6B7280; font-style: italic; }
-ul.variants { margin: 3px 0 3px 20px; padding: 0; }
-ul.variants li { margin: 2px 0; font-size: 10pt; }
-ul.variants.nl li { font-size: 9pt; color: #6B7280; font-style: italic; }
-.src { color: #6B7280; font-style: italic; font-size: 8.5pt; margin-top: 5px; }
-.toc { background: #F9FAFB; padding: 12px 14px; border-radius: 5px; margin-top: 16px; border: 1px solid #E5E7EB; }
-.toc h3 { margin: 0 0 6px; color: #10B981; }
-.toc ol { margin: 0; padding-left: 20px; }
-.toc li { margin: 2px 0; font-size: 10pt; }
-.pres { padding: 6px 10px; background: #F0FDF4; border-left: 3px solid #10B981; border-radius: 3px; margin: 6px 0; font-size: 10pt; }
-.pres-absent { color: #991B1B; font-size: 9pt; margin-top: 2px; }
-.sess-notes { margin-top: 10px; padding: 8px 10px; background: #F9FAFB; border-left: 3px solid #6B7280; border-radius: 3px; font-style: italic; font-size: 10pt; }
-.load-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 4px; }
-.load-table th { background: #F3F4F6; padding: 5px 6px; text-align: left; font-size: 9.5pt; border-bottom: 1px solid #E5E7EB; }
-.load-table td { padding: 5px 6px; border-bottom: 1px solid #F3F4F6; }
-.load-table tr.total td { background: #ECFDF5; font-weight: 700; border-top: 2px solid #10B981; }
-.week-note { margin-top: 16px; padding: 10px 12px; background: #FEF3C7; border-radius: 4px; font-size: 10pt; border-left: 3px solid #F59E0B; }
-.signature { margin-top: 30px; text-align: center; padding-top: 12px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 9.5pt; }
-.signature strong { color: #10B981; font-weight: 800; letter-spacing: 0.3px; }
-.hint { text-align: center; padding: 8px; background: #F9FAFB; font-size: 9pt; color: #6B7280; border-radius: 4px; margin-bottom: 10px; }
-@media print {
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .hint { display: none; }
-}
-</style>
-</head>
-<body>
-<div class="hint">💡 Utilise <strong>Fichier → Imprimer → Enregistrer au format PDF</strong> (ou ⌘P / Ctrl+P) pour sauvegarder le document.</div>
+      const focusChips = Array.isArray(sess.focus) && sess.focus.length
+        ? sess.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')
+        : '';
 
-<div class="cover">
-  <div class="cover-head">
-    ${logoB64 ? `<img class="cover-logo" src="${logoB64}" alt="RealDev Vilvoorde">` : ''}
-    <div class="cover-title">
-      <h1>Planning hebdo</h1>
-      <div class="match">${esc(matchLabel)}</div>
-      <div class="meta">${esc(matchMeta)}</div>
-    </div>
-  </div>
+      const objectifHtml = sess.objectif
+        ? `<div class="sess-objectif">${esc(sess.objectif)}</div>`
+        : '';
 
-  <div class="toc">
-    <h3>Sommaire</h3>
-    <ol>
-      ${sessions.map((s,i)=>`<li><strong>${esc(s.dayName||s.label||s.type)}</strong> — ${(s.exercises||[]).length} exo${(s.exercises||[]).length>1?'s':''} · ${esc(s.duration||75)} min · RPE ${esc(s.rpe_target||'?')}</li>`).join('')}
-    </ol>
-  </div>
+      const absentsHtml = presences.absents.length
+        ? `<div class="absents"><strong>Absent${presences.absents.length > 1 ? 's' : ''} :</strong> ${presences.absents.map(a => esc(a.name) + (a.position ? ` (${esc(a.position)})` : '')).join(', ')}</div>`
+        : `<div class="absents-none">Tous présents</div>`;
 
-  <h3 style="margin-top:18px;">Résumé charge hebdomadaire</h3>
-  <table class="load-table">
-    <thead><tr>
-      <th>Séance</th>
-      <th style="text-align:center;">Durée</th>
-      <th style="text-align:center;">RPE cible</th>
-      <th style="text-align:center;">Charge (AU)</th>
-    </tr></thead>
-    <tbody>
-      ${sessions.map(s=>{
-        const r=rpeN(s.rpe_target), d=s.duration||75;
-        return `<tr>
-          <td>${esc(s.dayName||s.label||s.type)}</td>
-          <td style="text-align:center;">${esc(d)} min</td>
-          <td style="text-align:center;">${esc(s.rpe_target||'?')}</td>
-          <td style="text-align:center;">${Math.round(r*d)}</td>
-        </tr>`;
-      }).join('')}
-      <tr class="total">
-        <td>Total</td>
-        <td style="text-align:center;">${totalDur} min</td>
-        <td style="text-align:center;">${avgRpe.toFixed(1)} moy</td>
-        <td style="text-align:center;">${totalLoad} AU</td>
-      </tr>
-    </tbody>
-  </table>
+      const presencesHtml = presences.total > 0 ? `
+        <div class="sess-presences">
+          <div class="pres-left">
+            <div class="big">${presences.present}/${presences.total}</div>
+            <div class="lbl">présents · ${esc(presences.date)}</div>
+          </div>
+          ${absentsHtml}
+        </div>` : '';
 
-  ${plan.week_note ? `<div class="week-note"><strong>📝 Note de semaine :</strong><br>${esc(plan.week_note).replace(/\n/g,'<br>')}</div>` : ''}
+      // Exercises
+      let exosHtml = '';
+      exos.forEach((exRef, eIdx) => {
+        const full = { ...(EX[exRef.id] || {}), ...exRef };
+        const titleFr = full.title_fr || full.name || exRef.name || full.id;
+        const titleNl = full.title_nl || '';
+        const cat = full.category || '';
+        const subcat = full.subcategory || '';
+        const exDur = full.duration || exRef.duration || 0;
+        const players = full.players_min || full.players || '';
+        const ageRange = full.age_range || '';
+        const intensity = full.intensity || '';
+        const thumb = imgCache[full.image_url] || '';
 
-  <div class="signature">
-    <strong>RealDev Vilvoorde</strong><br>
-    Document généré le ${esc(genDate)} — App v${esc(appVer)}
-  </div>
-</div>
+        const chipsHtml = [
+          subcat ? `<span class="chip ${catChipClass(cat)}">${esc(subcat)}</span>` : (cat ? `<span class="chip ${catChipClass(cat)}">${esc(cat)}</span>` : ''),
+          exDur ? `<span class="chip chip-dur">${exDur} min</span>` : '',
+          players ? `<span class="chip chip-players">${esc(players)} joueurs</span>` : '',
+          ageRange ? `<span class="chip chip-age">${esc(ageRange)}</span>` : '',
+          intensity ? `<span class="chip chip-int">${esc(intensity)}</span>` : ''
+        ].filter(Boolean).join('');
 
-${sessions.map((s,si)=>renderSession(s,si)).join('')}
+        const thumbHtml = thumb
+          ? `<img class="exo-thumb" src="${thumb}" alt="">`
+          : `<div class="exo-thumb exo-thumb-empty"></div>`;
 
-<div class="signature" style="margin-top:20px;">
-  <strong>RealDev Vilvoorde</strong> · Planning hebdomadaire<br>
-  <span class="muted">Généré le ${esc(genDate)} — App v${esc(appVer)}</span>
-</div>
+        const section = (label, fr, nl) => {
+          if (!fr && !nl) return '';
+          return `
+            <div class="exo-section">
+              <div class="exo-label">${esc(label)}</div>
+              ${fr ? `<div class="exo-text-fr">${esc(fr)}</div>` : ''}
+              ${nl ? `<div class="exo-text-nl">${esc(nl)}</div>` : ''}
+            </div>`;
+        };
 
-<script>window.onload=()=>setTimeout(()=>{try{window.print();}catch(e){}},600);<\/script>
-</body></html>`;
+        const listSection = (label, listFr, listNl, ordered) => {
+          const hasFr = Array.isArray(listFr) && listFr.length;
+          const hasNl = Array.isArray(listNl) && listNl.length;
+          if (!hasFr && !hasNl) return '';
+          const tag = ordered ? 'ol' : 'ul';
+          const frHtml = hasFr ? `<${tag} class="lst-fr">${listFr.map(i => `<li>${esc(i)}</li>`).join('')}</${tag}>` : '';
+          const nlHtml = hasNl ? `<${tag} class="lst-nl">${listNl.map(i => `<li>${esc(i)}</li>`).join('')}</${tag}>` : '';
+          return `
+            <div class="exo-section">
+              <div class="exo-label">${esc(label)}</div>
+              ${frHtml}
+              ${nlHtml}
+            </div>`;
+        };
 
-    // 9) Write to the popup
+        const sourceHtml = full.source
+          ? `<div class="exo-source">${esc(full.source)}</div>` : '';
+
+        // Avoid page-break-inside only from 2nd exo (let 1st flow to fill session page)
+        const avoidClass = eIdx === 0 ? '' : ' exo-avoid';
+
+        exosHtml += `
+          <div class="exo c-${dayKey}${avoidClass}">
+            <div class="exo-head">
+              <div class="exo-num">${eIdx + 1}</div>
+              ${thumbHtml}
+              <div class="exo-info">
+                <div class="exo-title-fr">${esc(titleFr)}</div>
+                ${titleNl ? `<div class="exo-title-nl">${esc(titleNl)}</div>` : ''}
+                <div class="exo-chips">${chipsHtml}</div>
+              </div>
+            </div>
+            ${section('Objectif', full.objectif_fr || full.objectif, full.objectif_nl)}
+            ${section('Setup', full.setup_fr || full.setup, full.setup_nl)}
+            ${listSection('Instructions', full.instructions_fr || full.instructions, full.instructions_nl, true)}
+            ${listSection('Variantes', full.variants_fr || full.variants, full.variants_nl, false)}
+            ${sourceHtml}
+          </div>`;
+      });
+
+      const notesHtml = sess.notes ? `
+        <div class="sess-notes">
+          <strong>Notes de séance</strong>
+          ${esc(sess.notes).replace(/\n/g, '<br>')}
+        </div>` : '';
+
+      const focusRow = focusChips ? `<div class="sess-chips">${focusChips}</div>` : '';
+
+      sessionsHtml += `
+        <div class="session c-${dayKey}">
+          <div class="sess-banner c-${dayKey}">
+            <div class="sess-banner-inner">
+              <div class="sess-left">
+                <div class="sess-idx">Séance ${sIdx + 1} / ${plan.sessions.length}</div>
+                <div class="sess-day">${esc(dayLabelShort).toUpperCase()}</div>
+                ${dateDer ? `<div class="sess-date">${esc(dateDer)}</div>` : ''}
+                ${focusRow}
+              </div>
+              <div class="sess-right">
+                <div class="sess-label">${esc(sessLabelRight)}</div>
+                <div class="sess-right-chips">
+                  <span class="chip">${dur} min</span>
+                  <span class="chip">RPE ${rpe}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          ${objectifHtml}
+
+          <div class="sess-metrics">
+            <div class="metric"><div class="value">${sumExoMin} min</div><div class="label">Σ exos</div></div>
+            <div class="metric"><div class="value">${dur} min</div><div class="label">Séance</div></div>
+            <div class="metric"><div class="value">${au} AU</div><div class="label">Charge</div></div>
+          </div>
+
+          ${presencesHtml}
+
+          <div class="exos-title">Exercices (${exos.length})</div>
+          ${exosHtml}
+
+          ${notesHtml}
+        </div>`;
+    });
+
+    // 8. CSS
+    const css = `
+      @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+      * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      html, body { margin: 0; padding: 0; background:#fff; color:#1f2937;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+        font-size: 11pt; line-height: 1.5; }
+
+      /* COVER */
+      .cover { page-break-after: always; }
+      .cover-logo { display:block; margin: 0 auto 4mm; height: 28mm; }
+      .cover-club { text-align:center; font-size: 10pt; letter-spacing: 2px;
+        text-transform: uppercase; color:#6b7280; margin-bottom: 2mm; }
+      .cover-title { text-align:center; font-size: 28pt; font-weight: 800;
+        color:#111827; line-height:1.1; margin: 5mm 0 2mm; }
+      .cover-sub { text-align:center; font-size: 13pt; color:#4b5563; margin-bottom: 4mm; }
+      .cover-date { text-align:center; font-size: 15pt; font-weight: 600;
+        color:#111827; margin: 0 auto 7mm; padding-bottom: 5mm; white-space: nowrap;
+        border-bottom: 2px solid #16a34a; max-width: 90mm; }
+
+      .cover-section-title { font-size: 11pt; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 1.5px; color:#16a34a; margin: 8mm 0 3mm; }
+
+      .summary-card { display: flex; align-items: stretch; margin-bottom: 3mm;
+        border: 1px solid #e5e7eb; border-radius: 4mm; overflow: hidden; }
+      .summary-card .band { width: 5mm; flex-shrink: 0; }
+      .summary-card .body { flex: 1; padding: 3mm 5mm; display:flex;
+        justify-content:space-between; align-items:center; }
+      .summary-card .day { font-size: 13pt; font-weight: 700; color:#111827; }
+      .summary-card .meta { font-size: 10.5pt; color:#4b5563; }
+
+      .charge-table { width: 100%; border-collapse: collapse; margin-top: 2mm; }
+      .charge-table th { background:#f3f4f6; font-size: 10pt; font-weight:700;
+        text-align:left; padding: 2mm 3mm; text-transform:uppercase;
+        letter-spacing:0.8px; color:#374151; border-bottom: 2px solid #e5e7eb; }
+      .charge-table td { padding: 2.5mm 3mm; border-bottom: 1px solid #f3f4f6;
+        font-size: 10.5pt; }
+      .charge-table tr:nth-child(even) td { background:#fafafa; }
+      .charge-table .au { font-weight: 700; color:#111827; }
+      .charge-table tr.total td { background:#16a34a; color:#fff; font-weight: 700;
+        border-bottom: none; }
+      .charge-table tr.total td.au { color:#fff; }
+
+      .week-note { display:flex; margin-top: 7mm; border-radius: 3mm;
+        background: #fef3c7; overflow:hidden; }
+      .week-note .bar { width: 4mm; background: #f59e0b; flex-shrink: 0; }
+      .week-note .content { padding: 3mm 5mm; font-size: 10.5pt; color: #78350f; }
+      .week-note .title { font-weight: 700; display:block; margin-bottom: 1mm; font-size: 10.5pt; }
+
+      .cover-footer { margin-top: 12mm; text-align:center; font-size: 9pt;
+        color:#9ca3af; border-top: 1px solid #e5e7eb; padding-top: 3mm; }
+
+      /* SESSION */
+      .session { page-break-before: always; }
+
+      .sess-banner { margin: -18mm -16mm 5mm -16mm; padding: 7mm 16mm 6mm;
+        color:#fff; }
+      .sess-banner.c-lundi { background: linear-gradient(135deg,#16a34a,#15803d); }
+      .sess-banner.c-mardi { background: linear-gradient(135deg,#ea580c,#c2410c); }
+      .sess-banner.c-mercredi { background: linear-gradient(135deg,#2563eb,#1d4ed8); }
+      .sess-banner.c-jeudi { background: linear-gradient(135deg,#8b5cf6,#6d28d9); }
+      .sess-banner.c-vendredi { background: linear-gradient(135deg,#db2777,#be185d); }
+      .sess-banner.c-samedi { background: linear-gradient(135deg,#475569,#334155); }
+      .sess-banner.c-dimanche { background: linear-gradient(135deg,#dc2626,#b91c1c); }
+
+      .sess-banner-inner { display:flex; justify-content:space-between; align-items:flex-start; }
+      .sess-left { flex: 1; }
+      .sess-right { text-align: right; }
+
+      .sess-banner .sess-idx { font-size: 9pt; letter-spacing: 2px;
+        text-transform: uppercase; opacity: 0.85; margin-bottom: 1mm; }
+      .sess-banner .sess-day { font-size: 34pt; font-weight: 800; line-height: 1;
+        letter-spacing: -0.5px; }
+      .sess-banner .sess-date { font-size: 12pt; opacity: 0.9; margin-top: 1mm; }
+      .sess-banner .sess-label { font-size: 13pt; font-weight: 600; margin-bottom: 2mm; }
+      .sess-banner .sess-chips { margin-top: 3mm; }
+      .sess-banner .chip { display:inline-block; padding: 1mm 3mm;
+        background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.45);
+        border-radius: 4mm; font-size: 10pt; font-weight: 600; margin-right: 2mm; color:#fff; }
+
+      .sess-objectif { background: #fef3c7; border-left: 4px solid #f59e0b;
+        padding: 3mm 5mm; margin-bottom: 5mm; font-size: 11pt; font-style: italic;
+        color:#78350f; border-radius: 0 2mm 2mm 0; }
+      .sess-objectif::before { content:"▸ "; color:#f59e0b; font-style: normal; font-weight: 700; }
+
+      .sess-metrics { display:flex; gap: 4mm; margin-bottom: 5mm; }
+      .metric { flex: 1; text-align: center; padding: 4mm 2mm;
+        background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3mm; }
+      .metric .value { font-size: 20pt; font-weight: 800; color:#111827; line-height: 1; }
+      .metric .label { font-size: 9pt; color:#6b7280; text-transform: uppercase;
+        letter-spacing: 0.8px; margin-top: 2mm; }
+
+      .sess-presences { display:flex; align-items:center; gap: 6mm;
+        padding: 3mm 5mm; border-left: 4px solid #16a34a; background:#f0fdf4;
+        margin-bottom: 6mm; border-radius: 0 2mm 2mm 0; }
+      .c-mardi .sess-presences { border-left-color:#ea580c; background:#fff7ed; }
+      .c-mercredi .sess-presences { border-left-color:#2563eb; background:#eff6ff; }
+      .c-jeudi .sess-presences { border-left-color:#8b5cf6; background:#f5f3ff; }
+      .c-vendredi .sess-presences { border-left-color:#db2777; background:#fdf2f8; }
+      .c-samedi .sess-presences { border-left-color:#475569; background:#f1f5f9; }
+      .c-dimanche .sess-presences { border-left-color:#dc2626; background:#fef2f2; }
+      .sess-presences .big { font-size: 20pt; font-weight: 800; color:#166534; line-height:1; }
+      .c-mardi .sess-presences .big { color:#9a3412; }
+      .c-mercredi .sess-presences .big { color:#1e40af; }
+      .c-jeudi .sess-presences .big { color:#5b21b6; }
+      .c-vendredi .sess-presences .big { color:#9d174d; }
+      .c-samedi .sess-presences .big { color:#334155; }
+      .c-dimanche .sess-presences .big { color:#991b1b; }
+      .sess-presences .lbl { font-size: 9pt; color:#166534; text-transform: uppercase;
+        letter-spacing: 0.8px; margin-top: 1mm; }
+      .c-mardi .sess-presences .lbl { color:#9a3412; }
+      .c-mercredi .sess-presences .lbl { color:#1e40af; }
+      .c-jeudi .sess-presences .lbl { color:#5b21b6; }
+      .c-vendredi .sess-presences .lbl { color:#9d174d; }
+      .c-samedi .sess-presences .lbl { color:#334155; }
+      .c-dimanche .sess-presences .lbl { color:#991b1b; }
+      .sess-presences .absents { flex:1; font-size: 10pt; color:#b91c1c; }
+      .sess-presences .absents strong { color:#991b1b; font-weight: 700; }
+      .sess-presences .absents-none { flex:1; font-size: 10pt; color:#166534; font-style:italic; }
+
+      .exos-title { font-size: 11pt; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 1.5px; color: #16a34a; margin: 6mm 0 3mm;
+        padding-bottom: 2mm; border-bottom: 2px solid #16a34a; }
+      .c-mardi .exos-title { color:#ea580c; border-bottom-color:#ea580c; }
+      .c-mercredi .exos-title { color:#2563eb; border-bottom-color:#2563eb; }
+      .c-jeudi .exos-title { color:#8b5cf6; border-bottom-color:#8b5cf6; }
+      .c-vendredi .exos-title { color:#db2777; border-bottom-color:#db2777; }
+      .c-samedi .exos-title { color:#475569; border-bottom-color:#475569; }
+      .c-dimanche .exos-title { color:#dc2626; border-bottom-color:#dc2626; }
+
+      .exo { margin-bottom: 6mm; padding-bottom: 5mm;
+        border-bottom: 1px solid #e5e7eb; }
+      .exo.exo-avoid { page-break-inside: avoid; }
+      .exo:last-child { border-bottom: none; }
+      .exo-head { display:flex; gap: 4mm; margin-bottom: 3mm; align-items: flex-start; }
+      .exo-num { width: 10mm; height: 10mm; border-radius: 50%; flex-shrink: 0;
+        background: #16a34a; color:#fff; font-weight: 800; font-size: 12pt;
+        display:flex; align-items:center; justify-content:center; }
+      .c-mardi .exo-num { background:#ea580c; }
+      .c-mercredi .exo-num { background:#2563eb; }
+      .c-jeudi .exo-num { background:#8b5cf6; }
+      .c-vendredi .exo-num { background:#db2777; }
+      .c-samedi .exo-num { background:#475569; }
+      .c-dimanche .exo-num { background:#dc2626; }
+      .exo-thumb { width: 45mm; height: 34mm; object-fit: cover; border-radius: 2mm;
+        border: 1px solid #d1d5db; flex-shrink: 0; background:#f3f4f6; }
+      .exo-thumb-empty { background: repeating-linear-gradient(45deg,#f3f4f6,#f3f4f6 5mm,#e5e7eb 5mm,#e5e7eb 10mm); }
+      .exo-info { flex: 1; }
+      .exo-title-fr { font-size: 13pt; font-weight: 700; color:#111827; line-height: 1.2; }
+      .exo-title-nl { font-size: 10pt; font-style: italic; color:#6b7280; margin-top: 1mm; }
+      .exo-chips { margin-top: 2mm; }
+      .exo-chips .chip { display:inline-block; padding: 0.6mm 2mm; border-radius: 2mm;
+        font-size: 9pt; font-weight: 600; margin-right: 1.5mm; margin-bottom: 1mm; }
+      .chip-cat-warmup, .chip-cat-chauffement { background:#fef3c7; color:#78350f; }
+      .chip-cat-technique { background:#cffafe; color:#155e75; }
+      .chip-cat-tactique, .chip-cat-tactic { background:#ede9fe; color:#5b21b6; }
+      .chip-cat-ssg, .chip-cat-jeureduit { background:#d1fae5; color:#065f46; }
+      .chip-cat-finition { background:#fee2e2; color:#991b1b; }
+      .chip-cat-setpieces, .chip-cat-phasesarrtes { background:#fef3c7; color:#92400e; }
+      .chip-cat-gardien { background:#e2e8f0; color:#334155; }
+      .chip-cat-prevention, .chip-cat-prvention { background:#fce7f3; color:#9d174d; }
+      .chip-cat-defense, .chip-cat-dfense { background:#ffedd5; color:#9a3412; }
+      .chip-cat-other { background:#f3f4f6; color:#374151; }
+      .chip-dur { background:#dcfce7; color:#166534; }
+      .chip-players { background:#dbeafe; color:#1e40af; }
+      .chip-age { background:#f3f4f6; color:#374151; }
+      .chip-int { background:#fee2e2; color:#991b1b; }
+
+      .exo-section { margin-top: 3mm; }
+      .exo-label { font-size: 9pt; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 1.2px; color: #16a34a; margin-bottom: 1mm; }
+      .c-mardi .exo-label { color:#ea580c; }
+      .c-mercredi .exo-label { color:#2563eb; }
+      .c-jeudi .exo-label { color:#8b5cf6; }
+      .c-vendredi .exo-label { color:#db2777; }
+      .c-samedi .exo-label { color:#475569; }
+      .c-dimanche .exo-label { color:#dc2626; }
+      .exo-text-fr { font-size: 11pt; color:#1f2937; }
+      .exo-text-nl { font-size: 10pt; font-style: italic; color:#6b7280; margin-top: 1mm; }
+      .exo-section ol, .exo-section ul { margin: 1mm 0 1mm 5mm; padding: 0; }
+      .exo-section ol li, .exo-section ul li { margin-bottom: 0.8mm; font-size: 11pt; }
+      .exo-section .lst-nl { margin-top: 1.5mm; color:#6b7280; font-style: italic; font-size: 10pt; }
+      .exo-section .lst-nl li { color:#6b7280; font-size: 10pt; }
+      .exo-source { font-size: 9pt; font-style: italic; color:#9ca3af; margin-top: 3mm; }
+      .exo-source::before { content: "◆ "; color:#d1d5db; }
+
+      .sess-notes { margin-top: 7mm; padding: 4mm 5mm; background:#fef3c7;
+        border-left: 4px solid #f59e0b; border-radius: 0 2mm 2mm 0;
+        font-size: 11pt; color:#78350f; page-break-inside: avoid; }
+      .sess-notes strong { display:block; font-size: 9pt; text-transform: uppercase;
+        letter-spacing: 1.2px; margin-bottom: 1mm; color:#92400e; }
+
+      /* Print toolbar (non-print) */
+      @media print { .noprint { display: none !important; } }
+      .noprint { position: fixed; top: 10px; right: 10px; z-index: 999;
+        background: #16a34a; color:#fff; padding: 8px 14px; border-radius: 6px;
+        cursor: pointer; border: none; font-weight: 600; font-size: 13px;
+        font-family: -apple-system, Helvetica, Arial, sans-serif;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    `;
+
+    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
+      <title>Planning — ${esc(match.opponent || '')}</title>
+      <style>${css}</style>
+      </head><body>
+      <button class="noprint" onclick="window.print()">Imprimer / Enregistrer PDF</button>
+      ${cover}
+      ${sessionsHtml}
+      <` + `script>setTimeout(()=>{try{window.print()}catch(e){}}, 600);</` + `script>
+      </body></html>`;
+
     w.document.open();
     w.document.write(html);
     w.document.close();
-    toast('✓ Export PDF prêt — Ctrl+P ou ⌘P');
-  } catch(err) {
+    toast('Export PDF lancé');
+  } catch (err) {
     console.error('[exportPlanningPDF]', err);
     try {
       w.document.open();
-      w.document.write('<!doctype html><meta charset="utf-8"><body style="font-family:sans-serif;padding:40px;color:#991B1B;"><h2>Erreur lors de la génération</h2><pre style="white-space:pre-wrap;color:#6B7280;">'+String((err&&err.message)||err).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))+'</pre><button onclick="window.close()">Fermer</button></body>');
+      w.document.write('<!DOCTYPE html><html><body style="font-family:sans-serif;padding:40px;background:#fef2f2;color:#991b1b"><h2>Erreur export PDF</h2><pre style="white-space:pre-wrap">' + String(err && err.stack || err) + '</pre></body></html>');
       w.document.close();
-    } catch(e){}
-    toast('✗ Erreur export : '+((err&&err.message)||err));
+    } catch(e) {}
+    toast('Erreur export PDF');
   }
-};
-
-/* ════════ MATCHS ════════ */
-
-// FIX P2 #6 - Export Match PNG (fiche WhatsApp-ready, 1080x1080)
-window.exportMatchPNG = (mid) => {
-  const match = S.matches.find(m=>m.id===mid);
-  if(!match){ toast('✗ Match introuvable'); return; }
-  const activeInj = (S.injuries||[]).filter(i=>i.status==='active');
-  const injuredIds = new Set(activeInj.map(i=>i.player_id));
-  const available = (S.players||[]).filter(p=>!injuredIds.has(p.id));
-  const canvas = document.createElement('canvas');
-  canvas.width = 1080; canvas.height = 1080;
-  const ctx = canvas.getContext('2d');
-  const g = ctx.createLinearGradient(0, 0, 0, 1080);
-  g.addColorStop(0, '#0B1437'); g.addColorStop(1, '#1E1148');
-  ctx.fillStyle = g; ctx.fillRect(0, 0, 1080, 1080);
-  ctx.fillStyle = '#F96167'; ctx.fillRect(0, 0, 1080, 8);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 44px system-ui, -apple-system, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('RealDev Vilvoorde FC', 60, 100);
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.font = '500 22px system-ui, -apple-system, sans-serif';
-  ctx.fillText((match.journee||'Match') + ' · ' + (S.season||'2025-26'), 60, 138);
-  ctx.fillStyle = 'rgba(255,255,255,0.15)';
-  ctx.fillRect(60, 170, 960, 2);
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 72px system-ui, -apple-system, sans-serif';
-  const home = match.is_home ? 'VFC' : (match.opponent||'Adversaire');
-  const away = match.is_home ? (match.opponent||'Adversaire') : 'VFC';
-  ctx.fillText(home, 270, 320);
-  ctx.fillStyle = '#F96167';
-  ctx.font = 'bold 56px system-ui, -apple-system, sans-serif';
-  ctx.fillText('vs', 540, 310);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 72px system-ui, -apple-system, sans-serif';
-  ctx.fillText(away, 810, 320);
-  const cardY = 400;
-  ctx.fillStyle = 'rgba(255,255,255,0.07)';
-  ctx.fillRect(60, cardY, 960, 140);
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.font = '500 20px system-ui, -apple-system, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('DATE', 100, cardY + 45);
-  ctx.fillText('LIEU', 400, cardY + 45);
-  ctx.fillText('KICK-OFF', 700, cardY + 45);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 30px system-ui, -apple-system, sans-serif';
-  let dateStr = match.match_date || '';
-  try { dateStr = new Date(match.match_date).toLocaleDateString('fr-BE', {day:'2-digit', month:'short', year:'numeric'}); } catch(_) {}
-  ctx.fillText(dateStr, 100, cardY + 95);
-  ctx.fillText(match.is_home ? 'Domicile' : 'Exterieur', 400, cardY + 95);
-  ctx.fillText(match.kickoff_time || '-', 700, cardY + 95);
-  const sY = 590;
-  ctx.fillStyle = '#10B981'; ctx.fillRect(60, sY, 470, 180);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 110px system-ui, -apple-system, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(String(available.length), 295, sY + 115);
-  ctx.font = '600 24px system-ui, -apple-system, sans-serif';
-  ctx.fillText('DISPONIBLES', 295, sY + 155);
-  ctx.fillStyle = '#EF4444'; ctx.fillRect(550, sY, 470, 180);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 110px system-ui, -apple-system, sans-serif';
-  ctx.fillText(String(activeInj.length), 785, sY + 115);
-  ctx.font = '600 24px system-ui, -apple-system, sans-serif';
-  ctx.fillText('BLESSES', 785, sY + 155);
-  if(activeInj.length){
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('INDISPONIBILITES', 60, 820);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '500 22px system-ui, -apple-system, sans-serif';
-    const injNames = activeInj.slice(0, 6).map(i=>{
-      const p = S.players.find(pp=>pp.id===i.player_id);
-      return (p && p.name ? p.name : '?') + ' (' + (i.injury_type||'-') + ')';
-    });
-    injNames.forEach((n, idx)=>{
-      const col = idx % 2;
-      const row = Math.floor(idx / 2);
-      ctx.fillText('• ' + n, 60 + col * 500, 860 + row * 34);
-    });
-    if(activeInj.length > 6){
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.fillText('+ ' + (activeInj.length - 6) + ' autres', 60, 860 + Math.ceil(6/2) * 34);
-    }
-  }
-  ctx.fillStyle = 'rgba(255,255,255,0.3)';
-  ctx.font = '500 16px system-ui, -apple-system, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('Genere le ' + new Date().toLocaleString('fr-BE') + ' · RealDev Vilvoorde FC', 540, 1040);
-  canvas.toBlob((blob)=>{
-    if(!blob){ toast('✗ Generation PNG echouee'); return; }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const safeOpp = (match.opponent||'match').replace(/[^a-z0-9]+/gi,'_').toLowerCase();
-    a.download = 'fiche_' + safeOpp + '_' + (match.match_date||'').replace(/-/g,'') + '.png';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url), 2000);
-    toast('✓ Fiche PNG exportee');
-  }, 'image/png');
 };
 
 function renderMatches(){
