@@ -743,6 +743,23 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* M3: Lineup 5v5 visuel */
+.ln-wrap{display:flex;flex-direction:column;gap:8px;}
+.ln-pitch{width:100%;max-width:380px;height:auto;border-radius:6px;align-self:center;}
+.ln-svg-slot-circle{cursor:pointer;transition:all .15s;}
+.ln-svg-slot-circle.on{fill:var(--brand);stroke:#fff;stroke-width:2;}
+.ln-svg-slot-circle.off{fill:rgba(255,255,255,.08);stroke:rgba(255,255,255,.4);stroke-dasharray:3;}
+.ln-svg-slot-lbl{font:700 10px/1 var(--font);fill:#fff;text-anchor:middle;pointer-events:none;}
+.ln-svg-slot-name{font:600 9px/1 var(--font);fill:var(--tx1);text-anchor:middle;pointer-events:none;}
+.ln-slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.ln-slot{background:var(--ink2);border:1px solid var(--sep2);border-radius:8px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-height:52px;justify-content:center;text-align:center;transition:all .15s;}
+.ln-slot:hover{border-color:var(--brand);}
+.ln-slot.filled{background:var(--brand-dim);border-color:var(--brand);}
+.ln-slot-role{font:700 9px/1 var(--font);color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;}
+.ln-slot-name{font:600 11px/1.2 var(--font);color:var(--tx1);word-break:break-word;}
+.ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
+.ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+
 /* M1: tabs Matchs (A venir / Joues / Adversaires) */
 .opp-card{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:12px;margin:6px 18px;display:flex;flex-direction:column;gap:6px;}
 .opp-card-head{display:flex;align-items:center;gap:8px;}
@@ -2413,6 +2430,32 @@ function generateMicrocycle(scouting) {
             </div>
             <input type="hidden" id="m-cards">
           </div>
+          <div class="fg"><label class="fl">Titulaires (5)</label>
+            <div class="ln-wrap">
+              <svg class="ln-pitch" viewBox="0 0 300 170" aria-hidden="true">
+                <rect x="1" y="1" width="298" height="168" rx="4" fill="#0a2a18" stroke="rgba(255,255,255,.18)"/>
+                <line x1="150" y1="1" x2="150" y2="169" stroke="rgba(255,255,255,.15)"/>
+                <circle cx="150" cy="85" r="18" fill="none" stroke="rgba(255,255,255,.15)"/>
+                <rect x="1" y="55" width="28" height="60" fill="none" stroke="rgba(255,255,255,.15)"/>
+                <rect x="271" y="55" width="28" height="60" fill="none" stroke="rgba(255,255,255,.15)"/>
+                <g id="ln-svg-slots"></g>
+              </svg>
+              <div class="ln-slots" id="ln-slots"></div>
+            </div>
+          </div>
+          <div class="fg"><label class="fl">Remplaçants</label>
+            <div class="pl-chip-wrap">
+              <div class="pl-chip-list" id="m-bench-chips" aria-live="polite"></div>
+              <div class="pl-chip-actions">
+                <button type="button" class="btn btn-sm btn-outline" onclick="window.openLineupBenchPicker()">+ Ajouter remplaçant</button>
+              </div>
+              <div class="pl-picker-dd" id="m-bench-dd" hidden>
+                <input type="search" class="fi" id="m-bench-dd-q" placeholder="Rechercher un joueur..." oninput="window.filterLineupBench()">
+                <div class="pl-picker-list" id="m-bench-dd-list"></div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="m-lineup">
           <div class="fg"><label class="fl">Rapport</label><textarea class="fi" id="m-notes" placeholder="Notes tactiques..."></textarea></div>
           <button class="btn btn-green btn-block" onclick="window.saveMatchForm()">Enregistrer</button>
           <div style="height:14px;"></div>
@@ -4662,26 +4705,184 @@ window.resetEncoderChips = function(){
   const d1=$('m-scorers-dd'), d2=$('m-cards-dd'); if(d1) d1.hidden=true; if(d2) d2.hidden=true;
 };
 
+// M3 — Lineup 5v5 visuel
+window.M_LINEUP = {
+  roles: [
+    {key:'GK',  label:'Gardien',   x:28,  y:85},
+    {key:'P1',  label:'Déf. G',  x:95,  y:40},
+    {key:'P2',  label:'Déf. D',  x:95,  y:130},
+    {key:'P3',  label:'Ailier',   x:175, y:40},
+    {key:'P4',  label:'Pivot',    x:175, y:130}
+  ],
+  starters: {},  // { GK: {id,name}, P1:{...}, ... }
+  bench: [],     // [{id,name}, ...]
+  activeRole: null
+};
+
+window.renderLineup = function(){
+  const slotsEl = $('ln-slots'); if(!slotsEl) return;
+  const L = window.M_LINEUP;
+  slotsEl.innerHTML = L.roles.map(r=>{
+    const pl = L.starters[r.key];
+    const filled = !!pl;
+    return '<div class="ln-slot '+(filled?'filled':'empty')+'" onclick="window.openLineupSlotPicker(\''+r.key+'\')" role="button" tabindex="0">'
+      +'<span class="ln-slot-role">'+r.label+'</span>'
+      +'<span class="ln-slot-name">'+(filled?pl.name:'+ Ajouter')+'</span>'
+    +'</div>';
+  }).join('');
+  // SVG overlay: small circles + labels
+  const g = document.getElementById('ln-svg-slots');
+  if(g){
+    g.innerHTML = L.roles.map(r=>{
+      const pl = L.starters[r.key];
+      const cls = pl ? 'on' : 'off';
+      const n = pl ? ((pl.name||'').split(' ').slice(-1)[0]||'') : r.label;
+      return '<g><circle class="ln-svg-slot-circle '+cls+'" cx="'+r.x+'" cy="'+r.y+'" r="12"/>'
+        + '<text class="ln-svg-slot-lbl" x="'+r.x+'" y="'+(r.y+3)+'">'+r.key+'</text>'
+        + '<text class="ln-svg-slot-name" x="'+r.x+'" y="'+(r.y+25)+'">'+n+'</text></g>';
+    }).join('');
+  }
+  // Bench chips
+  const bEl = $('m-bench-chips');
+  if(bEl){
+    bEl.innerHTML = L.bench.map((b,i)=>{
+      const safe=(b.name||'').replace(/</g,'&lt;');
+      return '<span class="pl-chip">🤝 '+safe
+        +'<button type="button" class="pl-chip-x" aria-label="Retirer" onclick="window.removeLineupBench('+i+')">×</button></span>';
+    }).join('');
+  }
+  window.serializeLineup();
+};
+
+window.openLineupSlotPicker = function(roleKey){
+  window.M_LINEUP.activeRole = roleKey;
+  // Reuse the bench dropdown as slot dropdown (single picker UI)
+  const dd = $('m-bench-dd'); if(!dd) return;
+  dd.hidden = false;
+  const q = $('m-bench-dd-q'); if(q){ q.value=''; q.focus(); }
+  window.filterLineupBench();
+};
+
+window.openLineupBenchPicker = function(){
+  window.M_LINEUP.activeRole = 'BENCH';
+  const dd = $('m-bench-dd'); if(!dd) return;
+  dd.hidden = false;
+  const q = $('m-bench-dd-q'); if(q){ q.value=''; q.focus(); }
+  window.filterLineupBench();
+};
+
+window.filterLineupBench = function(){
+  const list = $('m-bench-dd-list'); if(!list) return;
+  const q = (($('m-bench-dd-q')?.value)||'').toLowerCase().trim();
+  const L = window.M_LINEUP;
+  const usedIds = new Set();
+  Object.values(L.starters).forEach(p=>usedIds.add(p.id));
+  L.bench.forEach(b=>usedIds.add(b.id));
+  // Allow re-pick if we're replacing the same slot
+  if(L.activeRole && L.activeRole!=='BENCH' && L.starters[L.activeRole]){
+    usedIds.delete(L.starters[L.activeRole].id);
+  }
+  const players = (S.players||[]).slice()
+    .filter(p=>!usedIds.has(p.id))
+    .sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const filt = q ? players.filter(p=>(p.name||'').toLowerCase().includes(q)) : players;
+  if(!filt.length){
+    list.innerHTML='<div class="pl-picker-empty">Aucun joueur disponible</div>';
+    return;
+  }
+  list.innerHTML = filt.map(p=>{
+    const num = p.number!=null ? ('#'+p.number) : '';
+    const pos = p.position||'';
+    return '<button type="button" class="pl-picker-item" onclick="window.pickLineup(\''+p.id+'\')">'
+      +'<span class="pl-num">'+num+'</span>'
+      +'<span>'+((p.name||'')+'').replace(/</g,'&lt;')+'</span>'
+      +'<span class="pl-pos">'+pos+'</span>'
+    +'</button>';
+  }).join('');
+};
+
+window.pickLineup = function(playerId){
+  const p = (S.players||[]).find(x=>x.id===playerId); if(!p) return;
+  const L = window.M_LINEUP;
+  const role = L.activeRole;
+  if(!role) return;
+  if(role==='BENCH'){
+    L.bench.push({id:p.id, name:p.name||'?'});
+  } else {
+    L.starters[role] = {id:p.id, name:p.name||'?'};
+  }
+  L.activeRole = null;
+  const dd = $('m-bench-dd'); if(dd) dd.hidden = true;
+  window.renderLineup();
+};
+
+window.removeLineupBench = function(idx){
+  window.M_LINEUP.bench.splice(idx,1);
+  window.renderLineup();
+};
+
+window.clearLineupSlot = function(roleKey){
+  delete window.M_LINEUP.starters[roleKey];
+  window.renderLineup();
+};
+
+window.serializeLineup = function(){
+  const L = window.M_LINEUP;
+  const payload = {
+    starters: L.roles.map(r=>({role:r.key, label:r.label, player_id:L.starters[r.key]?.id||null, name:L.starters[r.key]?.name||null})),
+    bench: L.bench.map(b=>({player_id:b.id, name:b.name})),
+    updated_at: new Date().toISOString()
+  };
+  const el = $('m-lineup'); if(el) el.value = JSON.stringify(payload);
+};
+
+window.resetLineup = function(){
+  window.M_LINEUP.starters = {};
+  window.M_LINEUP.bench = [];
+  window.M_LINEUP.activeRole = null;
+  const dd = $('m-bench-dd'); if(dd) dd.hidden = true;
+  window.renderLineup();
+};
+
+// Initial render once the DOM is in place
+document.addEventListener('DOMContentLoaded', ()=>{ try{ window.renderLineup(); }catch(_){} });
+
 window.saveMatchForm=async()=>{
   const opp=$('m-opp').value.trim();
   if(!opp){toast('⚠ Adversaire requis');return;}
   const sn=parseInt($('m-sn').value), se=parseInt($('m-se').value);
   const played=!isNaN(sn)&&!isNaN(se);
   try{
-    const{error}=await sb.from('matches').insert({
+    // M3 — lineup jsonb (insere si la colonne existe; fallback silencieux sinon)
+    const lineupStr = ($('m-lineup')?.value||'').trim();
+    let lineupJSON = null;
+    if(lineupStr){
+      try{ lineupJSON = JSON.parse(lineupStr); }catch(_){ lineupJSON = null; }
+    }
+    const basePayload = {
       journee:$('m-journee').value, match_date:$('m-date').value||null,
       is_home:$('m-home').value==='true', opponent:opp,
       score_home:played?sn:null, score_away:played?se:null,
       result:played?(sn>se?'V':sn<se?'D':'N'):null,
       scorers:$('m-scorers').value, cards:$('m-cards').value, notes:$('m-notes').value,
-    });
+    };
+    const payloadWithLineup = lineupJSON ? Object.assign({}, basePayload, {lineup: lineupJSON}) : basePayload;
+    let {error} = await sb.from('matches').insert(payloadWithLineup);
+    if(error && lineupJSON && /lineup/i.test(error.message||'')){
+      // Retry without lineup column if the DB schema has not been migrated yet
+      const retry = await sb.from('matches').insert(basePayload);
+      error = retry.error;
+      if(!error){ try{ toast && toast('Match enregistré (colonne lineup manquante dans Supabase)'); }catch(_){}}
+    }
     if(error)throw error;
-    ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
+    ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes','m-lineup'].forEach(id=>{const e=$(id);if(e)e.value='';});
     try { window.resetEncoderChips && window.resetEncoderChips(); } catch(_){}
+    try { window.resetLineup && window.resetLineup(); } catch(_){}
     const{data}=await sb.from('matches').select('*').order('match_date');
     S.matches=data||[];
     renderMatches(); renderHome(); toast(msg('saved'));
-    stab(document.querySelector('#pg-matchs .tab-btn'),'tm-results');
+    // M1 — redirige vers 'tm-played' (anciennement tm-results)
+    stab(document.querySelector('#pg-matchs .tab-btn.on')||document.querySelector('#pg-matchs .tab-btn'),'tm-played');
   }catch(e){toast('✗ '+e.message);}
 };
 
