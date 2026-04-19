@@ -760,6 +760,14 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Sq4: alertes cumul cartons - banner p360 */
+.p360-susp-banner{margin:10px 16px 0;padding:10px 12px;border-radius:10px;display:flex;gap:10px;align-items:center;font:600 12px/1.35 var(--font);border:1px solid transparent;}
+.p360-susp-banner .ic{font-size:18px;line-height:1;}
+.p360-susp-banner.s-red{background:#fee2e2;color:#7f1d1d;border-color:#fecaca;}
+.p360-susp-banner.s-amber{background:#fef3c7;color:#78350f;border-color:#fde68a;}
+[data-theme="dark"] .p360-susp-banner.s-red{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.3);}
+[data-theme="dark"] .p360-susp-banner.s-amber{background:rgba(245,158,11,.15);color:#fbbf24;border-color:rgba(245,158,11,.3);}
+
 /* N3: sous-titre topbar contextuel */
 .topbar-subtitle{font:500 10px/1.2 var(--font);color:var(--tx3);margin-top:2px;display:block;max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .topbar-subtitle:empty{display:none;}
@@ -3566,13 +3574,16 @@ function renderHome() {
       <div class="alert-card-detail">${inj.type}<br>Retour ${fd(inj.return_date)||'?'}</div>
     </div>`);
   });
-  S.players.filter(p=>p.yellow_cards>=2).forEach(p=>{
+  // Sq4 — regle 2 jaunes = suspendu
+  S.players.filter(p=>((+p.yellow_cards||0)>=1)||((+p.red_cards||0)>=1)).forEach(p=>{
     const k='c'+p.id; if(seen.has(k))return; seen.add(k);
-    const susp=p.yellow_cards>=3;
+    const st = window.playerSuspensionStatus ? window.playerSuspensionStatus(p) : null;
+    if(!st) return;
+    const susp = st.level==='red';
     cards.push(`<div class="alert-card ${susp?'a-red':'a-amber'}">
-      <div class="alert-card-type">🟨 ${susp?'Suspendu':'Risque suspension'}</div>
+      <div class="alert-card-type">\ud83d\udfe8 ${st.label}</div>
       <div class="alert-card-name">${p.name}</div>
-      <div class="alert-card-detail">${p.yellow_cards} carton(s)</div>
+      <div class="alert-card-detail">${st.reason}</div>
     </div>`);
   });
   $('home-alerts').innerHTML=cards.length
@@ -6278,7 +6289,10 @@ window.renderPlayerDetail = function(p){
     + '<button class="btn btn-sm btn-outline" onclick="window.close_modal(\'modal-p360\');window.openNewInjFor&&window.openNewInjFor(\''+p.id+'\')">\ud83e\ude79 D\u00e9clarer blessure</button>'
     + '</div>' : '';
 
+  const susp = window.playerSuspensionStatus(p);
+  const suspBanner = susp ? '<div class="p360-susp-banner s-'+susp.level+'"><span class="ic">'+(susp.level==='red'?'\ud83d\udeab':'\u26a0\ufe0f')+'</span><div><div>'+susp.label+'</div><div style="font-weight:500;opacity:.85;">'+susp.reason+'</div></div></div>' : '';
   body.innerHTML = ''
+    + suspBanner
     +'<div class="p360-hero">'
       + avatar
       +'<div class="p360-hero-main">'
@@ -6320,6 +6334,16 @@ window.renderPlayerDetail = function(p){
       +'</div></div>'
       + (rpeAvg>0 ? '<div class="p360-row"><div class="p360-row-left"><div class="p360-row-title">RPE moyen</div><div class="p360-row-meta">'+rpeAvg.toFixed(1)+' sur '+rpeVals.length+' s\u00e9ance(s)</div></div></div>' : '')
     +'</div>';
+};
+
+// Sq4 — Statut suspension joueur (regle: 2 jaunes => suspendu, 1 jaune => risque)
+window.playerSuspensionStatus = function(p){
+  if(!p) return null;
+  const y = +(p.yellow_cards||0), r = +(p.red_cards||0);
+  if(r >= 1) return {level:'red', label:'Suspendu', reason:r+' rouge'+(r>1?'s':'')};
+  if(y >= 2) return {level:'red', label:'Suspendu', reason:y+' jaunes cumules'};
+  if(y >= 1) return {level:'amber', label:'Risque suspension', reason:y+' jaune'+(y>1?'s':'')};
+  return null;
 };
 
 window.openNewInjFor = function(playerId){
@@ -6366,7 +6390,7 @@ function renderSquad(){
     <div style="display:flex;gap:5px;align-items:center;">
       ${p.yellow_cards?`<span class="chip chip-amber">🟨 ${p.yellow_cards}</span>`:''}
       ${p.red_cards?`<span class="chip chip-red">🟥 ${p.red_cards}</span>`:''}
-      ${p.yellow_cards>=3?'<span class="chip chip-red">Suspendu</span>':p.yellow_cards>=2?'<span class="chip chip-amber">Risque</span>':''}
+      ${(p.red_cards>=1||p.yellow_cards>=2)?'<span class="chip chip-red">Suspendu</span>':p.yellow_cards>=1?'<span class="chip chip-amber">Risque</span>':''}
     </div>
   </div>`).join('')||emptyState('🏅','Aucun carton cette saison');
 
