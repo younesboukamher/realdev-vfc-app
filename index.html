@@ -779,6 +779,22 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .sq10-age{font:700 11px/1 var(--font);opacity:.85;}
 .sq10-empty{font:600 11px/1.3 var(--font);opacity:.7;padding:6px 0;text-align:center;}
 
+/* Sq6: Stats par poste */
+.sq6-group{margin:12px 14px;padding:14px;border-radius:12px;background:var(--card);border:1px solid var(--line);}
+.sq6-g-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+.sq6-g-icon{font-size:18px;line-height:1;}
+.sq6-g-title{font:800 13px/1 var(--font);text-transform:uppercase;letter-spacing:.5px;color:var(--tx1);flex:1;}
+.sq6-g-count{font:700 11px/1 var(--font);color:var(--tx3);padding:4px 8px;background:var(--ink2);border-radius:999px;}
+.sq6-p-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+.sq6-p-row:last-child{border-bottom:none;}
+.sq6-p-row:hover{background:var(--ink2);margin:0 -10px;padding-left:10px;padding-right:10px;border-radius:8px;}
+.sq6-p-name{flex:1;font:700 13px/1.2 var(--font);color:var(--tx1);min-width:90px;}
+.sq6-p-stats{display:flex;gap:6px;font:700 11px/1 var(--font);color:var(--tx2);flex-shrink:0;}
+.sq6-p-stat{padding:3px 7px;background:var(--ink2);border-radius:6px;}
+.sq6-bar-wrap{flex:2;min-width:60px;height:6px;background:var(--ink2);border-radius:999px;overflow:hidden;position:relative;}
+.sq6-bar{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand-dark,#15803d));border-radius:999px;transition:width .3s;}
+.sq6-empty{padding:20px;text-align:center;font:600 12px/1.4 var(--font);color:var(--tx3);}
+
 /* Of7: Install prompt PWA */
 .of7-wrap{position:fixed;bottom:12px;left:12px;right:12px;z-index:100;background:linear-gradient(135deg,#065A82,#1C7293);color:#fff;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 30px rgba(6,90,130,.4);animation:of7-slide-in .35s cubic-bezier(.16,1,.3,1);}
 @keyframes of7-slide-in{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -2856,6 +2872,7 @@ window.saveInj()">Enregistrer</button>
         <button class="tab-btn on" onclick="window.stab(this,'ts-roster')">Effectif</button>
         <button class="tab-btn" onclick="window.stab(this,'ts-disc')">Cartons</button>
         <button class="tab-btn" onclick="window.stab(this,'ts-goals')">Buts/Passes</button>
+        <button class="tab-btn" onclick="window.stab(this,'ts-position')">Par poste</button>
       </div>
       <!-- FIX UX #7 — Recherche + filtres Squad -->
       <div id="ts-roster" class="tab-pane on">
@@ -2874,6 +2891,7 @@ window.saveInj()">Enregistrer</button>
       </div>
       <div id="ts-disc"   class="tab-pane"><div id="disc-list"></div></div>
       <div id="ts-goals"  class="tab-pane"><div id="sq2-podium"></div><div class="sq2-divider">Classement complet</div><div id="goals-list"></div></div>
+      <div id="ts-position" class="tab-pane"><div id="sq6-content"></div></div>
     </div>
 
     <!-- MON PROFIL -->
@@ -7385,6 +7403,53 @@ window.openNewInjFor = function(playerId){
 };
 
 /* ════════ SQUAD ════════ */
+// Sq6 — Stats par poste (GK/FIXO/ALA/PIVOT)
+window.renderSq6 = function(){
+  const el = document.getElementById('sq6-content');
+  if(!el) return;
+  const groups = {
+    GK:    { label:'Gardiens',      icon:'🧤', players:[] },
+    FIXO:  { label:'Fixos',         icon:'🛡️', players:[] },
+    ALA:   { label:'Ailiers',       icon:'⚡', players:[] },
+    PIVOT: { label:'Pivots',        icon:'🎯', players:[] },
+  };
+  (S.players||[]).forEach(p => {
+    const pos = (p.position||'').toUpperCase();
+    if(groups[pos]) groups[pos].players.push(p);
+  });
+  // Compute per-group max for bar scaling
+  const out = [];
+  Object.keys(groups).forEach(key => {
+    const g = groups[key];
+    if(!g.players.length) return;
+    const maxScore = Math.max(1, ...g.players.map(p => (p.goals||0)*3 + (p.assists||0)*2));
+    const sorted = [...g.players].sort((a,b) => ((b.goals||0)*3+(b.assists||0)*2) - ((a.goals||0)*3+(a.assists||0)*2));
+    const rows = sorted.map(p => {
+      const score = (p.goals||0)*3 + (p.assists||0)*2;
+      const pct = Math.round(score / maxScore * 100);
+      const pres = (S.presences||[]).filter(pr => pr.player_id === p.id && (pr.status||'P') === 'P').length;
+      return '<div class="sq6-p-row" onclick="window.openPlayerDetail && window.openPlayerDetail(\''+p.id+'\')">'
+        +'<div class="sq6-p-name">'+(p.name||'?')+'</div>'
+        +'<div class="sq6-bar-wrap"><div class="sq6-bar" style="width:'+pct+'%"></div></div>'
+        +'<div class="sq6-p-stats">'
+          +'<span class="sq6-p-stat">⚽ '+(p.goals||0)+'</span>'
+          +'<span class="sq6-p-stat">🎯 '+(p.assists||0)+'</span>'
+          +'<span class="sq6-p-stat">✅ '+pres+'</span>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+    out.push('<div class="sq6-group">'
+      +'<div class="sq6-g-head"><span class="sq6-g-icon">'+g.icon+'</span><span class="sq6-g-title">'+g.label+'</span><span class="sq6-g-count">'+g.players.length+'</span></div>'
+      +rows
+    +'</div>');
+  });
+  if(!out.length){
+    el.innerHTML = '<div class="sq6-empty">Aucun joueur renseigne par poste</div>';
+    return;
+  }
+  el.innerHTML = out.join('');
+};
+
 // Sq10 — Anniversaires prochains (3 dans les 30j)
 window.renderSq10 = function(){
   const el = document.getElementById('sq10-birthdays');
@@ -7425,6 +7490,7 @@ window.renderSq10 = function(){
 
 function renderSquad(){
   try{ window.renderSq10 && window.renderSq10(); }catch(e){ console.warn('renderSq10',e); }
+  try{ window.renderSq6 && window.renderSq6(); }catch(e){ console.warn('renderSq6',e); }
   const sb2=s=>({Disponible:'chip-green',Blessé:'chip-red',Suspendu:'chip-amber',Incertain:'chip-amber'})[s]||'chip-muted';
   // FIX BUG #1 — playerAvatar() utilisé dans les 3 sections Squad (photos Looker)
   // + FIX UX #7 — Recherche / filtre joueurs
