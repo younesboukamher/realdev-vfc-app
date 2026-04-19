@@ -761,6 +761,17 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Sq10: Anniversaires prochains */
+.sq10-wrap{margin:10px 14px 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#6D2E46,#A26769);color:#fff;box-shadow:0 4px 14px rgba(109,46,70,.25);}
+.sq10-title{font:800 11px/1 var(--font);text-transform:uppercase;letter-spacing:1px;opacity:.9;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.sq10-list{display:flex;flex-direction:column;gap:6px;}
+.sq10-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.12);border-radius:10px;border:1px solid rgba(255,255,255,.1);}
+.sq10-row:hover{background:rgba(255,255,255,.18);cursor:pointer;}
+.sq10-date{font:800 12px/1 var(--font);padding:4px 8px;background:rgba(255,255,255,.2);border-radius:6px;min-width:54px;text-align:center;}
+.sq10-name{flex:1;font:700 13px/1.2 var(--font);}
+.sq10-age{font:700 11px/1 var(--font);opacity:.85;}
+.sq10-empty{font:600 11px/1.3 var(--font);opacity:.7;padding:6px 0;text-align:center;}
+
 /* An1: Hero KPI Indice forme equipe */
 .an1-hero{margin:10px 14px 12px;padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,var(--brand),#15803d);color:#fff;display:flex;align-items:center;gap:16px;box-shadow:0 6px 18px rgba(22,163,74,.28);}
 .an1-hero.warn{background:linear-gradient(135deg,#f59e0b,#b45309);box-shadow:0 6px 18px rgba(245,158,11,.28);}
@@ -2803,6 +2814,7 @@ window.saveInj()">Enregistrer</button>
       </div>
       <!-- FIX UX #7 — Recherche + filtres Squad -->
       <div id="ts-roster" class="tab-pane on">
+        <div id="sq10-birthdays"></div>
         <div class="squad-filter-bar" style="display:flex;gap:8px;align-items:center;padding:10px 18px 6px;flex-wrap:wrap;">
           <input id="sq-search" type="search" placeholder="🔍 Rechercher un joueur…" aria-label="Rechercher un joueur"
                  oninput="window.setSquadQuery(this.value)"
@@ -7172,7 +7184,46 @@ window.openNewInjFor = function(playerId){
 };
 
 /* ════════ SQUAD ════════ */
+// Sq10 — Anniversaires prochains (3 dans les 30j)
+window.renderSq10 = function(){
+  const el = document.getElementById('sq10-birthdays');
+  if(!el) return;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const in30 = new Date(today.getTime() + 30*86400000);
+  const upcoming = (S.players||[])
+    .filter(p => p.birthdate || p.birth_date)
+    .map(p => {
+      const bd = p.birthdate || p.birth_date;
+      if(!bd) return null;
+      const [y,m,d] = String(bd).split('-').map(Number);
+      if(!y||!m||!d) return null;
+      let next = new Date(today.getFullYear(), m-1, d);
+      if(next < today) next = new Date(today.getFullYear()+1, m-1, d);
+      if(next > in30) return null;
+      const newAge = next.getFullYear() - y;
+      return { player: p, date: next, age: newAge };
+    })
+    .filter(Boolean)
+    .sort((a,b) => a.date - b.date)
+    .slice(0,3);
+  if(!upcoming.length){
+    el.innerHTML = '<div class="sq10-wrap"><div class="sq10-title">🎂 Anniversaires</div><div class="sq10-empty">Aucun dans les 30 prochains jours</div></div>';
+    return;
+  }
+  const rows = upcoming.map(u => {
+    const dstr = u.date.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    return '<div class="sq10-row" onclick="window.openPlayerDetail && window.openPlayerDetail(\''+u.player.id+'\')">'
+      +'<div class="sq10-date">'+dstr+'</div>'
+      +'<div class="sq10-name">'+(u.player.name||'?')+'</div>'
+      +'<div class="sq10-age">'+u.age+' ans</div>'
+      +'</div>';
+  }).join('');
+  el.innerHTML = '<div class="sq10-wrap"><div class="sq10-title">🎂 Prochains anniversaires</div><div class="sq10-list">'+rows+'</div></div>';
+};
+
 function renderSquad(){
+  try{ window.renderSq10 && window.renderSq10(); }catch(e){ console.warn('renderSq10',e); }
   const sb2=s=>({Disponible:'chip-green',Blessé:'chip-red',Suspendu:'chip-amber',Incertain:'chip-amber'})[s]||'chip-muted';
   // FIX BUG #1 — playerAvatar() utilisé dans les 3 sections Squad (photos Looker)
   // + FIX UX #7 — Recherche / filtre joueurs
