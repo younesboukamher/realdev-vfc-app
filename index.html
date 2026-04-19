@@ -2614,6 +2614,9 @@ function generateMicrocycle(scouting) {
       </div>
 
       <div id="tp-history" class="tab-pane">
+        <div id="p8-export-bar" style="padding:10px 18px 0;display:flex;justify-content:flex-end;">
+          <button type="button" class="pl9-btn" onclick="window.p8ExportCSV && window.p8ExportCSV()" title="Exporter l'historique des presences au format CSV">📊 Exporter CSV</button>
+        </div>
         <div id="pres-hist-content" style="padding:14px 18px 0;"></div>
       </div>
 
@@ -4648,6 +4651,44 @@ window.confirmPdfOpts = function(){
   try{ close_modal('modal-pdf-opts'); }catch(_){}
   if(mid && typeof window.exportPlanningPDF==='function'){
     window.exportPlanningPDF(mid, o);
+  }
+};
+
+// P8 — Export CSV presences (1 ligne par joueur/date/statut)
+window.p8ExportCSV = function(){
+  try{
+    const playersById = {};
+    (S.players||[]).forEach(p => { playersById[p.id] = p; });
+    const rows = [['date','joueur_id','joueur_nom','position','statut','rpe','note']];
+    const esc = (v) => {
+      const s = String(v == null ? '' : v);
+      return /[,"\n\r]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+    };
+    (S.presences||[]).forEach(pr => {
+      if(!pr) return;
+      const p = playersById[pr.player_id] || {};
+      const d = pr.date || pr.session_date || '';
+      rows.push([
+        esc(d),
+        esc(pr.player_id||''),
+        esc(p.name||''),
+        esc(p.position||''),
+        esc(pr.status||'P'),
+        esc(pr.rpe||''),
+        esc(pr.note||'')
+      ]);
+    });
+    const csv = rows.map(r => r.join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'realdev-vfc-presences.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+    if(typeof toast === 'function') toast('CSV exporte ('+(rows.length-1)+' lignes)');
+  }catch(e){
+    console.error('p8ExportCSV', e);
+    if(typeof toast === 'function') toast('Export CSV : erreur');
   }
 };
 
