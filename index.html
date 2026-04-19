@@ -743,6 +743,24 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* M2: chip-picker joueurs (Encoder) */
+.pl-chip-wrap{display:flex;flex-direction:column;gap:6px;}
+.pl-chip-list{display:flex;flex-wrap:wrap;gap:6px;min-height:4px;}
+.pl-chip-list:empty{display:none;}
+.pl-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px 5px 10px;background:var(--ink2);border:1px solid var(--sep2);border-radius:999px;font:600 12px/1 var(--font);color:var(--tx1);}
+.pl-chip-ct{display:inline-flex;align-items:center;gap:3px;background:var(--brand-dim);color:var(--brand);padding:2px 6px;border-radius:999px;font-size:11px;}
+.pl-chip-ct button{background:transparent;border:none;color:var(--brand);cursor:pointer;padding:0 2px;font-weight:700;font-size:13px;line-height:1;}
+.pl-chip-x{background:transparent;border:none;color:var(--tx3);cursor:pointer;padding:0 2px;font-size:14px;font-weight:700;line-height:1;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;}
+.pl-chip-x:hover{background:var(--danger);color:#fff;}
+.pl-chip-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.pl-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;}
+.pl-picker-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
+.pl-picker-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font:500 12px/1 var(--font);color:var(--tx1);}
+.pl-picker-item:hover,.pl-picker-item:focus{background:var(--brand-dim);color:var(--brand);outline:none;}
+.pl-picker-item .pl-num{font-weight:700;color:var(--tx3);min-width:22px;text-align:right;}
+.pl-picker-item .pl-pos{font-size:10px;color:var(--tx3);margin-left:auto;text-transform:uppercase;}
+.pl-picker-empty{color:var(--tx3);font-size:12px;text-align:center;padding:10px;}
+
 /* Ex1: filtres multi-criteres library */
 .ex-picker-filters{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:10px;margin:8px 0;display:flex;flex-direction:column;gap:8px;}
 .ex-filt-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
@@ -2283,8 +2301,33 @@ function generateMicrocycle(scouting) {
             <div class="score-vs">–</div>
             <div><div class="score-lbl">Eux</div><input type="number" class="score-big" id="m-se" min="0" placeholder="–"></div>
           </div>
-          <div class="fg"><label class="fl">Buteurs</label><input class="fi" id="m-scorers" placeholder="El Fakiri (x2)..."></div>
-          <div class="fg"><label class="fl">Cartons</label><input class="fi" id="m-cards" placeholder="Hachem 🟨..."></div>
+          <div class="fg"><label class="fl">Buteurs</label>
+            <div class="pl-chip-wrap">
+              <div class="pl-chip-list" id="m-scorers-chips" aria-live="polite"></div>
+              <div class="pl-chip-actions">
+                <button type="button" class="btn btn-sm btn-outline" onclick="window.openPlayerPicker('scorer')">+ Ajouter buteur</button>
+              </div>
+              <div class="pl-picker-dd" id="m-scorers-dd" hidden>
+                <input type="search" class="fi" id="m-scorers-dd-q" placeholder="Rechercher un joueur..." oninput="window.filterPlayerDD('scorer')">
+                <div class="pl-picker-list" id="m-scorers-dd-list"></div>
+              </div>
+            </div>
+            <input type="hidden" id="m-scorers">
+          </div>
+          <div class="fg"><label class="fl">Cartons</label>
+            <div class="pl-chip-wrap">
+              <div class="pl-chip-list" id="m-cards-chips" aria-live="polite"></div>
+              <div class="pl-chip-actions">
+                <button type="button" class="btn btn-sm btn-outline" onclick="window.openPlayerPicker('yellow')">+ 🟨 Jaune</button>
+                <button type="button" class="btn btn-sm btn-outline" onclick="window.openPlayerPicker('red')">+ 🟥 Rouge</button>
+              </div>
+              <div class="pl-picker-dd" id="m-cards-dd" hidden>
+                <input type="search" class="fi" id="m-cards-dd-q" placeholder="Rechercher un joueur..." oninput="window.filterPlayerDD('cards')">
+                <div class="pl-picker-list" id="m-cards-dd-list"></div>
+              </div>
+            </div>
+            <input type="hidden" id="m-cards">
+          </div>
           <div class="fg"><label class="fl">Rapport</label><textarea class="fi" id="m-notes" placeholder="Notes tactiques..."></textarea></div>
           <button class="btn btn-green btn-block" onclick="window.saveMatchForm()">Enregistrer</button>
           <div style="height:14px;"></div>
@@ -4304,6 +4347,131 @@ function matchRow(m){
   </div>`;
 }
 
+window.M_ENC = { scorers:[], cards:[], dd:null };
+
+window.openPlayerPicker = function(mode){
+  // mode: 'scorer' | 'yellow' | 'red'
+  const ddId = (mode==='scorer') ? 'm-scorers-dd' : 'm-cards-dd';
+  const dd = $(ddId); if(!dd) return;
+  // Hide the other dd
+  const other = $((ddId==='m-scorers-dd')?'m-cards-dd':'m-scorers-dd');
+  if(other) other.hidden = true;
+  // Toggle this dd
+  const wasHidden = dd.hidden;
+  dd.hidden = false;
+  window.M_ENC.dd = {mode, ddId};
+  const q = $((ddId==='m-scorers-dd')?'m-scorers-dd-q':'m-cards-dd-q');
+  if(q){ q.value=''; q.focus(); }
+  window.filterPlayerDD(mode==='scorer'?'scorer':'cards');
+};
+
+window.filterPlayerDD = function(kind){
+  // kind: 'scorer' | 'cards'
+  const qId   = (kind==='scorer')?'m-scorers-dd-q':'m-cards-dd-q';
+  const lstId = (kind==='scorer')?'m-scorers-dd-list':'m-cards-dd-list';
+  const list = $(lstId); if(!list) return;
+  const q = (($(qId)?.value)||'').toLowerCase().trim();
+  const players = (S.players||[]).slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const filt = q ? players.filter(p=>(p.name||'').toLowerCase().includes(q)) : players;
+  if(!filt.length){
+    list.innerHTML = '<div class="pl-picker-empty">Aucun joueur trouvé</div>';
+    return;
+  }
+  list.innerHTML = filt.map(p=>{
+    const num = p.number!=null ? ('#'+p.number) : '';
+    const pos = p.position||'';
+    const mode = window.M_ENC && window.M_ENC.dd && window.M_ENC.dd.mode || 'scorer';
+    const call = (mode==='scorer') ? "window.addScorerChip('"+p.id+"')" : "window.addCardChip('"+p.id+"','"+mode+"')";
+    return '<button type="button" class="pl-picker-item" onclick="'+call+'"><span class="pl-num">'+num+'</span><span>'+((p.name||'')+'').replace(/</g,'&lt;')+'</span><span class="pl-pos">'+pos+'</span></button>';
+  }).join('');
+};
+
+window.addScorerChip = function(playerId){
+  const p = (S.players||[]).find(x=>x.id===playerId); if(!p) return;
+  const arr = window.M_ENC.scorers;
+  const ex = arr.find(s=>s.id===playerId);
+  if(ex){ ex.count = (ex.count||1)+1; }
+  else { arr.push({id:p.id, name:p.name||'?', count:1}); }
+  window.renderScorerChips();
+  window.serializeEncoder();
+  const dd = $('m-scorers-dd'); if(dd) dd.hidden = true;
+};
+
+window.bumpScorer = function(playerId, delta){
+  const arr = window.M_ENC.scorers;
+  const ex = arr.find(s=>s.id===playerId); if(!ex) return;
+  ex.count = (ex.count||1)+delta;
+  if(ex.count<=0){ window.M_ENC.scorers = arr.filter(s=>s.id!==playerId); }
+  window.renderScorerChips();
+  window.serializeEncoder();
+};
+
+window.removeScorer = function(playerId){
+  window.M_ENC.scorers = window.M_ENC.scorers.filter(s=>s.id!==playerId);
+  window.renderScorerChips();
+  window.serializeEncoder();
+};
+
+window.renderScorerChips = function(){
+  const el = $('m-scorers-chips'); if(!el) return;
+  el.innerHTML = window.M_ENC.scorers.map(s=>{
+    const safe = (s.name||'').replace(/</g,'&lt;');
+    return '<span class="pl-chip">⚽ '+safe
+      +'<span class="pl-chip-ct"><button type="button" aria-label="-1" onclick="window.bumpScorer(\''+s.id+'\',-1)">-</button>x'+s.count+'<button type="button" aria-label="+1" onclick="window.bumpScorer(\''+s.id+'\',+1)">+</button></span>'
+      +'<button type="button" class="pl-chip-x" aria-label="Retirer" onclick="window.removeScorer(\''+s.id+'\')">×</button></span>';
+  }).join('');
+};
+
+window.addCardChip = function(playerId, type){
+  const p = (S.players||[]).find(x=>x.id===playerId); if(!p) return;
+  const arr = window.M_ENC.cards;
+  arr.push({id:p.id, name:p.name||'?', type:type==='red'?'red':'yellow'});
+  window.renderCardChips();
+  window.serializeEncoder();
+  const dd = $('m-cards-dd'); if(dd) dd.hidden = true;
+};
+
+window.removeCard = function(idx){
+  window.M_ENC.cards.splice(idx,1);
+  window.renderCardChips();
+  window.serializeEncoder();
+};
+
+window.renderCardChips = function(){
+  const el = $('m-cards-chips'); if(!el) return;
+  el.innerHTML = window.M_ENC.cards.map((c,i)=>{
+    const ic = c.type==='red' ? '🟥' : '🟨';
+    const safe = (c.name||'').replace(/</g,'&lt;');
+    return '<span class="pl-chip">'+ic+' '+safe
+      +'<button type="button" class="pl-chip-x" aria-label="Retirer" onclick="window.removeCard('+i+')">×</button></span>';
+  }).join('');
+};
+
+window.serializeEncoder = function(){
+  // Serialize scorers to "Name (xN), Name2" format and cards to "Name 🟨, Name2 🟥"
+  const sc = window.M_ENC.scorers.map(s=>{
+    const nm = s.name||'?';
+    return (s.count>1) ? (nm+' (x'+s.count+')') : nm;
+  }).join(', ');
+  const cd = window.M_ENC.cards.map(c=>{
+    const ic = c.type==='red' ? '🟥' : '🟨';
+    return (c.name||'?')+' '+ic;
+  }).join(', ');
+  const sE=$('m-scorers'), cE=$('m-cards');
+  if(sE) sE.value = sc;
+  if(cE) cE.value = cd;
+};
+
+window.resetEncoderChips = function(){
+  window.M_ENC.scorers = [];
+  window.M_ENC.cards = [];
+  window.M_ENC.dd = null;
+  window.renderScorerChips();
+  window.renderCardChips();
+  window.serializeEncoder();
+  const d1=$('m-scorers-dd'), d2=$('m-cards-dd'); if(d1) d1.hidden=true; if(d2) d2.hidden=true;
+};
+
 window.saveMatchForm=async()=>{
   const opp=$('m-opp').value.trim();
   if(!opp){toast('⚠ Adversaire requis');return;}
@@ -4319,6 +4487,7 @@ window.saveMatchForm=async()=>{
     });
     if(error)throw error;
     ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
+    try { window.resetEncoderChips && window.resetEncoderChips(); } catch(_){}
     const{data}=await sb.from('matches').select('*').order('match_date');
     S.matches=data||[];
     renderMatches(); renderHome(); toast(msg('saved'));
