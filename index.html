@@ -2222,6 +2222,10 @@ object.ex-detail-img{object-fit:initial;padding:0;}
 </style>
 <script>
 window.APP_VERSION = '1.16.0';
+window.SW_CACHE = 'rdv-v26';
+window.BUILD_DATE = '2026-04-19';
+window.WORKSHOP_ITEMS = 30;
+window.WORKSHOP_SPRINTS = 4;
 const APP_VERSION = window.APP_VERSION;
 // Planning logic — inlined
 // ── Planning logic — RealDev microcycle Lun/Mar/Mer ───────────────
@@ -7406,7 +7410,16 @@ window.renderSettings = function(){
     +'<div class="st-group">'
       +'<div class="st-group-title">A propos</div>'
       +'<div class="st-row">'
-        +'<div class="st-row-body"><div class="st-row-label">Version</div><div class="st-row-hint">RealDev VFC '+appVer+'</div></div>'
+        +'<div class="st-row-body"><div class="st-row-label">Version app</div><div class="st-row-hint">RealDev VFC v'+appVer+'</div></div>'
+      +'</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Service Worker</div><div class="st-row-hint">Cache '+(window.SW_CACHE||'rdv-?')+'</div></div>'
+      +'</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Build</div><div class="st-row-hint">'+(window.BUILD_DATE||'n/a')+'</div></div>'
+      +'</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Workshop</div><div class="st-row-hint">'+(window.WORKSHOP_ITEMS||30)+' items livres en '+(window.WORKSHOP_SPRINTS||4)+' sprints</div></div>'
       +'</div>'
     +'</div>';
 };
