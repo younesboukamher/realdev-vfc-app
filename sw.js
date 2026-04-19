@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v22'; // bumped — fix(pdf): declare window.APP_VERSION to prevent ReferenceError in cover template
-const APP_VERSION = '1.12.8';
+const CACHE = 'rdv-v23'; // bumped — feat(sprint1): workshop L1+Pl3+H5+P1+H1+N1 (6 items)
+const APP_VERSION = '1.13.0';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
