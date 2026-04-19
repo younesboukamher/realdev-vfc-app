@@ -760,6 +760,29 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Sq2: podium buteurs + passeurs (2 colonnes) */
+.sq2-podium-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px 4px;}
+@media (max-width:380px){.sq2-podium-wrap{grid-template-columns:1fr;}}
+.sq2-pod-col{background:var(--ink2,var(--card));border:1px solid var(--line);border-radius:14px;padding:12px 10px 10px;display:flex;flex-direction:column;}
+.sq2-pod-title{font:800 11px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx2);text-align:center;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:5px;}
+.sq2-pod-title-icon{font-size:14px;}
+.sq2-pod-row{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px dashed var(--line);cursor:pointer;}
+.sq2-pod-row:last-child{border-bottom:none;}
+.sq2-pod-row:hover{background:var(--brand-dim);border-radius:8px;}
+.sq2-pod-rank{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:900 11px/1 var(--font);color:#fff;flex-shrink:0;}
+.sq2-pod-rank.r1{background:linear-gradient(135deg,#facc15,#eab308);color:#422006;box-shadow:0 0 0 2px #facc1533;}
+.sq2-pod-rank.r2{background:linear-gradient(135deg,#d1d5db,#9ca3af);color:#1f2937;box-shadow:0 0 0 2px #9ca3af33;}
+.sq2-pod-rank.r3{background:linear-gradient(135deg,#b45309,#92400e);box-shadow:0 0 0 2px #b4530933;}
+.sq2-pod-av{width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--ink3);display:flex;align-items:center;justify-content:center;font:800 13px/1 var(--font);color:var(--tx1);border:2px solid var(--line);}
+.sq2-pod-av img{width:100%;height:100%;object-fit:cover;display:block;}
+.sq2-pod-info{flex:1;min-width:0;}
+.sq2-pod-name{font:700 12px/1.2 var(--font);color:var(--tx1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sq2-pod-sub{font:500 10px/1 var(--font);color:var(--tx3);margin-top:2px;}
+.sq2-pod-num{font:900 22px/1 var(--font);color:var(--brand);flex-shrink:0;min-width:28px;text-align:right;letter-spacing:-.5px;}
+.sq2-pod-num.assists{color:var(--info,#3b82f6);}
+.sq2-pod-empty{padding:12px 4px;text-align:center;font:500 11px/1.4 var(--font);color:var(--tx3);}
+.sq2-divider{margin:6px 18px 0;padding:8px 2px 6px;font:700 10px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);border-top:1px solid var(--line);text-align:left;}
+
 /* Pl5: commentaires seance visibles (read-only) sous session card */
 .pl-sess-comment{margin:8px 0 0;padding:10px 12px;background:var(--brand-dim);border-left:3px solid var(--brand);border-radius:6px;font:500 12px/1.55 var(--font);color:var(--tx1);white-space:pre-wrap;word-break:break-word;}
 .pl-sess-comment-icon{display:inline-block;margin-right:5px;color:var(--brand);font-weight:700;}
@@ -2643,7 +2666,7 @@ window.saveInj()">Enregistrer</button>
       <div class="tabs">
         <button class="tab-btn on" onclick="window.stab(this,'ts-roster')">Effectif</button>
         <button class="tab-btn" onclick="window.stab(this,'ts-disc')">Cartons</button>
-        <button class="tab-btn" onclick="window.stab(this,'ts-goals')">Buts</button>
+        <button class="tab-btn" onclick="window.stab(this,'ts-goals')">Buts/Passes</button>
       </div>
       <!-- FIX UX #7 — Recherche + filtres Squad -->
       <div id="ts-roster" class="tab-pane on">
@@ -2660,7 +2683,7 @@ window.saveInj()">Enregistrer</button>
         <div id="roster-eff"></div>
       </div>
       <div id="ts-disc"   class="tab-pane"><div id="disc-list"></div></div>
-      <div id="ts-goals"  class="tab-pane"><div id="goals-list"></div></div>
+      <div id="ts-goals"  class="tab-pane"><div id="sq2-podium"></div><div class="sq2-divider">Classement complet</div><div id="goals-list"></div></div>
     </div>
 
     <!-- MON PROFIL -->
@@ -6652,6 +6675,8 @@ function renderSquad(){
     </div>
   </div>`).join('')||emptyState('🏅','Aucun carton cette saison');
 
+  // Sq2 — Podium buteurs + passeurs
+  try{ window.renderSq2Podium && window.renderSq2Podium(); }catch(e){ console.warn('renderSq2Podium failed',e); }
   const maxG=Math.max(...S.players.map(p=>p.goals||0),1);
   $('goals-list').innerHTML=[...S.players].sort((a,b)=>(b.goals||0)-(a.goals||0)).map((p,i)=>`<div class="goals-row" onclick="window.openPlayerDetail('${p.id}')" style="cursor:pointer;" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.openPlayerDetail('${p.id}');}">
     <div class="goals-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
@@ -6669,6 +6694,49 @@ function renderSquad(){
     </div>
   </div>`).join('');
 }
+
+// Sq2 — Podium buteurs + passeurs (top 3 chacun)
+window.renderSq2Podium = function(){
+  const el = document.getElementById('sq2-podium');
+  if(!el) return;
+  const esc = (x)=>String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const avHTML = (p)=>{
+    try{
+      if(typeof playerAvatar === 'function'){
+        // playerAvatar returns a DOM string; wrap-safe
+        return '<div class="sq2-pod-av">'+playerAvatar(p,'sm')+'</div>';
+      }
+    }catch(_){}
+    const ini = (p.name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    return '<div class="sq2-pod-av">'+esc(ini)+'</div>';
+  };
+  const clickAttr = (p)=>'onclick="window.openPlayerDetail(\''+esc(p.id)+'\')" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();window.openPlayerDetail(\''+esc(p.id)+'\');}"';
+  const build = (list, key, labelSing, labelPlur, cls)=>{
+    if(!list.length) return '<div class="sq2-pod-empty">Aucun '+labelPlur.toLowerCase()+'</div>';
+    return list.map((p,i)=>{
+      const v = p[key]||0;
+      const rankCls = i===0?'r1':i===1?'r2':'r3';
+      return '<div class="sq2-pod-row" '+clickAttr(p)+'>'
+        +'<div class="sq2-pod-rank '+rankCls+'">'+(i+1)+'</div>'
+        +avHTML(p)
+        +'<div class="sq2-pod-info">'
+          +'<div class="sq2-pod-name">'+esc(p.name||'')+'</div>'
+          +'<div class="sq2-pod-sub">'+esc(p.position||'')+'</div>'
+        +'</div>'
+        +'<div class="sq2-pod-num '+cls+'">'+v+'</div>'
+      +'</div>';
+    }).join('');
+  };
+  const players = Array.isArray(S.players) ? S.players : [];
+  const top3G = [...players].filter(p=>(p.goals||0)>0).sort((a,b)=>(b.goals||0)-(a.goals||0)).slice(0,3);
+  const top3A = [...players].filter(p=>(p.assists||0)>0).sort((a,b)=>(b.assists||0)-(a.assists||0)).slice(0,3);
+  el.innerHTML = '<div class="sq2-podium-wrap">'
+    + '<div class="sq2-pod-col"><div class="sq2-pod-title"><span class="sq2-pod-title-icon">⚽</span>Buteurs</div>'
+    + build(top3G, 'goals', 'but', 'buts', 'goals') + '</div>'
+    + '<div class="sq2-pod-col"><div class="sq2-pod-title"><span class="sq2-pod-title-icon">🎯</span>Passeurs</div>'
+    + build(top3A, 'assists', 'passe', 'passes', 'assists') + '</div>'
+    + '</div>';
+};
 
 /* ════════ PROFIL ════════ */
 function renderProfile(){
