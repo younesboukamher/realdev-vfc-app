@@ -2384,6 +2384,15 @@ function generateMicrocycle(scouting) {
           <span style="font:500 12px/1 var(--font);color:var(--tx3);">Saison 2025–26 · à venir</span>
           <button class="btn btn-sm btn-outline" onclick="window.syncACFF()" id="btn-sync">↻ Sync ACFF</button>
         </div>
+        <div class="m-filter-bar" style="padding:0 18px 8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <input type="search" class="fi" id="m-up-search" placeholder="Rechercher (adversaire, journée)..." oninput="window.renderMatches()" style="flex:1;min-width:160px;">
+          <select class="fs" id="m-up-when" onchange="window.renderMatches()" style="min-width:120px;">
+            <option value="all">Toutes dates</option>
+            <option value="7">7 jours</option>
+            <option value="30">30 jours</option>
+            <option value="season">Saison</option>
+          </select>
+        </div>
         <div id="sync-status"></div>
         <div id="matches-upcoming" class="match-list"></div>
       </div>
@@ -2392,6 +2401,15 @@ function generateMicrocycle(scouting) {
         <div style="padding:12px 18px; display:flex; justify-content:space-between; align-items:center;">
           <span style="font:500 12px/1 var(--font);color:var(--tx3);">Saison 2025–26 · joués</span>
           <span id="tm-played-count" class="chip chip-muted" style="font-size:10px;">0</span>
+        </div>
+        <div class="m-filter-bar" style="padding:0 18px 8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <input type="search" class="fi" id="m-pk-search" placeholder="Rechercher (adversaire, journée)..." oninput="window.renderMatches()" style="flex:1;min-width:160px;">
+          <select class="fs" id="m-pk-result" onchange="window.renderMatches()" style="min-width:110px;">
+            <option value="all">Tous résultats</option>
+            <option value="V">Victoires</option>
+            <option value="N">Nuls</option>
+            <option value="D">Défaites</option>
+          </select>
         </div>
         <div id="matches-played" class="match-list"></div>
       </div>
@@ -4585,12 +4603,31 @@ window.exportPlanningPDF = async (mid) => {
   }
 };
 
-function renderMatches(){
-  // M1 — Matchs eclates en 3 vues: A venir, Joues, Adversaires
+window.renderMatches = function(){
+  // M1 — Matchs eclates en 3 vues: A venir, Joues, Adversaires (+ M8 filtres)
   const upEl=$('matches-upcoming'), pkEl=$('matches-played');
   const all=[...(S.matches||[])];
-  const upcoming = all.filter(m=>!m.result).sort((a,b)=>new Date(a.match_date||0)-new Date(b.match_date||0));
-  const played   = all.filter(m=>m.result).sort((a,b)=>new Date(b.match_date||0)-new Date(a.match_date||0));
+  let upcoming = all.filter(m=>!m.result).sort((a,b)=>new Date(a.match_date||0)-new Date(b.match_date||0));
+  let played   = all.filter(m=>m.result).sort((a,b)=>new Date(b.match_date||0)-new Date(a.match_date||0));
+  // M8 — Filtres tab A venir
+  const qUp = (($('m-up-search')?.value)||'').toLowerCase().trim();
+  const whenUp = ($('m-up-when')?.value)||'all';
+  if(qUp){ upcoming = upcoming.filter(m=>((m.opponent||'')+' '+(m.journee||'')).toLowerCase().includes(qUp)); }
+  if(whenUp!=='all'){
+    const now = new Date();
+    upcoming = upcoming.filter(m=>{
+      if(!m.match_date) return whenUp==='season';
+      const d = new Date(m.match_date);
+      if(whenUp==='7')  return (d - now) <= 7*86400000;
+      if(whenUp==='30') return (d - now) <= 30*86400000;
+      return true;
+    });
+  }
+  // M8 — Filtres tab Joues
+  const qPk = (($('m-pk-search')?.value)||'').toLowerCase().trim();
+  const rPk = ($('m-pk-result')?.value)||'all';
+  if(qPk){ played = played.filter(m=>((m.opponent||'')+' '+(m.journee||'')).toLowerCase().includes(qPk)); }
+  if(rPk!=='all'){ played = played.filter(m=>m.result===rPk); }
   if(upEl) upEl.innerHTML = upcoming.length ? upcoming.map(m=>matchRow(m)).join('') : emptyState('⏳','Aucun match à venir');
   if(pkEl) pkEl.innerHTML = played.length   ? played.map(m=>matchRow(m)).join('')   : emptyState('🏁','Aucun match joué');
   const cntEl=$('tm-played-count'); if(cntEl) cntEl.textContent=String(played.length);
@@ -4598,7 +4635,8 @@ function renderMatches(){
   const legacy=$('matches-list'); if(legacy) legacy.innerHTML=all.slice().reverse().map(m=>matchRow(m)).join('');
   // Adversaires
   try{ window.renderOpponents && window.renderOpponents(); }catch(_){}
-}
+};
+function renderMatches(){ return window.renderMatches(); }
 
 window.renderOpponents = function(){
   const el=$('matches-opps'); if(!el) return;
