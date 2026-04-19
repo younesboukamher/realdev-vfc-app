@@ -2356,6 +2356,8 @@ window.SW_CACHE = 'rdv-v26';
 window.BUILD_DATE = '2026-04-19';
 window.WORKSHOP_ITEMS = 30;
 window.WORKSHOP_SPRINTS = 4;
+// P3: VAPID public key (Web Push). REPLACE THIS with actual key from `npx web-push generate-vapid-keys`.
+window.VAPID_PUBLIC_KEY = 'REPLACE_WITH_VAPID_PUBLIC_KEY';
 const APP_VERSION = window.APP_VERSION;
 // Planning logic — inlined
 // ── Planning logic — RealDev microcycle Lun/Mar/Mer ───────────────
@@ -6444,6 +6446,111 @@ window.saveInj=async()=>{
 };
 
 /* ════════ PLANNING ════════ */
+// P3 — Push notifications pre-seance (opt-in strict)
+window._p3Status = { ready:false, subscribed:false };
+
+window.p3IsSubscribed = function(){
+  return !!window._p3Status.subscribed;
+};
+
+// Utility: urlBase64 -> Uint8Array
+window.p3Urlb64ToUint8 = function(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  const out = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) out[i] = rawData.charCodeAt(i);
+  return out;
+};
+
+window.p3InitStatus = async function(){
+  try{
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)){ window._p3Status.ready = true; return; }
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    window._p3Status.subscribed = !!sub;
+    window._p3Status.ready = true;
+    // Refresh settings page if open
+    if(document.getElementById('pg-settings') && document.getElementById('pg-settings').classList.contains('on')){
+      try{ window.renderSettings && window.renderSettings(); }catch(_){}
+    }
+  }catch(e){ console.warn('p3InitStatus', e); window._p3Status.ready = true; }
+};
+
+window.p3Subscribe = async function(){
+  try{
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)){
+      if(typeof toast === 'function') toast('Notifications non supportees sur ce navigateur');
+      return false;
+    }
+    const perm = await Notification.requestPermission();
+    if(perm !== 'granted'){
+      if(typeof toast === 'function') toast('Permission refusee');
+      return false;
+    }
+    const reg = await navigator.serviceWorker.ready;
+    const vapid = window.VAPID_PUBLIC_KEY;
+    if(!vapid || vapid === 'REPLACE_WITH_VAPID_PUBLIC_KEY'){
+      if(typeof toast === 'function') toast('VAPID public key non configuree (admin)');
+      return false;
+    }
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: window.p3Urlb64ToUint8(vapid)
+    });
+    const subJson = sub.toJSON();
+    const user = (typeof sb !== 'undefined' && sb && sb.auth) ? (await sb.auth.getUser()).data.user : null;
+    if(user && typeof sb !== 'undefined'){
+      try{
+        await sb.from('push_subscriptions').upsert({
+          user_id: user.id,
+          endpoint: subJson.endpoint,
+          p256dh: subJson.keys && subJson.keys.p256dh,
+          auth: subJson.keys && subJson.keys.auth,
+          user_agent: navigator.userAgent || null
+        }, { onConflict: 'user_id,endpoint' });
+      }catch(e){ console.warn('p3 upsert sub', e); }
+    }
+    window._p3Status.subscribed = true;
+    if(typeof toast === 'function') toast('Notifications activees');
+    if(window.renderSettings) window.renderSettings();
+    return true;
+  }catch(e){
+    console.warn('p3Subscribe', e);
+    if(typeof toast === 'function') toast('Activation notifications : erreur');
+    return false;
+  }
+};
+
+window.p3Unsubscribe = async function(){
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if(sub){
+      const endpoint = sub.endpoint;
+      await sub.unsubscribe();
+      try{
+        const user = (typeof sb !== 'undefined' && sb && sb.auth) ? (await sb.auth.getUser()).data.user : null;
+        if(user && typeof sb !== 'undefined'){
+          await sb.from('push_subscriptions').delete().eq('user_id', user.id).eq('endpoint', endpoint);
+        }
+      }catch(e){ console.warn('p3 delete sub', e); }
+    }
+    window._p3Status.subscribed = false;
+    if(typeof toast === 'function') toast('Notifications desactivees');
+    if(window.renderSettings) window.renderSettings();
+    return true;
+  }catch(e){ console.warn('p3Unsubscribe',e); return false; }
+};
+
+window.p3Toggle = async function(){
+  if(window._p3Status.subscribed) await window.p3Unsubscribe();
+  else await window.p3Subscribe();
+};
+
+// Probe status on load
+window.addEventListener('load', () => { setTimeout(() => window.p3InitStatus(), 800); });
+
 // Pl2 — Vue calendaire mois Planning
 window._pl2CalMonth = null; // Date first-day-of-month currently displayed
 
@@ -8019,6 +8126,13 @@ window.renderSettings = function(){
       +'<div class="st-row">'
         +'<div class="st-row-body"><div class="st-row-label">Demander confirmation avant suppression</div><div class="st-row-hint">Affiche un dialogue avant chaque suppression irreversible</div></div>'
         +'<button type="button" class="st-toggle '+(confirmDel?'on':'')+'" onclick="window.stSetConfirmDelete('+(!confirmDel)+')" aria-pressed="'+confirmDel+'" aria-label="Confirmation suppression"></button>'
+      +'</div>'
+    +'</div>'
+    +'<div class="st-group">'
+      +'<div class="st-group-title">Notifications</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Rappels de seance 24h avant</div><div class="st-row-hint">Android + iOS 16.4+ (PWA installee). Opt-in strict.</div></div>'
+        +'<button type="button" class="st-toggle '+(window.p3IsSubscribed()?'on':'')+'" onclick="window.p3Toggle()" aria-pressed="'+window.p3IsSubscribed()+'" aria-label="Activer les notifications"></button>'
       +'</div>'
     +'</div>'
     +'<div class="st-group">'

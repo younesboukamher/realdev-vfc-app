@@ -50,3 +50,33 @@ self.addEventListener('fetch', e => {
     }))
   );
 });
+
+
+// P3 — Web Push handlers (Sprint 5)
+self.addEventListener('push', (event) => {
+  let data = {};
+  try{ data = event.data ? event.data.json() : {}; }catch(_){ data = { title: 'RealDev VFC', body: event.data ? event.data.text() : '' }; }
+  const title = data.title || 'RealDev VFC';
+  const options = {
+    body: data.body || '',
+    icon: data.icon || '/realdev-vfc-app/icon-192.png',
+    badge: data.badge || '/realdev-vfc-app/icon-192.png',
+    data: { url: data.url || '/realdev-vfc-app/?page=planning' },
+    tag: data.tag || 'rdv-session-reminder',
+    renotify: true
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = (event.notification.data && event.notification.data.url) || '/realdev-vfc-app/?page=planning';
+  event.waitUntil(
+    clients.matchAll({ type:'window', includeUncontrolled:true }).then(list => {
+      for (const c of list) {
+        if (c.url.includes('/realdev-vfc-app/') && 'focus' in c) { c.navigate(target); return c.focus(); }
+      }
+      if (clients.openWindow) return clients.openWindow(target);
+    })
+  );
+});
