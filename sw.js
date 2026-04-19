@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v20'; // bumped — export PDF v3 (mise en page lisible + marges + bandeau couleur)
-const APP_VERSION = '1.12.6';
+const CACHE = 'rdv-v21'; // bumped — export PDF v3.1 (PWA standalone fallback overlay)
+const APP_VERSION = '1.12.7';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {

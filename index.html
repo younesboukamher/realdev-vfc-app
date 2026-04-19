@@ -2043,7 +2043,7 @@ function generateMicrocycle(scouting) {
     </div>
     <div class="topbar-right">
       <span class="top-badge" id="role-pill"></span>
-      <span class="version-badge" id="version-badge">v1.12.6</span>
+      <span class="version-badge" id="version-badge">v1.12.7</span>
       <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
       <select id="season-selector" onchange="window.setArchiveSeason(this.value)" aria-label="Saison" style="background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
         <option value="">Saison 2025-26</option>
@@ -3225,7 +3225,17 @@ window.exportPresencesCSV = ()=>{
   toast('✓ Présences exportées');
 };
 
-// FIX P2 #2 — Export Planning PDF (v3 : mise en page lisible + marges + bandeau couleur-jour)
+// FIX P2 #2 — Export Planning PDF (v3.1 : fallback PWA standalone via overlay in-app)
+window.closePdfPreview = () => {
+  try {
+    document.body.classList.remove('pdf-preview-mode');
+    const o = document.getElementById('pdf-preview-overlay');
+    if (o) o.remove();
+    const s = document.getElementById('pdf-preview-style');
+    if (s) s.remove();
+  } catch(e) {}
+};
+
 window.exportPlanningPDF = async (mid) => {
   const match = S.matches.find(m => m.id === mid);
   if (!match) { toast('Match introuvable'); return; }
@@ -3234,12 +3244,29 @@ window.exportPlanningPDF = async (mid) => {
     toast('Aucune séance planifiée pour ce match'); return;
   }
 
-  // 1. Popup ouvert SYNC (iOS pop-up blocker)
-  const w = window.open('', '_blank', 'width=900,height=1200');
-  if (!w) { toast('Pop-up bloqué — autorise les pop-ups'); return; }
-  w.document.open();
-  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Planning…</title><style>body{font-family:-apple-system,Helvetica,Arial,sans-serif;padding:60px;text-align:center;color:#666}.spin{display:inline-block;width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#16a34a;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}</style></head><body><div class="spin"></div><p>Préparation du planning…</p></body></html>');
-  w.document.close();
+  // 0. Détection mode PWA standalone (iOS home screen) → overlay in-app
+  //    Non-standalone (Safari, desktop, Android Chrome) → popup window comme avant
+  const isStandalone = (typeof navigator !== 'undefined' && navigator.standalone === true) ||
+                       (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches);
+
+  // 1. Préparation conteneur (popup OU overlay)
+  let w = null;      // popup window (non-standalone)
+  let overlay = null; // overlay div (standalone)
+  if (isStandalone) {
+    // Overlay plein écran in-app
+    window.closePdfPreview();
+    overlay = document.createElement('div');
+    overlay.id = 'pdf-preview-overlay';
+    overlay.innerHTML = '<div style="padding:60px;text-align:center;color:#666;font-family:-apple-system,sans-serif"><div style="display:inline-block;width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#16a34a;border-radius:50%;animation:rdv-spin 1s linear infinite"></div><p>Préparation du planning…</p></div><style>@keyframes rdv-spin{to{transform:rotate(360deg)}}</style>';
+    document.body.appendChild(overlay);
+    document.body.classList.add('pdf-preview-mode');
+  } else {
+    w = window.open('', '_blank', 'width=900,height=1200');
+    if (!w) { toast('Pop-up bloqué — autorise les pop-ups'); return; }
+    w.document.open();
+    w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Planning…</title><style>body{font-family:-apple-system,Helvetica,Arial,sans-serif;padding:60px;text-align:center;color:#666}.spin{display:inline-block;width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#16a34a;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}</style></head><body><div class="spin"></div><p>Préparation du planning…</p></body></html>');
+    w.document.close();
+  }
 
   try {
     // 2. DB exos
@@ -3250,6 +3277,9 @@ window.exportPlanningPDF = async (mid) => {
     const esc = (s) => String(s == null ? '' : s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    // Escape une chaîne pour un pattern RegExp (évite crash new RegExp si caractères spéciaux)
+    const escRe = (s) => String(s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     const dayIdxOfType = { dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6 };
     const DAY_LBL_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
@@ -3439,7 +3469,8 @@ window.exportPlanningPDF = async (mid) => {
       const sumExoMin = exos.reduce((s, e) => s + (e.duration || 0), 0);
       const au = chargeAU(sess);
       const dayLabelShort = DAY_LBL_FR[dayIdxOfType[dayKey]] || sess.dayName || sess.type || '';
-      const sessLabelRight = (sess.label || '').replace(new RegExp('^' + dayLabelShort + '\\s*·?\\s*', 'i'), '') || sess.type;
+      // escRe() pour éviter crash si dayLabelShort contient des caractères regex spéciaux
+      const sessLabelRight = (sess.label || '').replace(new RegExp('^' + escRe(dayLabelShort) + '\\s*·?\\s*', 'i'), '') || sess.type;
 
       const focusChips = Array.isArray(sess.focus) && sess.focus.length
         ? sess.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')
@@ -3583,8 +3614,8 @@ window.exportPlanningPDF = async (mid) => {
         </div>`;
     });
 
-    // 8. CSS
-    const css = `
+    // 8. CSS — version popup (non-scoped, classes "nues" car document popup isolé)
+    const cssPopup = `
       @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
       * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       html, body { margin: 0; padding: 0; background:#fff; color:#1f2937;
@@ -3784,27 +3815,125 @@ window.exportPlanningPDF = async (mid) => {
         box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
     `;
 
-    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
-      <title>Planning — ${esc(match.opponent || '')}</title>
-      <style>${css}</style>
-      </head><body>
-      <button class="noprint" onclick="window.print()">Imprimer / Enregistrer PDF</button>
-      ${cover}
-      ${sessionsHtml}
-      <` + `script>setTimeout(()=>{try{window.print()}catch(e){}}, 600);</` + `script>
-      </body></html>`;
+    if (!isStandalone) {
+      // ═══════════════════ MODE POPUP (Safari, desktop, Android Chrome) ═══════════════════
+      const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
+        <title>Planning — ${esc(match.opponent || '')}</title>
+        <style>${cssPopup}</style>
+        </head><body>
+        <button class="noprint" onclick="window.print()">Imprimer / Enregistrer PDF</button>
+        ${cover}
+        ${sessionsHtml}
+        <` + `script>setTimeout(()=>{try{window.print()}catch(e){}}, 600);</` + `script>
+        </body></html>`;
 
-    w.document.open();
-    w.document.write(html);
-    w.document.close();
-    toast('Export PDF lancé');
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      toast('Export PDF lancé');
+    } else {
+      // ═══════════════════ MODE OVERLAY (iOS PWA standalone) ═══════════════════
+      // On scope toutes les règles sous #pdf-preview-overlay pour éviter les fuites
+      // de styles vers l'app (classes comme .chip, .metric, .big peuvent collisionner).
+      const scopePdfCss = (css) => {
+        // Approche pragmatique : on ignore @page/@media (on les réinjecte manuellement),
+        // on préfixe chaque sélecteur non @ par "#pdf-preview-overlay ".
+        // Le CSS ici est structuré simplement (pas d'imbrication @), donc safe.
+        // 1. Extrait @media print { ... } — ne scope pas à l'intérieur, on gère la visibilité via body.pdf-preview-mode
+        let cleaned = css.replace(/@page\s*\{[^}]*\}/g, '');
+        cleaned = cleaned.replace(/@media\s+print\s*\{[^}]*\{[^}]*\}[^}]*\}/g, '');
+        // Fallback : si la regex multi-accolade n'a pas matché, on retire un @media print simple
+        cleaned = cleaned.replace(/@media\s+print\s*\{[^}]*\}/g, '');
+        // 2. Préfixe chaque bloc de règle
+        const scoped = cleaned.replace(
+          /(^|\})\s*([^{@}]+)\{/g,
+          (m, prev, sel) => {
+            const parts = sel.split(',').map(s => {
+              const t = s.trim();
+              if (!t) return t;
+              if (t === 'html' || t === 'body' || t === 'html, body') return '#pdf-preview-overlay';
+              if (t === '*') return '#pdf-preview-overlay *';
+              return '#pdf-preview-overlay ' + t;
+            });
+            return (prev || '') + ' ' + parts.join(', ') + ' {';
+          }
+        );
+        return scoped;
+      };
+
+      const scopedBody = scopePdfCss(cssPopup);
+
+      // CSS du shell overlay : toolbar, fond, print-only hide everything
+      const overlayShellCss = `
+        #pdf-preview-overlay {
+          position: fixed; inset: 0; z-index: 999999;
+          background: #fff; overflow: auto; color: #1f2937;
+          font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+          -webkit-overflow-scrolling: touch;
+        }
+        #pdf-preview-overlay .pdf-toolbar {
+          position: sticky; top: 0; z-index: 100;
+          display: flex; gap: 8px; justify-content: flex-end;
+          padding: env(safe-area-inset-top, 10px) 14px 10px 14px;
+          background: linear-gradient(180deg,#15803d,#166534);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        #pdf-preview-overlay .pdf-toolbar button {
+          background: #fff; color: #166534; border: 0; border-radius: 8px;
+          padding: 10px 16px; font: 700 13px/1 -apple-system, Arial, sans-serif;
+          cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+        #pdf-preview-overlay .pdf-toolbar button.secondary {
+          background: rgba(255,255,255,0.18); color:#fff;
+        }
+        #pdf-preview-overlay .pdf-content {
+          max-width: 210mm; margin: 0 auto;
+          padding: 12mm 16mm 16mm 16mm;
+          background: #fff;
+        }
+        body.pdf-preview-mode { overflow: hidden; }
+        @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+        @media print {
+          body.pdf-preview-mode > *:not(#pdf-preview-overlay) { display: none !important; }
+          body.pdf-preview-mode { overflow: visible !important; background: #fff !important; }
+          #pdf-preview-overlay { position: static !important; overflow: visible !important; background: #fff !important; }
+          #pdf-preview-overlay .pdf-toolbar { display: none !important; }
+          #pdf-preview-overlay .pdf-content { padding: 0 !important; max-width: none !important; margin: 0 !important; }
+        }
+      `;
+
+      // Injecte le style
+      const styleEl = document.createElement('style');
+      styleEl.id = 'pdf-preview-style';
+      styleEl.textContent = overlayShellCss + '\n' + scopedBody;
+      document.head.appendChild(styleEl);
+
+      // Remplit l'overlay avec toolbar + contenu
+      overlay.innerHTML = `
+        <div class="pdf-toolbar">
+          <button onclick="window.print()">Imprimer / Enregistrer PDF</button>
+          <button class="secondary" onclick="window.closePdfPreview()">Fermer</button>
+        </div>
+        <div class="pdf-content">
+          ${cover}
+          ${sessionsHtml}
+        </div>
+      `;
+      // Auto-trigger print après un délai court (laisse le layout se stabiliser)
+      setTimeout(() => { try { window.print(); } catch(e) {} }, 800);
+      toast('Aperçu PDF prêt');
+    }
   } catch (err) {
     console.error('[exportPlanningPDF]', err);
-    try {
-      w.document.open();
-      w.document.write('<!DOCTYPE html><html><body style="font-family:sans-serif;padding:40px;background:#fef2f2;color:#991b1b"><h2>Erreur export PDF</h2><pre style="white-space:pre-wrap">' + String(err && err.stack || err) + '</pre></body></html>');
-      w.document.close();
-    } catch(e) {}
+    if (!isStandalone && w) {
+      try {
+        w.document.open();
+        w.document.write('<!DOCTYPE html><html><body style="font-family:sans-serif;padding:40px;background:#fef2f2;color:#991b1b"><h2>Erreur export PDF</h2><pre style="white-space:pre-wrap">' + String(err && err.stack || err) + '</pre></body></html>');
+        w.document.close();
+      } catch(e) {}
+    } else if (isStandalone && overlay) {
+      overlay.innerHTML = '<div style="padding:40px;font-family:-apple-system,sans-serif;background:#fef2f2;color:#991b1b"><h2>Erreur export PDF</h2><pre style="white-space:pre-wrap">' + String(err && err.stack || err) + '</pre><button onclick="window.closePdfPreview()" style="margin-top:20px;padding:10px 18px;border-radius:6px;border:0;background:#991b1b;color:#fff;cursor:pointer;font-weight:600">Fermer</button></div>';
+    }
     toast('Erreur export PDF');
   }
 };
