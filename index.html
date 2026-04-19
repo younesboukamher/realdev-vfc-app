@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
+<script>(function(){try{var m=localStorage.getItem('rdv_theme')||'dark';var eff=m;if(m==='auto'){eff=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',eff);}catch(e){}})();</script>
 <meta charset="UTF-8"><!-- v12d -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -759,6 +760,49 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot-name{font:600 11px/1.2 var(--font);color:var(--tx1);word-break:break-word;}
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+
+/* St2: light theme override */
+html[data-theme="light"] {
+  --ink:       #F7F8FA;
+  --ink2:      #FFFFFF;
+  --ink3:      #FFFFFF;
+  --ink4:      #F0F2F5;
+  --tx1:       #0F172A;
+  --tx2:       rgba(15,23,42,.72);
+  --tx3:       rgba(15,23,42,.50);
+  --tx4:       rgba(15,23,42,.28);
+  --sep:       rgba(15,23,42,.08);
+  --sep2:      rgba(15,23,42,.15);
+  --brand-glow:rgba(34,197,94,.22);
+  --bg:        #F7F8FA;
+  --card:      #FFFFFF;
+  --line:      rgba(15,23,42,.10);
+}
+html[data-theme="light"] body{background:#F7F8FA;}
+
+/* St1: Settings page */
+.st-page{padding:12px 14px 24px;}
+.st-group{background:var(--card,var(--ink2));border:1px solid var(--line,var(--sep));border-radius:12px;margin-bottom:14px;overflow:hidden;}
+.st-group-title{padding:12px 14px 8px;font:800 11px/1 var(--font);color:var(--tx3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--line,var(--sep));}
+.st-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line,var(--sep));}
+.st-row:last-child{border-bottom:none;}
+.st-row-body{flex:1;min-width:0;}
+.st-row-label{font:700 13px/1.25 var(--font);color:var(--tx1);}
+.st-row-hint{font:500 11px/1.35 var(--font);color:var(--tx3);margin-top:3px;}
+.st-seg{display:inline-flex;background:var(--ink3);border:1px solid var(--line,var(--sep));border-radius:999px;padding:2px;gap:2px;}
+html[data-theme="light"] .st-seg{background:#F0F2F5;}
+.st-seg-btn{padding:6px 12px;border:none;background:transparent;color:var(--tx2);font:700 11px/1 var(--font);border-radius:999px;cursor:pointer;text-transform:uppercase;letter-spacing:.4px;}
+.st-seg-btn.on{background:var(--brand);color:#fff;}
+.st-toggle{width:44px;height:26px;border-radius:999px;border:1px solid var(--line,var(--sep));background:var(--ink3);position:relative;cursor:pointer;padding:0;flex-shrink:0;transition:background .15s;}
+html[data-theme="light"] .st-toggle{background:#E5E7EB;}
+.st-toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left .15s,background .15s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.st-toggle.on{background:var(--brand);border-color:var(--brand);}
+.st-toggle.on::after{left:20px;}
+.st-btn{padding:8px 14px;border:1px solid var(--line,var(--sep));background:var(--ink3);color:var(--tx1);border-radius:8px;font:700 12px/1 var(--font);cursor:pointer;flex-shrink:0;}
+html[data-theme="light"] .st-btn{background:#F0F2F5;}
+.st-btn:hover{border-color:var(--brand);color:var(--brand);}
+.st-btn.danger{color:var(--danger);border-color:rgba(239,68,68,.3);}
+.st-btn.danger:hover{background:var(--danger-dim);border-color:var(--danger);}
 
 /* Pr2: auto-declaration dispo joueur */
 .pr2-avail-list{padding:4px 18px 8px;display:flex;flex-direction:column;gap:8px;}
@@ -2824,6 +2868,11 @@ window.saveInj()">Enregistrer</button>
 
     </div>
 
+    <!-- St1: Settings page -->
+    <div class="pg" id="pg-settings">
+      <div id="settings-content" class="st-page"></div>
+    </div>
+
   </div><!-- main -->
 
   <!-- Bottom nav — staff — N1 : 5 items + Plus -->
@@ -2865,6 +2914,11 @@ window.saveInj()">Enregistrer</button>
           <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 3V21H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 16L11 11L14 14L19 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div class="more-lbl">Analytics</div>
           <div class="more-sub">Data Science Dashboard</div>
+        </button>
+        <button class="more-item" onclick="window.navFromMore('settings')">
+          <div class="more-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <div class="more-lbl">Reglages</div>
+          <div class="more-sub">Theme, langue, donnees</div>
         </button>
       </div>
     </div>
@@ -3139,6 +3193,9 @@ const MSGS = {
     present:'Aanwezig', late:'Te laat', form:'Formulier'
 }};
 const msg = k => (MSGS[S.lang]||MSGS.fr)[k] || k;
+
+// St2 — apply theme ASAP on boot (before first render)
+try{ window.stApplyTheme && window.stApplyTheme(); }catch(_){ /* stApplyTheme not defined yet */ }
 
 
 /* ── Helpers ── */
@@ -3693,6 +3750,7 @@ window.nav = (name, btn) => {
   if (name==='planning') renderPlanning();
   if (name==='profile') renderProfile();
   if (name==='stats') renderStats();
+  if (name==='settings') { try{ window.renderSettings && window.renderSettings(); }catch(e){ console.warn('renderSettings',e); } }
 };
 // N1 — Drawer "Plus"
 window.openMore = (btn) => {
@@ -7066,6 +7124,151 @@ window.renderSq2Podium = function(){
     + '<div class="sq2-pod-col"><div class="sq2-pod-title"><span class="sq2-pod-title-icon">🎯</span>Passeurs</div>'
     + build(top3A, 'assists', 'passe', 'passes', 'assists') + '</div>'
     + '</div>';
+};
+
+/* ════════ REGLAGES (St1 + St2) ════════ */
+// St2 — Theme engine (light/dark/auto)
+window.stGetTheme = function(){
+  try{ return localStorage.getItem('rdv_theme') || 'dark'; }catch(_){ return 'dark'; }
+};
+window.stApplyTheme = function(mode){
+  const m = mode || window.stGetTheme();
+  let effective = m;
+  if(m === 'auto'){
+    try{
+      effective = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }catch(_){ effective = 'dark'; }
+  }
+  try{
+    document.documentElement.setAttribute('data-theme', effective);
+  }catch(_){}
+};
+window.stSetTheme = function(mode){
+  if(!['light','dark','auto'].includes(mode)) return;
+  try{ localStorage.setItem('rdv_theme', mode); }catch(_){}
+  window.stApplyTheme(mode);
+  try{ window.renderSettings && window.renderSettings(); }catch(_){}
+  try{ toast(mode==='light'?'Theme clair':mode==='dark'?'Theme sombre':'Theme auto'); }catch(_){}
+};
+// Reagit aux changements systeme en mode auto
+try{
+  if(window.matchMedia){
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    const h = () => { if(window.stGetTheme() === 'auto') window.stApplyTheme('auto'); };
+    if(mq.addEventListener) mq.addEventListener('change', h);
+    else if(mq.addListener) mq.addListener(h);
+  }
+}catch(_){}
+
+// St1 — Confirm delete toggle
+window.stGetConfirmDelete = function(){
+  try{ return localStorage.getItem('rdv_confirm_delete') !== '0'; }catch(_){ return true; }
+};
+window.stSetConfirmDelete = function(val){
+  try{ localStorage.setItem('rdv_confirm_delete', val?'1':'0'); }catch(_){}
+  try{ window.renderSettings && window.renderSettings(); }catch(_){}
+  toast(val ? 'Confirmation activee' : 'Confirmation desactivee');
+};
+
+// St1 — Purge cache
+window.stPurgeCache = async function(){
+  if(!confirm('Purger le cache PWA et recharger l\'app ?')) return;
+  try{
+    if('caches' in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    toast('Cache vide — rechargement...');
+    setTimeout(() => location.reload(true), 600);
+  }catch(e){
+    console.warn('stPurgeCache', e);
+    toast('Erreur purge cache');
+  }
+};
+
+// St1 — Export JSON snapshot
+window.stExportJSON = function(){
+  try{
+    const snapshot = {
+      exported_at: new Date().toISOString(),
+      app_version: window.APP_VERSION || '?',
+      profile: S.profile || null,
+      players: S.players || [],
+      matches: S.matches || [],
+      injuries: S.injuries || [],
+      injHistory: S.injHistory || [],
+      presences: S.presences || [],
+      plans: S.plans || {},
+      availability: S.availability || [],
+    };
+    const json = JSON.stringify(snapshot, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+    a.href = url;
+    a.download = 'realdev-vfc-'+stamp+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('Export JSON genere');
+  }catch(e){
+    console.warn('stExportJSON', e);
+    toast('Erreur export');
+  }
+};
+
+// St1 — Settings page renderer
+window.renderSettings = function(){
+  const el = document.getElementById('settings-content');
+  if(!el) return;
+  const theme = window.stGetTheme();
+  const lang = S.lang || 'fr';
+  const confirmDel = window.stGetConfirmDelete();
+  const appVer = window.APP_VERSION || '?';
+  const segTheme = (v, lbl) => '<button type="button" class="st-seg-btn '+(theme===v?'on':'')+'" onclick="window.stSetTheme(\''+v+'\')">'+lbl+'</button>';
+  const segLang = (v, lbl) => '<button type="button" class="st-seg-btn '+(lang===v?'on':'')+'" onclick="window.setLang(\''+v+'\')">'+lbl+'</button>';
+  el.innerHTML = ''
+    +'<div class="st-group">'
+      +'<div class="st-group-title">Apparence</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Theme</div><div class="st-row-hint">Clair, sombre ou suivre le systeme</div></div>'
+        +'<div class="st-seg">'+segTheme('light','Clair')+segTheme('dark','Sombre')+segTheme('auto','Auto')+'</div>'
+      +'</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Langue</div><div class="st-row-hint">Libelles interface + PDF</div></div>'
+        +'<div class="st-seg">'+segLang('fr','FR')+segLang('nl','NL')+'</div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="st-group">'
+      +'<div class="st-group-title">Confort</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Demander confirmation avant suppression</div><div class="st-row-hint">Affiche un dialogue avant chaque suppression irreversible</div></div>'
+        +'<button type="button" class="st-toggle '+(confirmDel?'on':'')+'" onclick="window.stSetConfirmDelete('+(!confirmDel)+')" aria-pressed="'+confirmDel+'" aria-label="Confirmation suppression"></button>'
+      +'</div>'
+    +'</div>'
+    +'<div class="st-group">'
+      +'<div class="st-group-title">Donnees</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Exporter un instantane JSON</div><div class="st-row-hint">Toutes les donnees en memoire (joueurs, matchs, blessures, plannings, dispos)</div></div>'
+        +'<button type="button" class="st-btn" onclick="window.stExportJSON()">Exporter</button>'
+      +'</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Purger le cache PWA</div><div class="st-row-hint">Vide les caches Service Worker et recharge l\'app</div></div>'
+        +'<button type="button" class="st-btn danger" onclick="window.stPurgeCache()">Purger</button>'
+      +'</div>'
+    +'</div>'
+    +'<div class="st-group">'
+      +'<div class="st-group-title">A propos</div>'
+      +'<div class="st-row">'
+        +'<div class="st-row-body"><div class="st-row-label">Version</div><div class="st-row-hint">RealDev VFC '+appVer+'</div></div>'
+      +'</div>'
+    +'</div>';
 };
 
 /* ════════ PROFIL ════════ */
