@@ -760,6 +760,21 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* M3bis: modal Lineup 5v5 depuis match-row */
+.ln-modal-header{display:flex;gap:10px;align-items:center;padding:6px 2px 12px;border-bottom:1px solid var(--sep2);margin-bottom:12px;}
+.ln-modal-meta{flex:1;min-width:0;font:600 13px/1.3 var(--font);color:var(--tx2);}
+.ln-modal-meta strong{color:var(--tx1);font-weight:800;font-size:15px;}
+.ln-modal-section-title{font:700 12px/1 var(--font);color:var(--tx2);text-transform:uppercase;letter-spacing:.6px;margin:14px 4px 8px;}
+.ln-modal-actions{display:flex;gap:8px;padding:14px 2px 4px;border-top:1px solid var(--sep2);margin-top:14px;}
+.ln-modal-actions .btn{flex:1;}
+.match-row-cta-lineup{margin-left:auto;padding:6px 10px;background:var(--brand-dim);color:var(--brand);border:1px solid var(--brand);border-radius:999px;font:700 11px/1 var(--font);cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.match-row-cta-lineup:hover{background:var(--brand);color:#fff;}
+.match-row-cta-lineup.has-lineup{background:rgba(16,185,129,.22);}
+.match-hero-cta-lineup{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28);}
+.match-hero-cta-lineup:hover{background:rgba(255,255,255,.2);}
+.match-row{position:relative;}
+.match-row-actions{display:flex;gap:6px;align-items:center;padding:4px 8px 0;}
+
 /* M1: tabs Matchs (A venir / Joues / Adversaires) */
 .opp-card{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:12px;margin:6px 18px;display:flex;flex-direction:column;gap:6px;}
 .opp-card-head{display:flex;align-items:center;gap:8px;}
@@ -2430,33 +2445,10 @@ function generateMicrocycle(scouting) {
             </div>
             <input type="hidden" id="m-cards">
           </div>
-          <div class="fg"><label class="fl">Titulaires (5)</label>
-            <div class="ln-wrap">
-              <svg class="ln-pitch" viewBox="0 0 300 170" aria-hidden="true">
-                <rect x="1" y="1" width="298" height="168" rx="4" fill="#0a2a18" stroke="rgba(255,255,255,.18)"/>
-                <line x1="150" y1="1" x2="150" y2="169" stroke="rgba(255,255,255,.15)"/>
-                <circle cx="150" cy="85" r="18" fill="none" stroke="rgba(255,255,255,.15)"/>
-                <rect x="1" y="55" width="28" height="60" fill="none" stroke="rgba(255,255,255,.15)"/>
-                <rect x="271" y="55" width="28" height="60" fill="none" stroke="rgba(255,255,255,.15)"/>
-                <g id="ln-svg-slots"></g>
-              </svg>
-              <div class="ln-slots" id="ln-slots"></div>
-            </div>
-          </div>
-          <div class="fg"><label class="fl">Remplaçants</label>
-            <div class="pl-chip-wrap">
-              <div class="pl-chip-list" id="m-bench-chips" aria-live="polite"></div>
-              <div class="pl-chip-actions">
-                <button type="button" class="btn btn-sm btn-outline" onclick="window.openLineupBenchPicker()">+ Ajouter remplaçant</button>
-              </div>
-              <div class="pl-picker-dd" id="m-bench-dd" hidden>
-                <input type="search" class="fi" id="m-bench-dd-q" placeholder="Rechercher un joueur..." oninput="window.filterLineupBench()">
-                <div class="pl-picker-list" id="m-bench-dd-list"></div>
-              </div>
-            </div>
-          </div>
-          <input type="hidden" id="m-lineup">
           <div class="fg"><label class="fl">Rapport</label><textarea class="fi" id="m-notes" placeholder="Notes tactiques..."></textarea></div>
+          <div style="padding:10px 0 4px;font:500 12px/1.5 var(--font);color:var(--tx3);font-style:italic;">
+            ℹ️ Le <strong>Lineup 5v5</strong> se compose après enregistrement du match, via le bouton 🎯 sur la fiche du match.
+          </div>
           <button class="btn btn-green btn-block" onclick="window.saveMatchForm()">Enregistrer</button>
           <div style="height:14px;"></div>
         </div>
@@ -2790,6 +2782,15 @@ window.saveInj()">Enregistrer</button>
   <div class="sheet sheet-full" role="document">
     <button class="sheet-close" onclick="window.close_modal('modal-p360')" aria-label="Fermer">✕</button>
     <div id="modal-p360-body"></div>
+  </div>
+</div>
+
+<!-- M3bis — Modal Lineup 5v5 depuis match-row -->
+<div class="overlay" id="modal-lineup" onclick="if(event.target===this)close_modal('modal-lineup')">
+  <div class="sheet sheet-full" role="document" aria-labelledby="modal-lineup-title">
+    <button class="sheet-close" onclick="window.close_modal('modal-lineup')" aria-label="Fermer">✕</button>
+    <div class="sheet-title" id="modal-lineup-title">Lineup 5v5</div>
+    <div id="modal-lineup-body" style="padding:4px 2px 18px;"></div>
   </div>
 </div>
 
@@ -3443,6 +3444,7 @@ function renderHome() {
       ${absents ? `<div class="match-absents"><div class="match-absents-title" data-t="absent">Absents</div>${absents}</div>` : ''}
       ${canConvoc ? `<div class="match-cta-row">
         <button class="btn btn-green" onclick="window.nav('planning',document.querySelector('[data-p=planning]'));window.setPlanIdx(${S.matches.indexOf(nxt)});" aria-label="Préparer la convocation pour ce match">Préparer la convocation</button>
+        <button class="btn btn-outline match-hero-cta-lineup" onclick="window.openLineupModal('${nxt.id}')" aria-label="Composer le lineup 5v5 du prochain match">🎯 Lineup 5v5</button>
         <button class="btn btn-outline" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" aria-label="Voir les détails du match">Détails</button>
       </div>` : ''}
     </div>`;
@@ -4560,11 +4562,14 @@ window.renderOpponents = function(){
   }).join('');
 };
 function matchRow(m){
+  const hasLineup = !!(m.lineup && m.lineup.starters && m.lineup.starters.some && m.lineup.starters.some(s=>s.player_id));
+  const lnCta = `<button class="match-row-cta-lineup ${hasLineup?'has-lineup':''}" onclick="event.stopPropagation();window.openLineupModal('${m.id}')" aria-label="Composer le lineup 5v5">🎯 ${hasLineup?'Lineup ✓':'Lineup'}</button>`;
   if(!m.result)return`<div class="match-row">
     <div class="match-stripe n"></div>
     <div class="match-row-body">
       <div class="match-row-meta">${m.journee||''} · ${fd(m.match_date)} · ${m.is_home?'Dom':'Ext'}</div>
       <div class="match-row-teams">${m.is_home?`<strong>VFC</strong> vs ${m.opponent}`:`${m.opponent} vs <strong>VFC</strong>`}</div>
+      <div class="match-row-actions">${lnCta}</div>
     </div>
     <div class="match-row-next"><span class="chip chip-blue">À venir</span></div>
   </div>`;
@@ -4575,6 +4580,7 @@ function matchRow(m){
       <div class="match-row-meta">${m.journee||''} · ${fd(m.match_date)} · ${m.is_home?'Dom':'Ext'}</div>
       <div class="match-row-teams">${m.is_home?`<strong>VFC</strong> vs ${m.opponent}`:`${m.opponent} vs <strong>VFC</strong>`}</div>
       ${m.scorers?`<div class="match-row-sc">⚽ ${m.scorers}</div>`:''}
+      <div class="match-row-actions">${lnCta}</div>
     </div>
     <div class="match-row-score ${c}">${m.score_home}–${m.score_away}</div>
   </div>`;
@@ -4705,7 +4711,7 @@ window.resetEncoderChips = function(){
   const d1=$('m-scorers-dd'), d2=$('m-cards-dd'); if(d1) d1.hidden=true; if(d2) d2.hidden=true;
 };
 
-// M3 — Lineup 5v5 visuel
+// M3 — Lineup 5v5 visuel (M3bis: désormais dans modal, piloté par matchId)
 window.M_LINEUP = {
   roles: [
     {key:'GK',  label:'Gardien',   x:28,  y:85},
@@ -4716,7 +4722,8 @@ window.M_LINEUP = {
   ],
   starters: {},  // { GK: {id,name}, P1:{...}, ... }
   bench: [],     // [{id,name}, ...]
-  activeRole: null
+  activeRole: null,
+  currentMatchId: null
 };
 
 window.renderLineup = function(){
@@ -4844,8 +4851,90 @@ window.resetLineup = function(){
   window.renderLineup();
 };
 
-// Initial render once the DOM is in place
-document.addEventListener('DOMContentLoaded', ()=>{ try{ window.renderLineup(); }catch(_){} });
+// M3bis — Ouvre le modal Lineup pour un match existant
+window.openLineupModal = function(matchId){
+  const m = (S.matches||[]).find(x=>x.id===matchId); if(!m){ toast && toast('Match introuvable'); return; }
+  const L = window.M_LINEUP;
+  L.currentMatchId = matchId;
+  L.starters = {};
+  L.bench = [];
+  L.activeRole = null;
+  // Charge lineup existant si present
+  const lu = m.lineup;
+  if(lu && typeof lu === 'object'){
+    if(Array.isArray(lu.starters)){
+      lu.starters.forEach(s=>{
+        if(s && s.role && s.player_id){ L.starters[s.role] = {id:s.player_id, name:s.name||''}; }
+      });
+    }
+    if(Array.isArray(lu.bench)){
+      L.bench = lu.bench.filter(b=>b&&b.player_id).map(b=>({id:b.player_id, name:b.name||''}));
+    }
+  }
+  const body = $('modal-lineup-body'); if(!body) return;
+  const title = $('modal-lineup-title');
+  const vs = m.is_home ? ('VFC vs '+(m.opponent||'?')) : ((m.opponent||'?')+' vs VFC');
+  const dateStr = m.match_date ? (fd(m.match_date)) : '';
+  const jr = m.journee ? (m.journee+' · ') : '';
+  if(title) title.textContent = 'Lineup 5v5 — '+vs;
+  body.innerHTML = '<div class="ln-modal-header">'
+      + '<div class="ln-modal-meta"><strong>'+vs+'</strong><br>'+jr+dateStr+(m.result?' · '+m.result+' '+(m.score_home||0)+'–'+(m.score_away||0):' · À venir')+'</div>'
+    + '</div>'
+    + '<div class="ln-modal-section-title">Titulaires (5)</div>'
+    + '<div class="ln-wrap">'
+      + '<svg class="ln-pitch" viewBox="0 0 300 170" aria-hidden="true">'
+        + '<rect x="1" y="1" width="298" height="168" rx="4" fill="#0a2a18" stroke="rgba(255,255,255,.18)"/>'
+        + '<line x1="150" y1="1" x2="150" y2="169" stroke="rgba(255,255,255,.15)"/>'
+        + '<circle cx="150" cy="85" r="18" fill="none" stroke="rgba(255,255,255,.15)"/>'
+        + '<rect x="1" y="55" width="28" height="60" fill="none" stroke="rgba(255,255,255,.15)"/>'
+        + '<rect x="271" y="55" width="28" height="60" fill="none" stroke="rgba(255,255,255,.15)"/>'
+        + '<g id="ln-svg-slots"></g>'
+      + '</svg>'
+      + '<div class="ln-slots" id="ln-slots"></div>'
+    + '</div>'
+    + '<div class="ln-modal-section-title">Remplaçants</div>'
+    + '<div class="pl-chip-wrap">'
+      + '<div class="pl-chip-list" id="m-bench-chips" aria-live="polite"></div>'
+      + '<div class="pl-chip-actions">'
+        + '<button type="button" class="btn btn-sm btn-outline" onclick="window.openLineupBenchPicker()">+ Ajouter remplaçant</button>'
+      + '</div>'
+      + '<div class="pl-picker-dd" id="m-bench-dd" hidden>'
+        + '<input type="search" class="fi" id="m-bench-dd-q" placeholder="Rechercher un joueur..." oninput="window.filterLineupBench()">'
+        + '<div class="pl-picker-list" id="m-bench-dd-list"></div>'
+      + '</div>'
+    + '</div>'
+    + '<div class="ln-modal-actions">'
+      + '<button type="button" class="btn btn-outline" onclick="window.close_modal(\'modal-lineup\')">Annuler</button>'
+      + '<button type="button" class="btn btn-green" onclick="window.saveLineupModal()">Enregistrer le lineup</button>'
+    + '</div>';
+  window.open_modal('modal-lineup');
+  try{ window.renderLineup(); }catch(_){}
+};
+
+// M3bis — UPDATE partiel du lineup sur le match courant
+window.saveLineupModal = async function(){
+  const L = window.M_LINEUP;
+  if(!L.currentMatchId){ toast && toast('Aucun match actif'); return; }
+  const payload = {
+    starters: L.roles.map(r=>({role:r.key, label:r.label, player_id:L.starters[r.key]?.id||null, name:L.starters[r.key]?.name||null})),
+    bench: L.bench.map(b=>({player_id:b.id, name:b.name})),
+    updated_at: new Date().toISOString()
+  };
+  try{
+    let {error} = await sb.from('matches').update({lineup: payload}).eq('id', L.currentMatchId);
+    if(error && /lineup/i.test(error.message||'')){
+      toast && toast('Colonne "lineup" absente dans Supabase — exécute le SQL ALTER avant');
+      return;
+    }
+    if(error) throw error;
+    // Met à jour le state local
+    const m = (S.matches||[]).find(x=>x.id===L.currentMatchId);
+    if(m){ m.lineup = payload; }
+    window.close_modal('modal-lineup');
+    toast && toast('Lineup enregistré ✓');
+    try{ renderMatches(); renderHome && renderHome(); }catch(_){}
+  }catch(e){ toast && toast('✗ '+(e.message||e)); }
+};
 
 window.saveMatchForm=async()=>{
   const opp=$('m-opp').value.trim();
@@ -4853,12 +4942,7 @@ window.saveMatchForm=async()=>{
   const sn=parseInt($('m-sn').value), se=parseInt($('m-se').value);
   const played=!isNaN(sn)&&!isNaN(se);
   try{
-    // M3 — lineup jsonb (insere si la colonne existe; fallback silencieux sinon)
-    const lineupStr = ($('m-lineup')?.value||'').trim();
-    let lineupJSON = null;
-    if(lineupStr){
-      try{ lineupJSON = JSON.parse(lineupStr); }catch(_){ lineupJSON = null; }
-    }
+    // M3bis — le lineup est desormais gere via le modal depuis la fiche du match
     const basePayload = {
       journee:$('m-journee').value, match_date:$('m-date').value||null,
       is_home:$('m-home').value==='true', opponent:opp,
@@ -4866,18 +4950,10 @@ window.saveMatchForm=async()=>{
       result:played?(sn>se?'V':sn<se?'D':'N'):null,
       scorers:$('m-scorers').value, cards:$('m-cards').value, notes:$('m-notes').value,
     };
-    const payloadWithLineup = lineupJSON ? Object.assign({}, basePayload, {lineup: lineupJSON}) : basePayload;
-    let {error} = await sb.from('matches').insert(payloadWithLineup);
-    if(error && lineupJSON && /lineup/i.test(error.message||'')){
-      // Retry without lineup column if the DB schema has not been migrated yet
-      const retry = await sb.from('matches').insert(basePayload);
-      error = retry.error;
-      if(!error){ try{ toast && toast('Match enregistré (colonne lineup manquante dans Supabase)'); }catch(_){}}
-    }
+    let {error} = await sb.from('matches').insert(basePayload);
     if(error)throw error;
-    ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes','m-lineup'].forEach(id=>{const e=$(id);if(e)e.value='';});
+    ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
     try { window.resetEncoderChips && window.resetEncoderChips(); } catch(_){}
-    try { window.resetLineup && window.resetLineup(); } catch(_){}
     const{data}=await sb.from('matches').select('*').order('match_date');
     S.matches=data||[];
     renderMatches(); renderHome(); toast(msg('saved'));
