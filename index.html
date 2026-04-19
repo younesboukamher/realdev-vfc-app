@@ -743,6 +743,14 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* Ex2: favoris exos */
+.ex-card{position:relative;}
+.ex-fav-btn{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:all .15s;backdrop-filter:blur(4px);}
+.ex-fav-btn:hover{background:rgba(0,0,0,.75);transform:scale(1.1);}
+.ex-fav-btn.on{background:#f59e0b;color:#fff;}
+.ex-fav-btn.on:hover{background:#d97706;}
+.ex-card.is-fav{box-shadow:0 0 0 2px rgba(245,158,11,.5);}
+
 /* Med2: injury duration presets + countdown */
 .chip-dur{padding:6px 10px;border:1px solid var(--sep2);background:var(--ink2);color:var(--tx1);border-radius:999px;font:600 11px/1 var(--font);cursor:pointer;transition:all .15s;}
 .chip-dur:hover{background:var(--brand-dim);color:var(--brand);border-color:var(--brand);}
@@ -2692,7 +2700,7 @@ const sb = createClient(
 const S = {
   user:null, role:null, profile:null, lang:'fr', season:'2025-26',
   archiveMode:false, archiveSeason:null, // FIX P2 #8 - Season archive view-only
-  players:[], matches:[], injuries:[], injHistory:[],
+  players:[], matches:[], injuries:[], injHistory:[], favExercises:[],
   presences:[], scouting:[], plans:{},
   planIdx:null, expanded:new Set(),
   presStatus:{}, presRpe:{},
@@ -2950,6 +2958,15 @@ async function boot_app(user) {
   // FIX P0 #2 — fallback profile pour éviter crashes silencieux si row manquante
   S.profile=prof||{id:user.id,role:'player',full_name:user.email||'Utilisateur',players:null};
   S.role=(prof&&prof.role)||'player';
+  // Ex2 - favoris exos (Supabase user_profiles.favorite_exercises; fallback localStorage)
+  try {
+    if (prof && Array.isArray(prof.favorite_exercises)) {
+      S.favExercises = prof.favorite_exercises.slice();
+    } else {
+      const ls = localStorage.getItem('rdv_fav_ex_'+user.id);
+      S.favExercises = ls ? JSON.parse(ls) : [];
+    }
+  } catch(e){ console.warn('favExercises load failed:',e); S.favExercises=[]; }
   await loadAll();
   loadExerciseDB().catch(e=>console.warn('exercise DB load',e));
   splash_off();
@@ -4638,7 +4655,13 @@ window.openExercisePicker = function(onSelect, opts){
 
 function renderExPickerChips(){
   const el=$('ex-picker-chips'); if(!el||!EXERCISE_DB) return;
-  const cats=[{key:'all',label_fr:'Tous',label_nl:'Alle'}].concat(EXERCISE_DB.categories||[]);
+  const favCount = (S.favExercises||[]).length;
+  const favBase = S.lang==='nl' ? '⭐ Favorieten' : '⭐ Favoris';
+  const favLbl = favBase + (favCount?' ('+favCount+')':'');
+  const cats=[
+    {key:'all',label_fr:'Tous',label_nl:'Alle'},
+    {key:'fav',label_fr:favLbl,label_nl:favLbl}
+  ].concat(EXERCISE_DB.categories||[]);
   el.innerHTML=cats.map(c=>{
     const label=S.lang==='nl'?c.label_nl:c.label_fr;
     const on=EX_PICKER_STATE.cat===c.key?'on':'';
@@ -4656,8 +4679,10 @@ window.renderExPickerGrid = function(){
   const el=$('ex-picker-grid'); if(!el||!EXERCISE_DB) return;
   const q=($('ex-picker-q')?.value||'').toLowerCase().trim();
   const cat=EX_PICKER_STATE.cat;
+  const favs=new Set(S.favExercises||[]);
   const list=(EXERCISE_DB.exercises||[]).filter(ex=>{
-    if(cat!=='all' && ex.category!==cat) return false;
+    if(cat==='fav'){ if(!favs.has(ex.id)) return false; }
+    else if(cat!=='all' && ex.category!==cat) return false;
     if(!q) return true;
     const hay=(ex.title_fr+' '+ex.title_nl+' '+exCatLabel(ex.category)+' '+(ex.subcategory||'')).toLowerCase();
     return hay.includes(q);
@@ -4667,16 +4692,38 @@ window.renderExPickerGrid = function(){
     el.innerHTML=customBtn+'<div class="ex-picker-empty">'+(S.lang==='nl'?'Geen resultaat':'Aucun résultat')+'</div>';
     return;
   }
+  const favs2=new Set(S.favExercises||[]);
   el.innerHTML=customBtn+list.map(ex=>{
     const title=exT(ex,'title');
     const catLbl=exCatLabel(ex.category);
-    return '<div class="ex-card" onclick="window.pickExercise(\''+ex.id+'\')">'
+    const isFav=favs2.has(ex.id);
+    const starLbl=isFav?'★':'☆';
+    const aria=isFav?(S.lang==='nl'?'Verwijder uit favorieten':'Retirer des favoris'):(S.lang==='nl'?'Voeg toe aan favorieten':'Ajouter aux favoris');
+    return '<div class="ex-card '+(isFav?'is-fav':'')+'" onclick="window.pickExercise(\''+ex.id+'\')">'
+      +'<button class="ex-fav-btn '+(isFav?'on':'')+'" aria-label="'+aria+'" aria-pressed="'+isFav+'" onclick="event.stopPropagation();window.toggleExFav(\''+ex.id+'\')">'+starLbl+'</button>'
       +'<img class="ex-card-thumb" src="'+(ex.image_url||'')+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
       +'<div class="ex-card-body">'
       +'<div class="ex-card-title">'+title+'</div>'
       +'<div class="ex-card-meta"><span class="ex-card-cat">'+catLbl+'</span><span>⏱ '+ex.duration+'′</span><span>👥 '+ex.players_min+'+</span></div>'
       +'</div></div>';
   }).join('');
+};
+
+window.toggleExFav = async function(id){
+  if(!id) return;
+  const arr = Array.isArray(S.favExercises) ? S.favExercises.slice() : [];
+  const ix = arr.indexOf(id);
+  if(ix>=0) arr.splice(ix,1); else arr.push(id);
+  S.favExercises = arr;
+  try { renderExPickerChips(); renderExPickerGrid(); } catch(_){}
+  const uid = S.user && S.user.id;
+  if(uid){
+    try { localStorage.setItem('rdv_fav_ex_'+uid, JSON.stringify(arr)); } catch(_){}
+    try {
+      const { error } = await sb.rpc('set_favorite_exercises', { favs: arr });
+      if(error) console.warn('favorites RPC failed (localStorage kept):', error.message);
+    } catch(e){ console.warn('favorites RPC error (localStorage kept):', e); }
+  }
 };
 
 window.pickExercise = function(id){
