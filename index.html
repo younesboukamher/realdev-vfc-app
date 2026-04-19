@@ -761,6 +761,13 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* H6: Notes seance du jour (Home widget) */
+.h6-notes{margin:10px 14px;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);cursor:pointer;transition:background .15s,border-color .15s;}
+.h6-notes:hover{background:var(--ink2);border-left-color:var(--brand-dark,#15803d);}
+.h6-notes-title{font:800 10px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.h6-notes-body{font:500 12px/1.45 var(--font);color:var(--tx2);}
+.h6-notes-more{font:700 11px/1 var(--font);color:var(--brand);margin-top:6px;display:inline-block;}
+
 /* Sq10: Anniversaires prochains */
 .sq10-wrap{margin:10px 14px 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#6D2E46,#A26769);color:#fff;box-shadow:0 4px 14px rgba(109,46,70,.25);}
 .sq10-title{font:800 11px/1 var(--font);text-transform:uppercase;letter-spacing:1px;opacity:.9;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
@@ -3893,6 +3900,40 @@ function applyTranslations() {
 
 /* ════════ ACCUEIL ════════ */
 // H2 — Action du jour (4 regles ordonnees)
+// H6 — Notes seance du jour sur Home
+window.renderH6Notes = function(){
+  const ctn = document.getElementById('h6-notes-ctn');
+  if(!ctn) return;
+  ctn.innerHTML = '';
+  try{
+    const today = new Date();
+    const isoT = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    // Find a session today with notes
+    let found = null;
+    (S.matches||[]).forEach(m => {
+      const plan = S.plans && S.plans[m.id];
+      if(!plan || !plan.sessions) return;
+      plan.sessions.forEach((s,idx) => {
+        if(!s) return;
+        const d = s.date || s.session_date;
+        if(d && String(d).slice(0,10) === isoT && (s.notes||'').trim()){
+          if(!found) found = { match: m, idx, session: s };
+        }
+      });
+    });
+    if(!found) return;
+    const notes = (found.session.notes||'').trim();
+    const words = notes.split(/\s+/);
+    const preview = words.length > 30 ? words.slice(0,30).join(' ')+'…' : notes;
+    const more = words.length > 30 ? '<div class="h6-notes-more">Voir plus →</div>' : '';
+    ctn.innerHTML = '<div class="h6-notes" onclick="window.showPage && window.showPage(\'pg-planning\')" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'){window.showPage && window.showPage(\'pg-planning\');}">'
+      +'<div class="h6-notes-title">📝 Notes seance du jour</div>'
+      +'<div class="h6-notes-body">'+preview.replace(/</g,'&lt;')+'</div>'
+      +more
+      +'</div>';
+  }catch(e){ console.warn('renderH6Notes',e); }
+};
+
 window.renderHomeAction = function(){
   const el = document.getElementById('home-action');
   if(!el) return;
@@ -4128,9 +4169,18 @@ function renderHome() {
     }
   }
   $('home-kpis').innerHTML = kpiHtml;
+  // H6 : ensure container exists just below home-kpis
+  if(!document.getElementById('h6-notes-ctn')){
+    const c = document.createElement('div'); c.id = 'h6-notes-ctn';
+    const kp = document.getElementById('home-kpis');
+    if(kp && kp.parentNode) kp.parentNode.insertBefore(c, kp.nextSibling);
+  }
 
   /* H2 — Action du jour banner */
   try{ window.renderHomeAction && window.renderHomeAction(); }catch(e){ console.warn('renderHomeAction failed',e); }
+
+  /* H6 — Notes seance du jour */
+  try{ window.renderH6Notes && window.renderH6Notes(); }catch(e){ console.warn('renderH6Notes failed',e); }
 
   /* H3 — Timeline 7 jours */
   try{ window.renderHomeTimeline && window.renderHomeTimeline(); }catch(e){ console.warn('renderHomeTimeline failed',e); }
