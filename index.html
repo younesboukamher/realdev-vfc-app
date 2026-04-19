@@ -5524,9 +5524,18 @@ async function renderPlanning(){
   const sc=S.scouting.find(s=>s.opponent_name?.toLowerCase().includes((match.opponent||'').split(' ')[0].toLowerCase()));
   let plan=S.plans[match.id];
   if(!plan){
-    const{data}=await sb.from('training_plans').select('*').eq('match_id',match.id).maybeSingle();
+    let data=null;
+    try{
+      const resp=await sb.from('training_plans').select('*').eq('match_id',match.id).maybeSingle();
+      data = resp && resp.data;
+    }catch(e){ console.warn('training_plans load failed, trying local cache', e); }
+    // Pl1 — fallback local cache if Supabase absent or erroring
+    if(!data){
+      const cached = window.plLocalLoad && window.plLocalLoad(match.id);
+      if(cached){ plan = {...cached, _from_cache: true}; S.plans[match.id] = plan; }
+    }
     if(data){plan=data;S.plans[match.id]=data;}
-    else{const mc=generateMicrocycle(sc);plan={sessions:mc.sessions,week_note:'',analysis:mc.analysis};S.plans[match.id]=plan;}
+    if(!plan){const mc=generateMicrocycle(sc);plan={sessions:mc.sessions,week_note:'',analysis:mc.analysis};S.plans[match.id]=plan;}
   }
   const absent=S.injuries.map(i=>i.players?.name||'');
   let dLabel='';
@@ -5949,6 +5958,45 @@ function dayBlock(s,si,mid,absent){
 
 window.toggleDay=(mid,si)=>{const k=mid+'_'+si;S.expanded.has(k)?S.expanded.delete(k):S.expanded.add(k);renderPlanning();};
 window.setPlanIdx=idx=>{S.planIdx=idx;renderPlanning();};
+// Pl1 — Helpers localStorage fallback pour planning
+window.plLocalKey = function(mid){ return 'rdv_plan_'+mid; };
+window.plLocalSave = function(mid, plan){
+  try{
+    const payload = { sessions: plan.sessions||[], week_note: plan.week_note||'', analysis: plan.analysis||{consignes:[]}, saved_at: Date.now(), pending_sync: !!plan._pending_sync };
+    localStorage.setItem(window.plLocalKey(mid), JSON.stringify(payload));
+    return true;
+  }catch(e){ console.warn('plLocalSave failed', e); return false; }
+};
+window.plLocalLoad = function(mid){
+  try{
+    const raw = localStorage.getItem(window.plLocalKey(mid));
+    return raw ? JSON.parse(raw) : null;
+  }catch(_){ return null; }
+};
+window.plLocalFlushQueue = async function(){
+  try{
+    const keys = Object.keys(localStorage).filter(k=>k.startsWith('rdv_plan_'));
+    let flushed = 0;
+    for(const k of keys){
+      const mid = k.replace('rdv_plan_','');
+      const cached = window.plLocalLoad(mid);
+      if(!cached || !cached.pending_sync) continue;
+      try{
+        const { data, error } = await sb.from('training_plans').upsert({ match_id: mid, sessions: cached.sessions, week_note: cached.week_note }, { onConflict:'match_id' }).select().single();
+        if(!error && data){
+          const c = { ...cached, pending_sync: false };
+          localStorage.setItem(k, JSON.stringify(c));
+          if(S.plans && S.plans[mid]) S.plans[mid] = { ...S.plans[mid], id: data.id, updated_at: data.updated_at };
+          flushed++;
+        }
+      }catch(e){ console.warn('pl flush item failed', mid, e); }
+    }
+    if(flushed > 0 && typeof toast==='function') toast('\u2705 '+flushed+' planning(s) synchronise(s)');
+  }catch(e){ console.warn('plLocalFlushQueue error', e); }
+};
+window.addEventListener('online', ()=>{ setTimeout(()=>window.plLocalFlushQueue(), 1200); });
+window.addEventListener('load', ()=>{ if(navigator.onLine) setTimeout(()=>window.plLocalFlushQueue(), 2500); });
+
 // FIX P0 #4 — savePlan simplifié : id persisté + erreurs explicites + rollback silencieux
 window.savePlan=async mid=>{
   const plan=S.plans[mid];
@@ -5965,10 +6013,18 @@ window.savePlan=async mid=>{
     if(!resp.data) throw new Error('Supabase a retourné aucune donnée');
     // Merge en préservant les sessions locales + nouvel id
     S.plans[mid]={...plan, id:resp.data.id, updated_at:resp.data.updated_at};
+    // Pl1 — cache local apres success
+    try{ window.plLocalSave(mid, {...S.plans[mid], _pending_sync:false}); }catch(_){}
     toast('Planning sauvegardé ✓');
   }catch(e){
     console.error('savePlan error:', e);
-    toast('✗ Sauvegarde planning : '+(e.message||'erreur inconnue'));
+    // Pl1 — fallback localStorage si Supabase fail (offline / RLS / network)
+    try{
+      window.plLocalSave(mid, {...plan, _pending_sync:true});
+      toast('\ud83d\udce5 Planning en cache local — sync a la reconnexion');
+    }catch(_){
+      toast('✗ Sauvegarde planning : '+(e.message||'erreur inconnue'));
+    }
   }
 };
 /* ════════════════════════════════════════════════════════════════
