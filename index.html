@@ -761,6 +761,22 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* An1: Hero KPI Indice forme equipe */
+.an1-hero{margin:10px 14px 12px;padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,var(--brand),#15803d);color:#fff;display:flex;align-items:center;gap:16px;box-shadow:0 6px 18px rgba(22,163,74,.28);}
+.an1-hero.warn{background:linear-gradient(135deg,#f59e0b,#b45309);box-shadow:0 6px 18px rgba(245,158,11,.28);}
+.an1-hero.bad{background:linear-gradient(135deg,#ef4444,#991b1b);box-shadow:0 6px 18px rgba(239,68,68,.28);}
+.an1-ring{position:relative;width:84px;height:84px;flex-shrink:0;}
+.an1-ring svg{width:100%;height:100%;transform:rotate(-90deg);}
+.an1-ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.an1-ring-val{font:900 26px/1 var(--font);letter-spacing:-1px;}
+.an1-ring-unit{font:700 10px/1 var(--font);opacity:.85;margin-top:2px;}
+.an1-body{flex:1;min-width:0;}
+.an1-tag{font:800 10px/1 var(--font);text-transform:uppercase;letter-spacing:1px;opacity:.85;margin-bottom:4px;}
+.an1-title{font:800 17px/1.2 var(--font);margin-bottom:4px;}
+.an1-label{font:700 13px/1.3 var(--font);opacity:.95;}
+.an1-breakdown{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.an1-pill{padding:3px 8px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.22);border-radius:999px;font:700 9px/1 var(--font);text-transform:uppercase;letter-spacing:.3px;}
+
 /* St2: light theme override */
 html[data-theme="light"] {
   --ink:       #F7F8FA;
@@ -2844,6 +2860,8 @@ window.saveInj()">Enregistrer</button>
 
       <!-- ════ VUE COACH ════ -->
       <div id="ana-coach-view">
+        <!-- An1: Hero KPI Indice forme equipe -->
+        <div id="ana-form-index"></div>
         <!-- KPIs globaux -->
         <div id="ana-kpis"></div>
 
@@ -7737,6 +7755,94 @@ function radarSVG(player) {
   return '<svg class="radar-svg" width="220" height="200" viewBox="0 0 220 200">'+grid+poly+labels+'</svg>';
 }
 
+// An1 — Hero KPI : Indice forme equipe
+// Formule : winRate*0.40 + goalDiff*0.20 + showup*0.20 + (1-injuries/squad)*0.20
+window.computeFormIndex = function(){
+  const D = (typeof LOOKER_DATA !== 'undefined' && LOOKER_DATA) ? LOOKER_DATA : null;
+  const G = D && D.global ? D.global : null;
+  // 1) Win rate (0..100)
+  let winRate = 0;
+  try{
+    const matches = (S.matches||[]).filter(m => m && m.result);
+    if(matches.length){
+      const wins = matches.filter(m => (m.result||'').toUpperCase().startsWith('W') || m.result === 'V').length;
+      winRate = Math.round(wins / matches.length * 100);
+    } else if(G && G.matches){
+      // Fallback via LOOKER_DATA if available
+      const w = G.wins || 0, tot = G.matches || 1;
+      winRate = Math.round(w / tot * 100);
+    }
+  }catch(_){}
+  // 2) Goal diff normalise (-10..+10 maps to 0..100, clamp)
+  let goalDiffScore = 50;
+  try{
+    let gf = 0, ga = 0;
+    if(G){ gf = G.goals_for||0; ga = G.goals_against||0; }
+    else {
+      (S.matches||[]).forEach(m => {
+        if(m && m.result){
+          gf += (m.goals_for||m.gf||0);
+          ga += (m.goals_against||m.ga||0);
+        }
+      });
+    }
+    const diff = gf - ga;
+    goalDiffScore = Math.max(0, Math.min(100, Math.round((diff + 10) / 20 * 100)));
+  }catch(_){}
+  // 3) Showup rate
+  let showup = 0;
+  try{
+    const pres = S.presences||[];
+    if(pres.length){
+      const totSlots = pres.length;
+      const present = pres.filter(p => (p.status||'P') === 'P').length;
+      showup = Math.round(present / totSlots * 100);
+    }
+  }catch(_){}
+  // 4) Injuries ratio
+  let injuryHealth = 100;
+  try{
+    const squad = (S.players||[]).length || 1;
+    const act = (S.injuries||[]).filter(i => (i.is_active===true || i.status==='active')).length;
+    const ratio = act / squad;
+    injuryHealth = Math.max(0, Math.round((1 - ratio) * 100));
+  }catch(_){}
+  const score = Math.round(winRate*0.40 + goalDiffScore*0.20 + showup*0.20 + injuryHealth*0.20);
+  return { score, winRate, goalDiffScore, showup, injuryHealth };
+};
+
+window.renderFormIndex = function(){
+  const el = document.getElementById('ana-form-index');
+  if(!el) return;
+  const r = window.computeFormIndex();
+  const score = Math.max(0, Math.min(100, r.score));
+  let label, cls;
+  if(score >= 75){ label = 'Excellente'; cls = ''; }
+  else if(score >= 55){ label = 'Bonne'; cls = ''; }
+  else if(score >= 35){ label = 'Moyenne'; cls = 'warn'; }
+  else { label = 'Critique'; cls = 'bad'; }
+  // SVG ring
+  const cx = 42, cy = 42, rad = 34, circ = 2 * Math.PI * rad;
+  const dash = (score / 100) * circ;
+  const ring = '<svg viewBox="0 0 84 84" aria-hidden="true">'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="6"/>'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'"/>'
+    +'</svg>';
+  el.innerHTML = '<div class="an1-hero '+cls+'" role="status" aria-label="Indice forme equipe : '+score+' sur 100, '+label+'">'
+    +'<div class="an1-ring">'+ring+'<div class="an1-ring-text"><div class="an1-ring-val">'+score+'</div><div class="an1-ring-unit">/100</div></div></div>'
+    +'<div class="an1-body">'
+      +'<div class="an1-tag">Indice de forme</div>'
+      +'<div class="an1-title">Equipe '+label+'</div>'
+      +'<div class="an1-breakdown">'
+        +'<span class="an1-pill">Victoires '+r.winRate+'%</span>'
+        +'<span class="an1-pill">Buts '+r.goalDiffScore+'</span>'
+        +'<span class="an1-pill">Presences '+r.showup+'%</span>'
+        +'<span class="an1-pill">Sante '+r.injuryHealth+'%</span>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+};
+
 /* ─── Vue Coach : tableau global ─── */
 function renderAnalyticsCoach() {
   const D = LOOKER_DATA;
@@ -7762,6 +7868,9 @@ function renderAnalyticsCoach() {
       <div class="ana-kpi"><div class="ana-kpi-val gold">${diff>0?'+':''}${diff}</div><div class="ana-kpi-lbl">Différentiel</div></div>
       <div class="ana-kpi"><div class="ana-kpi-val blue">${G.team_efficiency}%</div><div class="ana-kpi-lbl">Efficacité</div></div>
     </div>`;
+
+  // An1 — Hero KPI Indice forme equipe
+  try{ window.renderFormIndex && window.renderFormIndex(); }catch(e){ console.warn('renderFormIndex',e); }
 
   // ── Onglets Coach ──
   $('ana-tabs-coach').innerHTML = `
