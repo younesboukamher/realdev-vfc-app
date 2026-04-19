@@ -779,6 +779,19 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .sq10-age{font:700 11px/1 var(--font);opacity:.85;}
 .sq10-empty{font:600 11px/1.3 var(--font);opacity:.7;padding:6px 0;text-align:center;}
 
+/* H9: Quick actions FAB Home */
+.h9-fab-wrap{position:fixed;bottom:86px;right:16px;z-index:80;display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;}
+.h9-fab-main{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand-dark,#15803d));color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 8px 20px rgba(22,163,74,.4);display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.16,1,.3,1);}
+.h9-fab-main:hover{filter:brightness(1.1);}
+.h9-fab-wrap.open .h9-fab-main{transform:rotate(45deg);}
+.h9-fab-items{display:flex;flex-direction:column-reverse;gap:8px;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .2s,transform .2s;}
+.h9-fab-wrap.open .h9-fab-items{opacity:1;pointer-events:auto;transform:translateY(0);}
+.h9-fab-item{display:flex;align-items:center;gap:8px;cursor:pointer;background:transparent;border:none;padding:0;}
+.h9-fab-item-lbl{background:var(--card);color:var(--tx1);padding:8px 12px;border-radius:10px;font:700 12px/1 var(--font);box-shadow:0 4px 12px rgba(0,0,0,.15);border:1px solid var(--line);}
+.h9-fab-item-icon{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.h9-fab-item:hover .h9-fab-item-lbl,.h9-fab-item:hover .h9-fab-item-icon{background:var(--brand);color:#fff;border-color:var(--brand);}
+@media (max-width: 480px){ .h9-fab-wrap{bottom:76px;} }
+
 /* Sq6: Stats par poste */
 .sq6-group{margin:12px 14px;padding:14px;border-radius:12px;background:var(--card);border:1px solid var(--line);}
 .sq6-g-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line);}
@@ -3890,6 +3903,8 @@ window.renderTopbarSub = function(pageName){
 };
 
 window.nav = (name, btn) => {
+  // H9: cleanup FAB on nav away from home
+  if(name !== 'home' && window.h9CleanupFab) window.h9CleanupFab();
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   $('pg-'+name)?.classList.add('on');
   document.querySelectorAll('.nb-tab').forEach(t=>t.classList.remove('on'));
@@ -4236,6 +4251,9 @@ function renderHome() {
 
   /* H2 — Action du jour banner */
   try{ window.renderHomeAction && window.renderHomeAction(); }catch(e){ console.warn('renderHomeAction failed',e); }
+
+  /* H9 — Quick actions FAB (coach only) */
+  try{ window.renderH9Fab && window.renderH9Fab(); }catch(e){ console.warn('renderH9Fab',e); }
 
   /* H6 — Notes seance du jour */
   try{ window.renderH6Notes && window.renderH6Notes(); }catch(e){ console.warn('renderH6Notes failed',e); }
@@ -9470,6 +9488,80 @@ function renderCoachGoals() {
 }
 
 /* ── Boot ── */
+// H9 — Quick actions FAB Home (coach only)
+window.renderH9Fab = function(){
+  try{
+    const isStaff = ['admin','coach','assistant','physio','gk'].includes(S.role);
+    const existing = document.getElementById('h9-fab');
+    const onHome = document.getElementById('pg-home') && document.getElementById('pg-home').classList.contains('on');
+    if(!isStaff || !onHome){
+      if(existing) existing.remove();
+      return;
+    }
+    if(existing) return; // already mounted
+    const wrap = document.createElement('div');
+    wrap.id = 'h9-fab';
+    wrap.className = 'h9-fab-wrap';
+    wrap.innerHTML = ''
+      +'<button type="button" class="h9-fab-main" aria-label="Actions rapides" aria-expanded="false">+</button>'
+      +'<div class="h9-fab-items">'
+        +'<button type="button" class="h9-fab-item" data-act="match">'
+          +'<span class="h9-fab-item-lbl">Nouveau match</span>'
+          +'<span class="h9-fab-item-icon">⚽</span>'
+        +'</button>'
+        +'<button type="button" class="h9-fab-item" data-act="injury">'
+          +'<span class="h9-fab-item-lbl">Declarer blessure</span>'
+          +'<span class="h9-fab-item-icon">🏥</span>'
+        +'</button>'
+        +'<button type="button" class="h9-fab-item" data-act="presence">'
+          +'<span class="h9-fab-item-lbl">Pointer seance</span>'
+          +'<span class="h9-fab-item-icon">✅</span>'
+        +'</button>'
+        +'<button type="button" class="h9-fab-item" data-act="squad">'
+          +'<span class="h9-fab-item-lbl">Voir effectif</span>'
+          +'<span class="h9-fab-item-icon">👥</span>'
+        +'</button>'
+      +'</div>';
+    document.body.appendChild(wrap);
+    const main = wrap.querySelector('.h9-fab-main');
+    main.addEventListener('click', () => {
+      wrap.classList.toggle('open');
+      main.setAttribute('aria-expanded', wrap.classList.contains('open'));
+    });
+    wrap.querySelectorAll('.h9-fab-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const act = btn.getAttribute('data-act');
+        wrap.classList.remove('open');
+        main.setAttribute('aria-expanded','false');
+        if(act === 'match'){
+          if(window.nav) window.nav('matchs', document.querySelector('[data-p=matchs]'));
+          setTimeout(() => { const tab = document.querySelector('[onclick*="tm-add"]'); if(tab) tab.click(); }, 80);
+        } else if(act === 'injury'){
+          if(window.nav) window.nav('medical', document.querySelector('[data-p=medical]'));
+          setTimeout(() => { const tab = document.querySelector('[onclick*="ti-declare"]'); if(tab) tab.click(); }, 80);
+        } else if(act === 'presence'){
+          if(window.nav) window.nav('presences', document.querySelector('[data-p=presences]'));
+        } else if(act === 'squad'){
+          if(window.nav) window.nav('squad', document.querySelector('[data-p=squad]'));
+        }
+      });
+    });
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if(wrap.classList.contains('open') && !wrap.contains(e.target)){
+        wrap.classList.remove('open');
+        main.setAttribute('aria-expanded','false');
+      }
+    });
+  }catch(e){ console.warn('renderH9Fab',e); }
+};
+
+// Remove FAB when leaving home
+window.h9CleanupFab = function(){
+  const el = document.getElementById('h9-fab');
+  if(el) el.remove();
+};
+
 // Of7 — Install prompt PWA (Android beforeinstallprompt + iOS Share instructions)
 (function(){
   try{
