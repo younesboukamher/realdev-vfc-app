@@ -760,6 +760,18 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Pd2: modal options export PDF */
+.pdf-opts-grid{padding:16px 18px;display:grid;gap:12px;}
+.pdf-opts-row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+.pdf-opts-lbl{font:700 12px/1 var(--font);color:var(--tx1);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.pdf-opts-sub{font:500 10px/1.3 var(--font);color:var(--tx3);margin-top:-4px;margin-bottom:8px;}
+.pdf-opts-choices{display:flex;gap:6px;flex-wrap:wrap;}
+.pdf-opts-choice{flex:1;min-width:70px;padding:8px 10px;background:var(--bg);border:1px solid var(--line);color:var(--tx2);border-radius:8px;font:600 11px/1 var(--font);cursor:pointer;text-align:center;}
+.pdf-opts-choice.on{background:var(--brand);color:#fff;border-color:var(--brand);}
+.pdf-opts-choice:hover:not(.on){background:var(--brand-dim);color:var(--brand);border-color:var(--brand);}
+.pdf-opts-footer{padding:0 18px 16px;display:flex;gap:8px;}
+.pdf-opts-footer .btn{flex:1;}
+
 /* Sq2: podium buteurs + passeurs (2 colonnes) */
 .sq2-podium-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px 4px;}
 @media (max-width:380px){.sq2-podium-wrap{grid-template-columns:1fr;}}
@@ -4109,9 +4121,78 @@ window.closePdfPreview = () => {
   } catch(e) {}
 };
 
-window.exportPlanningPDF = async (mid) => {
+// Pd2 — Options export PDF (modal + persistance localStorage)
+window._pdfOptsDefaults = { lang: 'both', svg: true, thumb: true, paper: 'A4' };
+window.getPdfOpts = function(){
+  try{
+    const s = localStorage.getItem('rdv_pdf_opts');
+    if(s){ return Object.assign({}, window._pdfOptsDefaults, JSON.parse(s)); }
+  }catch(_){}
+  return Object.assign({}, window._pdfOptsDefaults);
+};
+window._pdfOptsMid = null;
+window._pdfOptsDraft = null;
+window.openPdfOpts = function(mid){
+  window._pdfOptsMid = mid;
+  window._pdfOptsDraft = window.getPdfOpts();
+  window.renderPdfOptsBody();
+  try{ open_modal('modal-pdf-opts'); }catch(e){ console.warn('open_modal failed',e); window.confirmPdfOpts(); }
+};
+window.setPdfOpt = function(key, val){
+  if(!window._pdfOptsDraft) window._pdfOptsDraft = window.getPdfOpts();
+  if(val === 'true') val = true;
+  else if(val === 'false') val = false;
+  window._pdfOptsDraft[key] = val;
+  window.renderPdfOptsBody();
+};
+window.renderPdfOptsBody = function(){
+  const el = document.getElementById('pdf-opts-grid');
+  if(!el) return;
+  const o = window._pdfOptsDraft || window.getPdfOpts();
+  const row = (lbl, sub, key, choices)=>{
+    const btns = choices.map(c=>{
+      const on = (String(o[key]) === String(c.v)) ? 'on' : '';
+      return '<button type="button" class="pdf-opts-choice '+on+'" onclick="window.setPdfOpt(\''+key+'\',\''+c.v+'\')">'+c.lbl+'</button>';
+    }).join('');
+    return '<div class="pdf-opts-row">'
+      +'<div class="pdf-opts-lbl">'+lbl+'</div>'
+      +(sub?'<div class="pdf-opts-sub">'+sub+'</div>':'')
+      +'<div class="pdf-opts-choices">'+btns+'</div>'
+    +'</div>';
+  };
+  el.innerHTML = [
+    row('Langue', 'Contenu bilingue ou langue unique',
+      'lang', [{v:'fr',lbl:'FR seul'},{v:'nl',lbl:'NL seul'},{v:'both',lbl:'Les deux'}]),
+    row('Illustrations (SVG)', 'Schemas tactiques dans chaque exercice',
+      'svg', [{v:'true',lbl:'Avec'},{v:'false',lbl:'Sans'}]),
+    row('Vignettes (photos)', 'Petite image a cote du titre exercice',
+      'thumb', [{v:'true',lbl:'Avec'},{v:'false',lbl:'Sans'}]),
+    row('Format papier', 'A4 (Europe) ou US Letter',
+      'paper', [{v:'A4',lbl:'A4'},{v:'Letter',lbl:'US Letter'}]),
+  ].join('');
+};
+window.confirmPdfOpts = function(){
+  const o = window._pdfOptsDraft || window.getPdfOpts();
+  try{ localStorage.setItem('rdv_pdf_opts', JSON.stringify(o)); }catch(_){}
+  const mid = window._pdfOptsMid;
+  try{ close_modal('modal-pdf-opts'); }catch(_){}
+  if(mid && typeof window.exportPlanningPDF==='function'){
+    window.exportPlanningPDF(mid, o);
+  }
+};
+
+window.exportPlanningPDF = async (mid, __pdfOpts) => {
   const match = S.matches.find(m => m.id === mid);
   if (!match) { toast('Match introuvable'); return; }
+  // Pd2 — normalize options (fallback to stored defaults)
+  const _opts = (__pdfOpts && typeof __pdfOpts === 'object')
+    ? Object.assign({}, (window.getPdfOpts ? window.getPdfOpts() : {lang:'both',svg:true,thumb:true,paper:'A4'}), __pdfOpts)
+    : (window.getPdfOpts ? window.getPdfOpts() : {lang:'both',svg:true,thumb:true,paper:'A4'});
+  const _pdfLang = _opts.lang || 'both';
+  const _pdfSvg = _opts.svg !== false;
+  const _pdfThumb = _opts.thumb !== false;
+  const _pdfPaper = _opts.paper || 'A4';
+  console.log('[exportPDF] options=', _opts);
   const plan = (S.plans || {})[mid];
   if (!plan || !Array.isArray(plan.sessions) || plan.sessions.length === 0) {
     toast('Aucune séance planifiée pour ce match'); return;
@@ -4388,23 +4469,27 @@ window.exportPlanningPDF = async (mid) => {
           intensity ? `<span class="chip chip-int">${esc(intensity)}</span>` : ''
         ].filter(Boolean).join('');
 
-        const thumbHtml = thumb
+        const thumbHtml = (_pdfThumb && thumb)
           ? `<img class="exo-thumb" src="${thumb}" alt="">`
-          : `<div class="exo-thumb exo-thumb-empty"></div>`;
+          : (_pdfThumb ? `<div class="exo-thumb exo-thumb-empty"></div>` : '');
 
         const section = (label, fr, nl) => {
-          if (!fr && !nl) return '';
+          const showFr = _pdfLang !== 'nl';
+          const showNl = _pdfLang !== 'fr';
+          if (!(showFr && fr) && !(showNl && nl)) return '';
           return `
             <div class="exo-section">
               <div class="exo-label">${esc(label)}</div>
-              ${fr ? `<div class="exo-text-fr">${esc(fr)}</div>` : ''}
-              ${nl ? `<div class="exo-text-nl">${esc(nl)}</div>` : ''}
+              ${(showFr && fr) ? `<div class="exo-text-fr">${esc(fr)}</div>` : ''}
+              ${(showNl && nl) ? `<div class="exo-text-nl">${esc(nl)}</div>` : ''}
             </div>`;
         };
 
         const listSection = (label, listFr, listNl, ordered) => {
-          const hasFr = Array.isArray(listFr) && listFr.length;
-          const hasNl = Array.isArray(listNl) && listNl.length;
+          const showFr = _pdfLang !== 'nl';
+          const showNl = _pdfLang !== 'fr';
+          const hasFr = showFr && Array.isArray(listFr) && listFr.length;
+          const hasNl = showNl && Array.isArray(listNl) && listNl.length;
           if (!hasFr && !hasNl) return '';
           const tag = ordered ? 'ol' : 'ul';
           const frHtml = hasFr ? `<${tag} class="lst-fr">${listFr.map(i => `<li>${esc(i)}</li>`).join('')}</${tag}>` : '';
@@ -4430,7 +4515,7 @@ window.exportPlanningPDF = async (mid) => {
               ${thumbHtml}
               <div class="exo-info">
                 <div class="exo-title-fr">${esc(titleFr)}</div>
-                ${titleNl ? `<div class="exo-title-nl">${esc(titleNl)}</div>` : ''}
+                ${(_pdfLang !== 'fr' && titleNl) ? `<div class="exo-title-nl">${esc(titleNl)}</div>` : ''}
                 <div class="exo-chips">${chipsHtml}</div>
               </div>
             </div>
@@ -4489,7 +4574,7 @@ window.exportPlanningPDF = async (mid) => {
 
     // 8. CSS — version popup (non-scoped, classes "nues" car document popup isolé)
     const cssPopup = `
-      @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+      @page { size: ${_pdfPaper === 'Letter' ? 'letter' : 'A4'}; margin: 18mm 16mm 20mm 16mm; }
       * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       html, body { margin: 0; padding: 0; background:#fff; color:#1f2937;
         font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -4765,7 +4850,7 @@ window.exportPlanningPDF = async (mid) => {
           background: #fff;
         }
         body.pdf-preview-mode { overflow: hidden; }
-        @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+        @page { size: ${_pdfPaper === 'Letter' ? 'letter' : 'A4'}; margin: 18mm 16mm 20mm 16mm; }
         @media print {
           body.pdf-preview-mode > *:not(#pdf-preview-overlay) { display: none !important; }
           body.pdf-preview-mode { overflow: visible !important; background: #fff !important; }
@@ -5610,7 +5695,7 @@ async function renderPlanning(){
         oninput="S.plans['${match.id}'].week_note=this.value">${plan.week_note||''}</textarea>
       <div style="display:flex;gap:6px;margin-top:10px;">
         <button class="btn btn-green" style="flex:2" onclick="savePlan('${match.id}')">Sauvegarder le planning</button>
-        <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="exportPlanningPDF('${match.id}')" aria-label="Exporter le planning en PDF">📄 Export PDF</button>
+        <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="window.openPdfOpts('${match.id}')" aria-label="Exporter le planning en PDF">📄 Export PDF</button>
         <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="exportMatchPNG('${match.id}')" aria-label="Exporter la fiche match en PNG pour WhatsApp">🖼️ Fiche PNG</button>
       </div>
     </div><div style="height:16px;"></div>`:'<div style="height:16px;"></div>'}
@@ -8227,5 +8312,22 @@ window.applyUpdate = () => {
   }
 };
 </script>
+<!-- Pd2: modal options export PDF -->
+<div class="modal" id="modal-pdf-opts" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pdf-opts-title">
+  <div class="modal-sheet sheet-full" role="document">
+    <div class="modal-head">
+      <div class="modal-title" id="pdf-opts-title">Options export PDF</div>
+      <button class="modal-close" aria-label="Fermer" onclick="close_modal('modal-pdf-opts')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="pdf-opts-grid" id="pdf-opts-grid"></div>
+    </div>
+    <div class="pdf-opts-footer">
+      <button class="btn btn-outline" onclick="close_modal('modal-pdf-opts')">Annuler</button>
+      <button class="btn btn-green" onclick="window.confirmPdfOpts()">Exporter PDF</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
