@@ -760,6 +760,16 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Of3+Of2: bouton force-sync + badge en topbar */
+.sync-pending-btn{display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.45);color:#fbbf24;font:700 11px/1 var(--font);padding:4px 8px;border-radius:999px;cursor:pointer;transition:all .15s;}
+.sync-pending-btn:hover{background:rgba(245,158,11,.28);transform:scale(1.02);}
+.sync-pending-btn[hidden]{display:none!important;}
+.sync-pending-btn.syncing{animation:sync-rot 1s linear infinite;pointer-events:none;opacity:.7;}
+.sync-pending-btn .sp-ic{font-size:12px;line-height:1;}
+.sync-pending-btn .sp-count{font-weight:800;min-width:12px;text-align:center;}
+@keyframes sync-rot{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+@media (max-width:480px){ .sync-pending-btn{padding:3px 6px;font-size:10px;} }
+
 /* Sq4: alertes cumul cartons - banner p360 */
 .p360-susp-banner{margin:10px 16px 0;padding:10px 12px;border-radius:10px;display:flex;gap:10px;align-items:center;font:600 12px/1.35 var(--font);border:1px solid transparent;}
 .p360-susp-banner .ic{font-size:18px;line-height:1;}
@@ -2291,6 +2301,9 @@ function generateMicrocycle(scouting) {
       </div>
     </div>
     <div class="topbar-right">
+      <button id="sync-pending-btn" class="sync-pending-btn" onclick="window.forceSyncNow()" aria-label="Synchroniser les actions en attente" hidden>
+        <span class="sp-ic">🔄</span><span class="sp-count" id="sync-pending-count">0</span>
+      </button>
       <span class="top-badge" id="role-pill"></span>
       <span class="version-badge" id="version-badge">v1.14.0</span>
       <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
@@ -3293,6 +3306,7 @@ async function queueOfflineOp(op){
       tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error);
     });
   }catch(e){ console.warn('queueOfflineOp failed:',e); return false; }
+  finally{ try{ window.renderSyncBadge && window.renderSyncBadge(); }catch(_){} }
 }
 async function flushOfflineQueue(){
   try{
@@ -3322,9 +3336,62 @@ async function flushOfflineQueue(){
     }
     if(ok){ toast(`✓ ${ok} action(s) synchronisée(s)`); const{data}=await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300); S.presences=data||[]; renderPresences(); renderHome(); }
   }catch(e){ console.warn('flushOfflineQueue error:',e); }
+  finally{ try{ window.renderSyncBadge && window.renderSyncBadge(); }catch(_){} }
 }
+// Of3+Of2 — Compteur actions pending + Force sync
+window.getPendingCount = async function(){
+  try{
+    const db = await _openIdb();
+    return await new Promise((res,rej)=>{
+      const tx = db.transaction(OFFLINE_STORE,'readonly');
+      const req = tx.objectStore(OFFLINE_STORE).count();
+      req.onsuccess = ()=>res(req.result||0);
+      req.onerror = ()=>rej(req.error);
+    });
+  }catch(_){ return 0; }
+};
+
+window.renderSyncBadge = async function(){
+  try{
+    const n = await window.getPendingCount();
+    const btn = document.getElementById('sync-pending-btn');
+    const cnt = document.getElementById('sync-pending-count');
+    if(!btn || !cnt) return;
+    if(n > 0){
+      cnt.textContent = String(n);
+      btn.hidden = false;
+      btn.title = n+' action'+(n>1?'s':'')+' en attente de sync';
+    } else {
+      btn.hidden = true;
+    }
+  }catch(_){ }
+};
+
+window.forceSyncNow = async function(){
+  const btn = document.getElementById('sync-pending-btn');
+  if(!navigator.onLine){
+    if(typeof toast==='function') toast('\u26a0\ufe0f Hors-ligne \u2014 sync impossible');
+    return;
+  }
+  try{
+    if(btn) btn.classList.add('syncing');
+    if(typeof toast==='function') toast('\ud83d\udd04 Synchronisation forc\u00e9e\u2026');
+    await flushOfflineQueue();
+  }catch(e){ console.warn('forceSyncNow failed',e); }
+  finally{
+    if(btn) btn.classList.remove('syncing');
+    window.renderSyncBadge();
+  }
+};
+
+// Hook refresh badge on online/offline events
+window.addEventListener('online', ()=>window.renderSyncBadge());
+window.addEventListener('offline', ()=>window.renderSyncBadge());
+// Refresh periodique (toutes les 15s)
+setInterval(()=>{ try{ window.renderSyncBadge(); }catch(_){} }, 15000);
+
 // Tente flush au démarrage si en ligne
-window.addEventListener('load',()=>{ if(navigator.onLine) setTimeout(flushOfflineQueue,1500); });
+window.addEventListener('load',()=>{ if(navigator.onLine) setTimeout(flushOfflineQueue,1500); setTimeout(()=>window.renderSyncBadge && window.renderSyncBadge(), 500); });
 
 /* ── Navigation ── */
 const PAGE_NAMES=()=>({home:msg('home'),presences:msg('presences'),matchs:msg('matchs'),medical:msg('medical'),planning:msg('planning'),squad:msg('squad'),profile:msg('profile'),stats:'Stats'});
