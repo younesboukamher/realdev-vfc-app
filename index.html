@@ -743,6 +743,16 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* Ex1: filtres multi-criteres library */
+.ex-picker-filters{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:10px;margin:8px 0;display:flex;flex-direction:column;gap:8px;}
+.ex-filt-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.ex-filt-lbl{font:700 11px/1 var(--font);color:var(--tx2);text-transform:uppercase;letter-spacing:.6px;min-width:72px;}
+.ex-filt-chip{padding:6px 10px;border:1px solid var(--sep2);background:var(--ink1);color:var(--tx1);border-radius:999px;font:600 12px/1 var(--font);cursor:pointer;transition:all .15s;}
+.ex-filt-chip:hover{border-color:var(--brand);color:var(--brand);}
+.ex-filt-chip.on{background:var(--brand);color:#fff;border-color:var(--brand);}
+.ex-filt-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;background:var(--brand);color:#fff;border-radius:999px;font:700 10px/1 var(--font);}
+#ex-picker-filters-btn[aria-expanded="true"]{border-color:var(--brand);color:var(--brand);}
+
 /* Ex2: favoris exos */
 .ex-card{position:relative;}
 .ex-fav-btn{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:all .15s;backdrop-filter:blur(4px);}
@@ -2553,8 +2563,35 @@ window.saveInj()">Enregistrer</button>
   <div class="sheet" style="max-width:640px;">
     <button class="sheet-close" onclick="window.close_modal('modal-ex-picker')">✕</button>
     <div class="sheet-title" id="modal-ex-picker-title">Choisir un exercice</div>
-    <div class="ex-picker-search">
-      <input type="search" id="ex-picker-q" placeholder="Rechercher…" oninput="window.renderExPickerGrid()">
+    <div class="ex-picker-search" style="display:flex;gap:6px;align-items:center;">
+      <input type="search" id="ex-picker-q" placeholder="Rechercher…" oninput="window.renderExPickerGrid()" style="flex:1;">
+      <button type="button" id="ex-picker-filters-btn" class="btn btn-outline btn-sm" style="white-space:nowrap;padding:8px 12px;" onclick="window.toggleExFiltersPanel()" aria-expanded="false" aria-controls="ex-picker-filters">Filtres <span id="ex-picker-filters-badge" class="ex-filt-badge" hidden>0</span></button>
+    </div>
+    <div id="ex-picker-filters" class="ex-picker-filters" hidden>
+      <div class="ex-filt-row">
+        <span class="ex-filt-lbl">Intensité</span>
+        <button type="button" class="ex-filt-chip on" data-filt="intensity" data-val="all" onclick="window.setExFilter('intensity','all')">Toutes</button>
+        <button type="button" class="ex-filt-chip" data-filt="intensity" data-val="faible" onclick="window.setExFilter('intensity','faible')">Faible</button>
+        <button type="button" class="ex-filt-chip" data-filt="intensity" data-val="moyenne" onclick="window.setExFilter('intensity','moyenne')">Moyenne</button>
+        <button type="button" class="ex-filt-chip" data-filt="intensity" data-val="élevée" onclick="window.setExFilter('intensity','élevée')">Élevée</button>
+      </div>
+      <div class="ex-filt-row">
+        <span class="ex-filt-lbl">Durée</span>
+        <button type="button" class="ex-filt-chip on" data-filt="duration" data-val="all" onclick="window.setExFilter('duration','all')">Toutes</button>
+        <button type="button" class="ex-filt-chip" data-filt="duration" data-val="short" onclick="window.setExFilter('duration','short')">≤ 6 min</button>
+        <button type="button" class="ex-filt-chip" data-filt="duration" data-val="mid" onclick="window.setExFilter('duration','mid')">7–10 min</button>
+        <button type="button" class="ex-filt-chip" data-filt="duration" data-val="long" onclick="window.setExFilter('duration','long')">> 10 min</button>
+      </div>
+      <div class="ex-filt-row">
+        <span class="ex-filt-lbl">Joueurs</span>
+        <button type="button" class="ex-filt-chip on" data-filt="players" data-val="all" onclick="window.setExFilter('players','all')">Tous</button>
+        <button type="button" class="ex-filt-chip" data-filt="players" data-val="few" onclick="window.setExFilter('players','few')">≤ 4</button>
+        <button type="button" class="ex-filt-chip" data-filt="players" data-val="mid" onclick="window.setExFilter('players','mid')">5–8</button>
+        <button type="button" class="ex-filt-chip" data-filt="players" data-val="many" onclick="window.setExFilter('players','many')">≥ 9</button>
+      </div>
+      <div class="ex-filt-row" style="justify-content:flex-end;border-top:1px dashed var(--sep2);padding-top:8px;margin-top:4px;">
+        <button type="button" class="btn btn-sm btn-outline" onclick="window.resetExFilters()" style="padding:6px 12px;">Réinitialiser</button>
+      </div>
     </div>
     <div class="ex-picker-chips" id="ex-picker-chips"></div>
     <div class="ex-picker-grid" id="ex-picker-grid"></div>
@@ -4607,7 +4644,7 @@ async function renderPlanning(){
 
 /* ════════ EXERCISE DB — Planning v2 ════════ */
 var EXERCISE_DB = null;
-var EX_PICKER_STATE = { cat:'all', onSelect:null };
+var EX_PICKER_STATE = { cat:'all', onSelect:null, intensity:'all', duration:'all', players:'all' };
 
 async function loadExerciseDB(){
   if(EXERCISE_DB) return EXERCISE_DB;
@@ -4641,6 +4678,15 @@ window.openExercisePicker = function(onSelect, opts){
   opts=opts||{};
   EX_PICKER_STATE.onSelect=onSelect;
   EX_PICKER_STATE.cat=opts.cat||'all';
+  EX_PICKER_STATE.intensity='all';
+  EX_PICKER_STATE.duration='all';
+  EX_PICKER_STATE.players='all';
+  try { window.updateExFiltersBadge && window.updateExFiltersBadge(); } catch(_){}
+  try {
+    const panel=$('ex-picker-filters'); if(panel) panel.hidden=true;
+    const btn=$('ex-picker-filters-btn'); if(btn) btn.setAttribute('aria-expanded','false');
+    document.querySelectorAll('.ex-filt-chip').forEach(b=>{ b.classList.toggle('on', b.getAttribute('data-val')==='all'); });
+  } catch(_){}
   const titleEl=$('modal-ex-picker-title');
   if(titleEl) titleEl.textContent = opts.title || (S.lang==='nl'?'Kies oefening':'Choisir un exercice');
   const qEl=$('ex-picker-q');
@@ -4680,9 +4726,25 @@ window.renderExPickerGrid = function(){
   const q=($('ex-picker-q')?.value||'').toLowerCase().trim();
   const cat=EX_PICKER_STATE.cat;
   const favs=new Set(S.favExercises||[]);
+  const fInt = EX_PICKER_STATE.intensity || 'all';
+  const fDur = EX_PICKER_STATE.duration || 'all';
+  const fPla = EX_PICKER_STATE.players || 'all';
   const list=(EXERCISE_DB.exercises||[]).filter(ex=>{
     if(cat==='fav'){ if(!favs.has(ex.id)) return false; }
     else if(cat!=='all' && ex.category!==cat) return false;
+    if(fInt!=='all' && (ex.intensity||'').toLowerCase() !== fInt.toLowerCase()) return false;
+    if(fDur!=='all'){
+      const d=ex.duration||0;
+      if(fDur==='short' && d>6) return false;
+      if(fDur==='mid'   && (d<7 || d>10)) return false;
+      if(fDur==='long'  && d<=10) return false;
+    }
+    if(fPla!=='all'){
+      const n=ex.players_min||0;
+      if(fPla==='few'  && n>4) return false;
+      if(fPla==='mid'  && (n<5 || n>8)) return false;
+      if(fPla==='many' && n<9) return false;
+    }
     if(!q) return true;
     const hay=(ex.title_fr+' '+ex.title_nl+' '+exCatLabel(ex.category)+' '+(ex.subcategory||'')).toLowerCase();
     return hay.includes(q);
@@ -4707,6 +4769,39 @@ window.renderExPickerGrid = function(){
       +'<div class="ex-card-meta"><span class="ex-card-cat">'+catLbl+'</span><span>⏱ '+ex.duration+'′</span><span>👥 '+ex.players_min+'+</span></div>'
       +'</div></div>';
   }).join('');
+};
+
+window.setExFilter = function(kind, val){
+  if(!['intensity','duration','players'].includes(kind)) return;
+  EX_PICKER_STATE[kind] = val;
+  // Update chip on-state for this kind
+  document.querySelectorAll('.ex-filt-chip[data-filt="'+kind+'"]').forEach(b=>{
+    b.classList.toggle('on', b.getAttribute('data-val')===val);
+  });
+  window.updateExFiltersBadge();
+  window.renderExPickerGrid();
+};
+window.resetExFilters = function(){
+  EX_PICKER_STATE.intensity='all';
+  EX_PICKER_STATE.duration='all';
+  EX_PICKER_STATE.players='all';
+  document.querySelectorAll('.ex-filt-chip').forEach(b=>{
+    b.classList.toggle('on', b.getAttribute('data-val')==='all');
+  });
+  window.updateExFiltersBadge();
+  window.renderExPickerGrid();
+};
+window.updateExFiltersBadge = function(){
+  const badge=$('ex-picker-filters-badge'); if(!badge) return;
+  const n = (EX_PICKER_STATE.intensity!=='all'?1:0) + (EX_PICKER_STATE.duration!=='all'?1:0) + (EX_PICKER_STATE.players!=='all'?1:0);
+  if(n){ badge.textContent=String(n); badge.hidden=false; }
+  else { badge.hidden=true; }
+};
+window.toggleExFiltersPanel = function(){
+  const panel=$('ex-picker-filters'), btn=$('ex-picker-filters-btn'); if(!panel||!btn) return;
+  const open = panel.hidden;
+  panel.hidden = !open;
+  btn.setAttribute('aria-expanded', String(open));
 };
 
 window.toggleExFav = async function(id){
