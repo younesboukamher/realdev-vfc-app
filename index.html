@@ -676,6 +676,7 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .status-btn.s-P { background:rgba(34,197,94,.15); border-color:rgba(34,197,94,.4); color:var(--brand); }
 .status-btn.s-R { background:rgba(245,158,11,.15); border-color:rgba(245,158,11,.4); color:var(--warn); }
 .status-btn.s-B { background:rgba(245,158,11,.15); border-color:rgba(245,158,11,.4); color:var(--warn); }
+.status-btn.s-A { background:rgba(239,68,68,.15); border-color:rgba(239,68,68,.4); color:var(--danger); }
 .status-btn.s-E { background:rgba(59,130,246,.15); border-color:rgba(59,130,246,.4); color:var(--info); }
 
 /* Stepper RPE — 44×44 */
@@ -2142,9 +2143,10 @@ function generateMicrocycle(scouting) {
             </div>
           </div>
         </div>
-        <!-- FIX FINDING #1 — Action rapide "Tous présents" (réduit 12 taps à 1) -->
-        <div style="padding:0 18px 4px;">
-          <button class="btn btn-outline btn-sm btn-block" onclick="window.setAllPresent()" style="font-weight:600">✅ Tous présents (hors blessés)</button>
+        <!-- P1 — Actions bulk : Tous présents / Tous absents (hors blessés) -->
+        <div style="padding:0 18px 4px;display:flex;gap:6px;">
+          <button class="btn btn-outline btn-sm" onclick="window.setAllPresent()" style="flex:1;font-weight:600" aria-label="Marquer tous les joueurs présents (hors blessés)">Tous présents</button>
+          <button class="btn btn-outline btn-sm" onclick="window.setAllAbsent()" style="flex:1;font-weight:600" aria-label="Marquer tous les joueurs absents (hors blessés)">Tous absents</button>
         </div>
         <!-- FIX P2 #3+#4 — Undo/Redo + Export CSV -->
         <div style="padding:6px 18px 4px;display:flex;gap:6px;">
@@ -3177,10 +3179,11 @@ function renderPresences() {
     listEl.innerHTML=S.players.map(p=>{
       const cur=S.presStatus[p.id]||'P';
       const rpe=S.presRpe[p.id]||0;
-      const statusLabels={'P':'Présent','B':'Blessé','R':'En retard'};
-      const statusIcons={'P':'✅','B':'🤕','R':'⏰'};
+      // P1 — Ajout statut 'A' (Absent)
+      const statusLabels={'P':'Présent','A':'Absent','B':'Blessé','R':'Retard'};
+      const statusIcons={'P':'✓','A':'✗','B':'🤕','R':'⏰'};
       // FIX BUG #1/#2 — data-status sur chaque bouton pour un ciblage fiable
-      const btns=['P','B','R'].map(s=>
+      const btns=['P','A','B','R'].map(s=>
         `<button class="status-btn ${cur===s?'s-'+s:''}" data-status="${s}" onclick="setStatus('${p.id}','${s}')">${statusIcons[s]} ${statusLabels[s]}</button>`
       ).join('');
       // FIX UI #1 — helper unifié playerAvatar (photo ou initiales) utilisé partout
@@ -3248,7 +3251,7 @@ window.setStatus=(pid,s)=>{
   if(!line) return;
   line.querySelectorAll('.status-btn').forEach(btn=>{
     const btnStatus=btn.getAttribute('data-status');
-    btn.classList.remove('s-P','s-B','s-R');
+    btn.classList.remove('s-P','s-A','s-B','s-R');
     if(btnStatus===s) btn.classList.add('s-'+s);
   });
 };
@@ -3261,7 +3264,16 @@ window.setAllPresent=()=>{
     S.presStatus[p.id]=injured?'B':'P';
   });
   renderPresences();
-  if(typeof toast==='function') toast('✓ Tous marqués présents');
+  if(typeof toast==='function') toast('Tous marqués présents');
+};
+// P1 — Action rapide "Tous Absents" (les blessés gardent leur statut 'B')
+window.setAllAbsent=()=>{
+  S.players.forEach(p=>{
+    const injured=S.injuries.some(i=>i.player_id===p.id&&(i.is_active===true||i.status==='active'));
+    S.presStatus[p.id]=injured?'B':'A';
+  });
+  renderPresences();
+  if(typeof toast==='function') toast('Tous marqués absents');
 };
 window.adjRpe=(pid,d)=>{
   const cur=S.presRpe[pid]||0;
