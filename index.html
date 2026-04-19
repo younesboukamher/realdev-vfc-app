@@ -743,6 +743,16 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* Med2: injury duration presets + countdown */
+.chip-dur{padding:6px 10px;border:1px solid var(--sep2);background:var(--ink2);color:var(--tx1);border-radius:999px;font:600 11px/1 var(--font);cursor:pointer;transition:all .15s;}
+.chip-dur:hover{background:var(--brand-dim);color:var(--brand);border-color:var(--brand);}
+.chip-dur:active{transform:scale(.95);}
+.inj-countdown{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font:700 11px/1 var(--font);white-space:nowrap;}
+.inj-countdown.soon{background:rgba(34,197,94,.15);color:var(--brand);border:1px solid rgba(34,197,94,.4);}
+.inj-countdown.mid{background:rgba(245,158,11,.15);color:var(--warn);border:1px solid rgba(245,158,11,.4);}
+.inj-countdown.far{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.4);}
+.inj-countdown.past{background:var(--ink3);color:var(--tx2);border:1px solid var(--sep2);}
+
 /* FIX UX #7 — boutons filtre Squad */
 .sq-fil {
   min-height:40px; padding:8px 14px; border-radius:10px;
@@ -2301,8 +2311,20 @@ function generateMicrocycle(scouting) {
             </div>
           </div>
           <div class="fg2">
-            <div class="fg"><label class="fl">Date blessure</label><input type="date" class="fi" id="inj-date"></div>
-            <div class="fg"><label class="fl">Retour estimé</label><input type="date" class="fi" id="inj-retour"></div>
+            <div class="fg"><label class="fl">Date blessure</label><input type="date" class="fi" id="inj-date" oninput="window.injRecalcDur()"></div>
+            <div class="fg"><label class="fl">Retour estimé</label><input type="date" class="fi" id="inj-retour" oninput="window.injRecalcDur()"></div>
+          </div>
+          <div class="fg" id="inj-dur-row" style="margin-top:-6px;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+              <span style="font:600 11px/1 var(--font);color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;">Durée estimée</span>
+              <button type="button" class="chip chip-dur" onclick="window.injSetDur(7)">7 j</button>
+              <button type="button" class="chip chip-dur" onclick="window.injSetDur(14)">2 sem</button>
+              <button type="button" class="chip chip-dur" onclick="window.injSetDur(21)">3 sem</button>
+              <button type="button" class="chip chip-dur" onclick="window.injSetDur(30)">1 mois</button>
+              <button type="button" class="chip chip-dur" onclick="window.injSetDur(42)">6 sem</button>
+              <button type="button" class="chip chip-dur" onclick="window.injSetDur(60)">2 mois</button>
+              <span id="inj-dur-hint" style="font:500 12px/1 var(--font);color:var(--tx2);margin-left:auto;"></span>
+            </div>
           </div>
           <div class="fg"><label class="fl">Mécanisme</label><input class="fi" id="inj-mech" placeholder="Contact, sprint..."></div>
           <div class="fg"><label class="fl">Zone anatomique</label><input class="fi" id="inj-zone" placeholder="Ligaments..."></div>
@@ -2315,7 +2337,24 @@ function generateMicrocycle(scouting) {
           <div class="fg"><label class="fl">Notes staff</label><textarea class="fi" id="inj-notes" placeholder="Moral, observations..."></textarea></div>
           <div class="btn-row">
             <button class="btn btn-outline" style="flex:1;" onclick="window.cancelInj()">Annuler</button>
-            <button class="btn btn-green" style="flex:2;" id="inj-save-btn" onclick="window.saveInj()">Enregistrer</button>
+            <button class="btn btn-green" style="flex:2;" id="inj-save-btn" onclick="window.injSetDur=(days)=>{
+  const d=$('inj-date').value;
+  if(!d){ $('inj-date').value=new Date().toISOString().split('T')[0]; }
+  const base=new Date($('inj-date').value);
+  const ret=new Date(base.getTime()+days*86400000);
+  $('inj-retour').value=ret.toISOString().split('T')[0];
+  window.injRecalcDur();
+};
+window.injRecalcDur=()=>{
+  const d=$('inj-date').value, r=$('inj-retour').value;
+  const h=$('inj-dur-hint'); if(!h) return;
+  if(!d||!r){ h.textContent=''; return; }
+  const days=Math.round((new Date(r)-new Date(d))/86400000);
+  if(days<=0){ h.textContent=''; return; }
+  const w=days/7;
+  h.textContent = days<14 ? `${days} j` : (w===Math.round(w) ? `${Math.round(w)} sem` : `${days} j (~${w.toFixed(1)} sem)`);
+};
+window.saveInj()">Enregistrer</button>
           </div>
           <div style="height:14px;"></div>
         </div>
@@ -4296,6 +4335,7 @@ function renderMedical(){
             <div class="inj-dates">
               <span class="inj-date-item">📅 ${fd(inj.injury_date)}</span>
               <span class="inj-date-item">🎯 Retour ${fd(inj.return_date)||'?'}</span>
+              ${(()=>{ if(!inj.return_date) return ''; const d=Math.round((new Date(inj.return_date)-new Date())/86400000); if(d<0) return `<span class="inj-countdown past">Retour dépassé (J+${-d})</span>`; if(d===0) return `<span class="inj-countdown soon">Retour aujourd'hui</span>`; const cls=d<=7?'soon':d<=21?'mid':'far'; return `<span class="inj-countdown ${cls}">J-${d}</span>`; })()}
               <span class="chip chip-muted" style="font-size:9px;">${inj.status||''}</span>
             </div>
             ${tot?`<div class="rec-bar">
@@ -4429,7 +4469,7 @@ window.cancelInj=()=>{clearInjForm();stab(document.querySelector('#pg-medical .t
 window.editInj=id=>{
   const inj=S.injuries.find(i=>i.id===id);if(!inj)return;
   $('inj-edit-id').value=id; $('inj-form-title').textContent='Modifier la blessure'; $('inj-save-btn').textContent='Mettre à jour';
-  $('inj-type').value=inj.type||''; $('inj-date').value=inj.injury_date||''; $('inj-retour').value=inj.return_date||'';
+  $('inj-type').value=inj.type||''; $('inj-date').value=inj.injury_date||''; $('inj-retour').value=inj.return_date||''; window.injRecalcDur&&window.injRecalcDur();
   $('inj-mech').value=inj.mechanism||''; $('inj-zone').value=inj.anatomy_zone||''; $('inj-exam').value=inj.exam||'';
   $('inj-treat').value=inj.treatment||''; $('inj-matches').value=inj.matches_missed||''; $('inj-notes').value=inj.notes||'';
   const gs=$('inj-grav'); for(const o of gs.options){if(o.value===inj.severity){gs.value=o.value;break;}}
