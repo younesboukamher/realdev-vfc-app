@@ -760,6 +760,16 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* An2: date range picker Analytics */
+.ana-daterange{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 18px 4px;background:linear-gradient(90deg,var(--brand-dim),transparent);border-bottom:1px solid var(--line);}
+.ana-dr-label{font:700 10px/1 var(--font);color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;}
+.ana-daterange input[type="date"]{padding:5px 8px;background:var(--bg);border:1px solid var(--line);border-radius:6px;font:600 11px/1 var(--font);color:var(--tx1);}
+.ana-daterange .ana-dr-sep{color:var(--tx3);font-weight:700;}
+.ana-daterange .ana-dr-preset{padding:4px 8px;background:transparent;border:1px solid var(--line);color:var(--tx2);border-radius:999px;font:600 10px/1 var(--font);cursor:pointer;}
+.ana-daterange .ana-dr-preset:hover{background:var(--brand-dim);color:var(--brand);border-color:var(--brand);}
+.ana-daterange .ana-dr-reset{padding:4px 8px;background:var(--danger);color:#fff;border:none;border-radius:999px;font:700 10px/1 var(--font);cursor:pointer;margin-left:auto;}
+.ana-daterange .ana-dr-reset[hidden]{display:none!important;}
+
 /* Pr6: form change password dans profil */
 .pwd-form{margin:0 18px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;}
 .pwd-form-title{font:700 13px/1 var(--font);color:var(--tx1);margin-bottom:4px;}
@@ -2653,6 +2663,19 @@ window.saveInj()">Enregistrer</button>
 
     <!-- ANALYTICS — Data Science Dashboard -->
     <div class="pg" id="pg-stats">
+
+      <!-- An2: date range picker global -->
+      <div class="ana-daterange" id="ana-daterange">
+        <span class="ana-dr-label">Periode</span>
+        <input type="date" id="ana-dr-from" onchange="window.setDateRange()" aria-label="Date de debut">
+        <span class="ana-dr-sep">→</span>
+        <input type="date" id="ana-dr-to" onchange="window.setDateRange()" aria-label="Date de fin">
+        <button class="ana-dr-preset" onclick="window.setDateRangePreset(7)">7j</button>
+        <button class="ana-dr-preset" onclick="window.setDateRangePreset(30)">30j</button>
+        <button class="ana-dr-preset" onclick="window.setDateRangePreset(90)">90j</button>
+        <button class="ana-dr-preset" onclick="window.setDateRangePreset('season')">Saison</button>
+        <button class="ana-dr-reset" id="ana-dr-reset" onclick="window.resetDateRange()" hidden>Reset</button>
+      </div>
 
       <!-- Header avec vue badge -->
       <div class="ana-header">
@@ -6888,7 +6911,13 @@ function renderAnalyticsCoach() {
   const diff = G.goals_for - G.goals_against;
   // Saison label
   const seasonLbl = $('ana-season-label');
-  if(seasonLbl) seasonLbl.textContent = 'Saison '+(S.season||'2025-2026')+' · '+G.matches+' matchs';
+  if(seasonLbl){
+    if(S.dateRange && (S.dateRange.from || S.dateRange.to)){
+      seasonLbl.textContent = 'Periode '+(S.dateRange.from||'?')+' → '+(S.dateRange.to||'?')+' · '+G.matches+' matchs (saison complete)';
+    } else {
+      seasonLbl.textContent = 'Saison '+(S.season||'2025-2026')+' · '+G.matches+' matchs';
+    }
+  }
 
   $('ana-kpis').innerHTML = `
     <div class="ana-kpi-band">
@@ -7302,6 +7331,74 @@ function renderAnalyticsPlayer(playerName) {
     </div>
     <div style="height:16px"></div>`;
 }
+
+/* An2 — Date range picker global Analytics */
+window.setDateRange = function(){
+  const fromEl = document.getElementById('ana-dr-from');
+  const toEl = document.getElementById('ana-dr-to');
+  const reset = document.getElementById('ana-dr-reset');
+  if(!fromEl || !toEl) return;
+  const from = fromEl.value || '';
+  const to = toEl.value || '';
+  if(from || to){
+    S.dateRange = { from, to };
+    try{ localStorage.setItem('rdv_ana_dr', JSON.stringify(S.dateRange)); }catch(_){}
+    if(reset) reset.hidden = false;
+  } else {
+    S.dateRange = null;
+    try{ localStorage.removeItem('rdv_ana_dr'); }catch(_){}
+    if(reset) reset.hidden = true;
+  }
+  // Refresh label + topbar subtitle
+  try{ window.renderStats && window.renderStats(); }catch(_){}
+  try{ window.renderTopbarSub && window.renderTopbarSub('stats'); }catch(_){}
+};
+
+window.setDateRangePreset = function(preset){
+  const fromEl = document.getElementById('ana-dr-from');
+  const toEl = document.getElementById('ana-dr-to');
+  if(!fromEl || !toEl) return;
+  const today = new Date();
+  const iso = (d)=>d.toISOString().slice(0,10);
+  if(preset === 'season'){
+    fromEl.value = '2025-08-01';
+    toEl.value = '2026-05-31';
+  } else {
+    const days = +preset || 30;
+    const start = new Date(today.getTime() - days*86400000);
+    fromEl.value = iso(start);
+    toEl.value = iso(today);
+  }
+  window.setDateRange();
+};
+
+window.resetDateRange = function(){
+  const fromEl = document.getElementById('ana-dr-from');
+  const toEl = document.getElementById('ana-dr-to');
+  if(fromEl) fromEl.value = '';
+  if(toEl) toEl.value = '';
+  window.setDateRange();
+};
+
+// Restore saved range on load
+(function _restoreDateRange(){
+  try{
+    const s = localStorage.getItem('rdv_ana_dr');
+    if(!s) return;
+    const dr = JSON.parse(s);
+    if(dr && (dr.from || dr.to)){
+      S.dateRange = dr;
+      setTimeout(()=>{
+        const fromEl = document.getElementById('ana-dr-from');
+        const toEl = document.getElementById('ana-dr-to');
+        const reset = document.getElementById('ana-dr-reset');
+        if(fromEl) fromEl.value = dr.from||'';
+        if(toEl) toEl.value = dr.to||'';
+        if(reset) reset.hidden = !(dr.from||dr.to);
+      }, 300);
+    }
+  }catch(_){}
+})();
 
 /* ─── Routeur principal renderStats ─── */
 function renderStats() {
