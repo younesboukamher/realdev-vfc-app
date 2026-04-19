@@ -2997,20 +2997,60 @@ function applyTranslations() {
 
 /* ════════ ACCUEIL ════════ */
 function renderHome() {
-  /* KPIs */
-  const dispo=S.players.filter(p=>p.status==='Disponible').length;
-  const blesse=S.injuries.length;
-  const played=S.matches.filter(m=>m.result);
-  const W=played.filter(m=>m.result==='V').length, D=played.filter(m=>m.result==='N').length, L=played.filter(m=>m.result==='D').length;
-  const pts=W*3+D;
-  const pPres=S.presences.filter(r=>r.status==='P').length, pTot=S.presences.length;
-  const pPct=pTot?Math.round(pPres/pTot*100):0;
-  $('home-kpis').innerHTML=`<div class="quick-stats">
-    <div class="qs-cell"><div class="qs-num" style="color:var(--brand);">${dispo}</div><div class="qs-lbl" data-t="available">Dispos</div></div>
-    <div class="qs-cell"><div class="qs-num" style="color:var(--danger);">${blesse}</div><div class="qs-lbl" data-t="injured_count">Blessés</div></div>
-    <div class="qs-cell"><div class="qs-num">${pPct}%</div><div class="qs-lbl">Présence</div></div>
-    <div class="qs-cell"><div class="qs-num">${pts}</div><div class="qs-lbl">${W}V ${D}N ${L}D</div></div>
-  </div>`;
+  /* H5 — KPIs différenciés coach/joueur */
+  const isStaff = ['admin','coach','assistant','physio','gk'].includes(S.role);
+  let kpiHtml = '';
+  if (isStaff) {
+    const dispo = S.players.filter(p => p.status === 'Disponible').length;
+    const blesse = S.injuries.length;
+    const played = S.matches.filter(m => m.result);
+    const W = played.filter(m => m.result === 'V').length, D = played.filter(m => m.result === 'N').length, L = played.filter(m => m.result === 'D').length;
+    const pts = W * 3 + D;
+    const pPres = S.presences.filter(r => r.status === 'P').length, pTot = S.presences.length;
+    const pPct = pTot ? Math.round(pPres / pTot * 100) : 0;
+    kpiHtml = `<div class="quick-stats">
+      <div class="qs-cell"><div class="qs-num" style="color:var(--brand);">${dispo}</div><div class="qs-lbl" data-t="available">Dispos</div></div>
+      <div class="qs-cell"><div class="qs-num" style="color:var(--danger);">${blesse}</div><div class="qs-lbl" data-t="injured_count">Blessés</div></div>
+      <div class="qs-cell"><div class="qs-num">${pPct}%</div><div class="qs-lbl">Présence</div></div>
+      <div class="qs-cell"><div class="qs-num">${pts}</div><div class="qs-lbl">${W}V ${D}N ${L}D</div></div>
+    </div>`;
+  } else {
+    // Player view — KPIs personnels
+    const me = S.profile && S.profile.player_id ? S.players.find(p => p.id === S.profile.player_id) : null;
+    if (me) {
+      const myPres = S.presences.filter(r => r.player_id === me.id);
+      const myPresCount = myPres.filter(r => r.status === 'P').length;
+      const myPct = myPres.length ? Math.round(myPresCount / myPres.length * 100) : 0;
+      // Lookup LOOKER_DATA for rating
+      let rating = null;
+      try {
+        const last = (me.name || '').split(' ').slice(-1)[0].toLowerCase();
+        if (last && window.LOOKER_DATA?.players?.length) {
+          const lp = LOOKER_DATA.players.find(p => (p.name || '').toLowerCase().includes(last));
+          if (lp && typeof lp.rating === 'number') rating = lp.rating;
+        }
+      } catch(_) {}
+      const injured = S.injuries.some(i => i.player_id === me.id);
+      kpiHtml = `<div class="quick-stats">
+        <div class="qs-cell"><div class="qs-num" style="color:var(--brand);">${me.goals || 0}</div><div class="qs-lbl">Mes buts</div></div>
+        <div class="qs-cell"><div class="qs-num" style="color:var(--info);">${me.assists || 0}</div><div class="qs-lbl">Mes passes</div></div>
+        <div class="qs-cell"><div class="qs-num">${myPct}%</div><div class="qs-lbl">Ma présence</div></div>
+        <div class="qs-cell"><div class="qs-num" style="color:${injured ? 'var(--danger)' : rating != null ? 'var(--warn)' : 'var(--tx2)'};">${injured ? '🩺' : (rating != null ? rating.toFixed(1) : '—')}</div><div class="qs-lbl">${injured ? 'Blessé' : 'Ma note'}</div></div>
+      </div>`;
+    } else {
+      // Player without player_id link — fallback minimal (team view)
+      const played = S.matches.filter(m => m.result);
+      const W = played.filter(m => m.result === 'V').length, D = played.filter(m => m.result === 'N').length, L = played.filter(m => m.result === 'D').length;
+      const pts = W * 3 + D;
+      kpiHtml = `<div class="quick-stats">
+        <div class="qs-cell"><div class="qs-num">${pts}</div><div class="qs-lbl">Pts équipe</div></div>
+        <div class="qs-cell"><div class="qs-num" style="color:var(--brand);">${W}</div><div class="qs-lbl">Victoires</div></div>
+        <div class="qs-cell"><div class="qs-num">${D}</div><div class="qs-lbl">Nuls</div></div>
+        <div class="qs-cell"><div class="qs-num" style="color:var(--danger);">${L}</div><div class="qs-lbl">Défaites</div></div>
+      </div>`;
+    }
+  }
+  $('home-kpis').innerHTML = kpiHtml;
 
   /* Prochain match */
   const nxt=S.matches.find(m=>!m.result);
