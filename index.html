@@ -1924,6 +1924,45 @@ window.applyPlanTemplate = (mid, key) => {
   p.week_note = (p.week_note||'') + (p.week_note?'\n':'') + `[Template ${tpl.label}] ${tpl.note}`;
   savePlan(mid).then(()=>renderPlanning());
 };
+
+// Pl3 — Dupliquer la semaine précédente
+window.duplicatePrevWeek = async (mid) => {
+  const idx = S.matches.findIndex(m => m.id === mid);
+  if (idx < 0) { toast('Match introuvable'); return; }
+  if (idx === 0) { toast('Aucun match précédent dans la saison'); return; }
+  const prev = S.matches[idx - 1];
+  if (!prev) { toast('Aucun match précédent'); return; }
+
+  let prevPlan = S.plans[prev.id];
+  if (!prevPlan) {
+    try {
+      const r = await sb.from('training_plans').select('*').eq('match_id', prev.id).maybeSingle();
+      prevPlan = r?.data || null;
+    } catch(e) { console.warn('[duplicatePrevWeek] load prev plan failed:', e); }
+  }
+  if (!prevPlan || !Array.isArray(prevPlan.sessions) || prevPlan.sessions.length === 0) {
+    toast('Le match precedent n' + String.fromCharCode(39) + 'a pas de planning à dupliquer');
+    return;
+  }
+
+  const prevLabel = (prev.journee ? 'J' + prev.journee + ' - ' : '') + (prev.opponent || 'match précédent');
+  if (!confirm('Dupliquer les séances de : ' + prevLabel + ' ?' + String.fromCharCode(10) + String.fromCharCode(10) + 'Cela remplace les séances actuelles (les notes de semaine et l' + String.fromCharCode(39) + 'analyse adversaire restent inchangées).')) return;
+
+  const cur = S.plans[mid] || { sessions: [], week_note: '', analysis: { consignes: [] } };
+  const clonedSessions = JSON.parse(JSON.stringify(prevPlan.sessions)).map(s => Object.assign({}, s, { notes: '' }));
+  cur.sessions = clonedSessions;
+  cur.week_note = (cur.week_note || '') + (cur.week_note ? String.fromCharCode(10) : '') + '[Dupliqué depuis ' + prevLabel + ']';
+  S.plans[mid] = cur;
+
+  try {
+    await savePlan(mid);
+    renderPlanning();
+    toast('Semaine dupliquée depuis ' + prevLabel);
+  } catch(e) {
+    console.error('[duplicatePrevWeek] save failed:', e);
+    toast('Erreur sauvegarde : ' + (e?.message || 'inconnue'));
+  }
+};
 function generateMicrocycle(scouting) {
   const analysis = analyzeOpponent(scouting);
 
@@ -4337,6 +4376,7 @@ async function renderPlanning(){
     ${['coach','admin','assistant'].includes(S.role)?`<div style="padding:0 18px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <span style="font:700 11px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-right:4px;">Template :</span>
       ${Object.entries(PLAN_TEMPLATES).map(([k,t])=>`<button class="btn btn-sm btn-outline" onclick="applyPlanTemplate('${match.id}','${k}')" title="${t.note}" aria-label="Template ${t.label}">${t.icon} ${t.label}</button>`).join('')}
+      <button class="btn btn-sm btn-outline" onclick="duplicatePrevWeek('${match.id}')" title="Copier les séances du match précédent" aria-label="Dupliquer la semaine précédente" style="margin-left:auto;">Dupliquer sem. précédente</button>
     </div>`:''}
     <div style="padding:0 18px 10px;font:700 12px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);">Programme de la semaine</div>
     ${(plan.sessions||[]).map((s,si)=>dayBlock(s,si,match.id,absent)).join('')}
