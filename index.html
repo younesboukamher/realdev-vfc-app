@@ -760,6 +760,28 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* H3: timeline 7j Home */
+.h3-tl{padding:10px 14px 4px;}
+.h3-tl-title{font:700 11px/1 var(--font);text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin:0 4px 8px;display:flex;align-items:center;gap:6px;}
+.h3-tl-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.h3-tl-day{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-height:72px;position:relative;transition:border-color .15s,background .15s;}
+.h3-tl-day:hover{border-color:var(--brand);}
+.h3-tl-day.today{background:linear-gradient(165deg,var(--brand-dim),transparent);border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-dim);}
+.h3-tl-day.past{opacity:.68;}
+.h3-tl-dow{font:800 9px/1 var(--font);text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);}
+.h3-tl-day.today .h3-tl-dow{color:var(--brand);}
+.h3-tl-date{font:900 17px/1 var(--font);color:var(--tx1);letter-spacing:-.5px;}
+.h3-tl-day.today .h3-tl-date{color:var(--brand);}
+.h3-tl-icons{display:flex;gap:2px;align-items:center;font-size:12px;line-height:1;min-height:14px;flex-wrap:wrap;justify-content:center;}
+.h3-tl-icon{display:inline-block;font-size:13px;line-height:1;}
+.h3-tl-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--danger);display:none;}
+.h3-tl-day.has-alert .h3-tl-dot{display:block;}
+.h3-tl-empty{font:500 9px/1 var(--font);color:var(--tx4);}
+@media (max-width:360px){
+  .h3-tl-day{padding:6px 2px 4px;min-height:64px;}
+  .h3-tl-date{font-size:14px;}
+}
+
 /* Pd2: modal options export PDF */
 .pdf-opts-grid{padding:16px 18px;display:grid;gap:12px;}
 .pdf-opts-row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
@@ -2409,6 +2431,8 @@ function generateMicrocycle(scouting) {
       <!-- H1 — Hero 'Prochain match' XL en premier -->
       <div id="home-match"></div>
       <div id="home-kpis" style="padding:6px 18px 0;"></div>
+      <!-- H3: timeline 7j -->
+      <div id="home-timeline"></div>
       <div class="sec" style="padding-top:16px;"><div class="sec-title" data-t="alerts">Alertes</div></div>
       <div id="home-alerts"></div>
       <div class="sec">
@@ -3679,6 +3703,84 @@ function applyTranslations() {
 }
 
 /* ════════ ACCUEIL ════════ */
+// H3 — Timeline 7 jours (seances + matchs) Home
+window.renderHomeTimeline = function(){
+  const el = document.getElementById('home-timeline');
+  if(!el) return;
+  const dayIdxOfType = { dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6 };
+  const DAYS_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const toISO = (d)=>{
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+dd;
+  };
+  // Build events map by date
+  const events = {}; // iso -> { matches:[], sessions:[], hasAlert }
+  const addEvent = (iso, kind, payload)=>{
+    if(!events[iso]) events[iso] = { matches:[], sessions:[], hasAlert:false };
+    events[iso][kind].push(payload);
+  };
+  // Matches
+  (S.matches||[]).forEach(m=>{
+    if(!m.match_date) return;
+    addEvent(m.match_date.slice(0,10), 'matches', m);
+  });
+  // Sessions from S.plans[mid].sessions
+  Object.keys(S.plans||{}).forEach(mid=>{
+    const plan = S.plans[mid];
+    const match = (S.matches||[]).find(m=>m.id===mid);
+    if(!plan || !match || !match.match_date) return;
+    (plan.sessions||[]).forEach((s,si)=>{
+      const matchD = new Date(match.match_date + 'T12:00:00');
+      const matchDow = matchD.getDay();
+      const t = (s.type||'').toLowerCase();
+      const trainDow = dayIdxOfType[t];
+      if(trainDow == null) return;
+      let diff = matchDow - trainDow;
+      if(diff <= 0) diff += 7;
+      const d = new Date(matchD);
+      d.setDate(d.getDate() - diff);
+      d.setHours(0,0,0,0);
+      addEvent(toISO(d), 'sessions', {...s, _match_id: mid, _idx: si});
+    });
+  });
+  // Build 7-day strip: today-1 to today+5
+  const cells = [];
+  for(let i=-1;i<=5;i++){
+    const d = new Date(today);
+    d.setDate(today.getDate()+i);
+    const iso = toISO(d);
+    const ev = events[iso] || { matches:[], sessions:[], hasAlert:false };
+    const isToday = i===0;
+    const isPast = i<0;
+    const dow = DAYS_SHORT[d.getDay()];
+    const dateNum = d.getDate();
+    const hasMatch = ev.matches.length > 0;
+    const hasSess = ev.sessions.length > 0;
+    let iconsHtml = '';
+    if(hasMatch) iconsHtml += '<span class="h3-tl-icon" title="Match">⚽</span>';
+    if(hasSess) iconsHtml += '<span class="h3-tl-icon" title="Seance">🏋</span>';
+    if(!hasMatch && !hasSess) iconsHtml = '<span class="h3-tl-empty">—</span>';
+    const click = hasMatch
+      ? 'onclick="window.nav(\'matchs\',document.querySelector(\'[data-p=matchs]\'))"'
+      : (hasSess ? 'onclick="window.nav(\'planning\',document.querySelector(\'[data-p=planning]\'))"' : '');
+    const title = 'Jour ' + dow + ' ' + dateNum
+      + (hasMatch ? ' • Match : ' + ev.matches.map(m=>m.opponent||'?').join(', ') : '')
+      + (hasSess ? ' • Seance : ' + ev.sessions.map(s=>s.label||s.type).join(', ') : '');
+    cells.push('<div class="h3-tl-day '+(isToday?'today':'')+' '+(isPast?'past':'')+'" '+click+' role="button" tabindex="0" aria-label="'+title.replace(/"/g,'&quot;')+'" title="'+title.replace(/"/g,'&quot;')+'">'
+      +'<span class="h3-tl-dot"></span>'
+      +'<div class="h3-tl-dow">'+dow+'</div>'
+      +'<div class="h3-tl-date">'+dateNum+'</div>'
+      +'<div class="h3-tl-icons">'+iconsHtml+'</div>'
+      +'</div>');
+  }
+  el.innerHTML = '<div class="h3-tl">'
+    +'<div class="h3-tl-title">📅 7 jours</div>'
+    +'<div class="h3-tl-strip">'+cells.join('')+'</div>'
+    +'</div>';
+};
+
 function renderHome() {
   /* H5 — KPIs différenciés coach/joueur */
   const isStaff = ['admin','coach','assistant','physio','gk'].includes(S.role);
@@ -3734,6 +3836,9 @@ function renderHome() {
     }
   }
   $('home-kpis').innerHTML = kpiHtml;
+
+  /* H3 — Timeline 7 jours */
+  try{ window.renderHomeTimeline && window.renderHomeTimeline(); }catch(e){ console.warn('renderHomeTimeline failed',e); }
 
   /* Prochain match — H1 Hero XL */
   const nxt = S.matches.find(m => !m.result);
