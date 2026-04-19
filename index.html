@@ -2043,7 +2043,7 @@ function generateMicrocycle(scouting) {
     </div>
     <div class="topbar-right">
       <span class="top-badge" id="role-pill"></span>
-      <span class="version-badge" id="version-badge">v1.12.4</span>
+      <span class="version-badge" id="version-badge">v1.12.5</span>
       <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
       <select id="season-selector" onchange="window.setArchiveSeason(this.value)" aria-label="Saison" style="background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
         <option value="">Saison 2025-26</option>
@@ -3225,41 +3225,373 @@ window.exportPresencesCSV = ()=>{
   toast('✓ Présences exportées');
 };
 
-// FIX P2 #2 — Export Planning PDF (fenêtre d'impression formatée)
-window.exportPlanningPDF = (mid)=>{
-  const plan=S.plans[mid]; if(!plan){ toast('Aucun planning à exporter'); return; }
-  const match=S.matches.find(m=>m.id===mid); if(!match){ toast('Match introuvable'); return; }
-  const loads=(plan.sessions||[]).map(s=>({n:s.dayName||s.label||s.type, rpe:rpeNum(s.rpe_target), dur:s.duration||75}));
-  const avg=loads.length?loads.reduce((a,l)=>a+l.rpe,0)/loads.length:0;
-  const html=`<!doctype html><html><head><meta charset="utf-8"><title>Planning ${match.opponent}</title>
-    <style>
-      body{font-family:-apple-system,Segoe UI,sans-serif;color:#0B1929;padding:24px;max-width:720px;margin:auto;}
-      h1{color:#10B981;margin:0 0 6px;font-size:22px;}
-      .meta{color:#6B7280;font-size:12px;margin-bottom:16px;}
-      .day{border-left:4px solid #10B981;padding:10px 14px;margin:10px 0;background:#F9FAFB;border-radius:4px;page-break-inside:avoid;}
-      .day h2{margin:0 0 4px;font-size:16px;}
-      .rpe{display:inline-block;padding:2px 8px;background:#10B981;color:#fff;border-radius:3px;font-size:11px;margin-left:8px;}
-      .ex{margin:6px 0;padding-left:16px;border-left:2px solid #E5E7EB;}
-      .footer{margin-top:20px;font-size:11px;color:#6B7280;border-top:1px solid #E5E7EB;padding-top:10px;}
-      @media print { body{padding:10px;} }
-    </style></head><body>
-    <h1>Planning hebdo — ${match.is_home?'VFC vs '+match.opponent:match.opponent+' vs VFC'}</h1>
-    <div class="meta">Match : ${fd(match.match_date)||'—'} · ${match.is_home?'Domicile':'Extérieur'} · Journée ${match.journee||'?'} · RPE moyen ${avg.toFixed(1)}</div>
-    ${(plan.sessions||[]).map(s=>`<div class="day">
-      <h2>${s.dayName||s.label||s.type}<span class="rpe">RPE ${s.rpe_target||'?'} · ${s.duration||75} min</span></h2>
-      <div style="color:#374151;font-size:13px;margin-bottom:6px;">${s.objectif||''}</div>
-      ${(s.focus||[]).length?`<div style="font-size:11px;color:#6B7280;margin-bottom:6px;">Focus : ${(s.focus||[]).join(' · ')}</div>`:''}
-      ${(s.exercises||[]).map((ex,i)=>`<div class="ex"><strong>${i+1}. ${ex.name||''}</strong><br><span style="color:#6B7280;font-size:12px;">${ex.detail||''}</span></div>`).join('')}
-      ${s.notes?`<div style="margin-top:8px;font-size:12px;color:#6B7280;font-style:italic;">📝 ${s.notes}</div>`:''}
-    </div>`).join('')}
-    ${plan.week_note?`<div style="margin-top:14px;padding:10px;background:#FEF3C7;border-radius:4px;font-size:12px;"><strong>Note de semaine :</strong> ${plan.week_note.replace(/\n/g,'<br>')}</div>`:''}
-    <div class="footer">Généré le ${new Date().toLocaleString('fr-BE')} — RealDev Vilvoorde FC</div>
-    <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
-  </body></html>`;
-  const w=window.open('', '_blank', 'width=800,height=900');
+// FIX P2 #2 — Export Planning PDF (v2 : détails complets bilingue + thumbnails + présences)
+// Remplace l'export minimaliste par un document A4 complet :
+//  - Couverture : logo, sommaire, tableau charge, note de semaine
+//  - Une section par séance avec metrics live + présences dérivées
+//  - Pour chaque exo : thumb PNG, titre FR+NL, setup/instructions/variants/source
+//  - Footer signé RealDev Vilvoorde
+window.exportPlanningPDF = async (mid)=>{
+  const plan = S.plans[mid]; if(!plan){ toast('Aucun planning à exporter'); return; }
+  const match = S.matches.find(m=>m.id===mid); if(!match){ toast('Match introuvable'); return; }
+
+  // Open window synchronously (iOS pop-up blocker requires user-gesture)
+  const w = window.open('about:blank','_blank','width=800,height=900');
   if(!w){ toast('✗ Pop-up bloqué — autorise les pop-ups'); return; }
-  w.document.write(html); w.document.close();
-  toast('✓ Export PDF lancé');
+  try {
+    w.document.write('<!doctype html><meta charset="utf-8"><title>Préparation…</title>'
+      +'<style>body{font-family:-apple-system,Segoe UI,sans-serif;text-align:center;padding:60px;color:#0B1929;background:#fff;}'
+      +'.sp{display:inline-block;width:32px;height:32px;border:3px solid #E5E7EB;border-top-color:#10B981;border-radius:50%;animation:sp 1s linear infinite;margin-bottom:14px;}'
+      +'@keyframes sp{to{transform:rotate(360deg)}}</style>'
+      +'<div class="sp"></div><div>Préparation du PDF…</div>'
+      +'<div style="color:#6B7280;font-size:12px;margin-top:6px;">Chargement des exercices et images</div>');
+    w.document.close();
+  } catch(e){}
+
+  toast('⏳ Génération du PDF…');
+
+  try {
+    // 1) Exercise DB
+    const db = await (typeof loadExerciseDB==='function' ? loadExerciseDB() : Promise.resolve(window.EXERCISE_DB||{exercises:[],categories:[]}));
+    const exIdx = {}; (db.exercises||[]).forEach(e=>{ exIdx[e.id] = e; });
+    const catLabel = (key)=>{
+      const c = (db.categories||[]).find(c=>c.key===key);
+      return c ? (c.label_fr||key) : key;
+    };
+
+    // 2) Collect all images to embed as base64
+    const imgUrls = new Set();
+    if(window.location) imgUrls.add('assets/logo.png');
+    (plan.sessions||[]).forEach(s=>{
+      (s.exercises||[]).forEach(ex=>{
+        const full = exIdx[ex.id];
+        const u = (full && full.image_url) || ex.image_url;
+        if(u) imgUrls.add(u);
+      });
+    });
+
+    const imgCache = {};
+    await Promise.all([...imgUrls].map(async (url)=>{
+      try {
+        const r = await fetch(url, {cache:'force-cache'});
+        if(!r.ok) return;
+        const blob = await r.blob();
+        imgCache[url] = await new Promise((resolve,reject)=>{
+          const fr = new FileReader();
+          fr.onload = ()=> resolve(fr.result);
+          fr.onerror = reject;
+          fr.readAsDataURL(blob);
+        });
+      } catch(e){ /* image optional */ }
+    }));
+
+    // 3) Dérive la date d'une séance depuis match_date + session.type
+    const matchDate = match.match_date ? new Date(match.match_date + 'T00:00:00') : null;
+    const dayIdxOfType = {dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6};
+    const dayNameFull = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+    const sessionDate = (type)=>{
+      if(!matchDate || !isFinite(matchDate.getTime())) return null;
+      const trainDow = dayIdxOfType[(type||'').toLowerCase()];
+      if(trainDow === undefined) return null;
+      const matchDow = matchDate.getDay();
+      let diff = matchDow - trainDow;
+      if(diff <= 0) diff += 7; // training day in the week before the match
+      const d = new Date(matchDate.getTime());
+      d.setDate(matchDate.getDate() - diff);
+      return d.toISOString().slice(0,10);
+    };
+
+    // 4) Présences
+    const presencesFor = (session)=>{
+      const date = sessionDate(session.type);
+      if(!date) return null;
+      const rows = (S.presences||[]).filter(p=> p.session_date === date);
+      if(!rows.length) return { date, present:0, total:0, absents:[], items:[] };
+      const present = rows.filter(p=> p.status==='P' || p.status==='present' || p.status==='Present').length;
+      const absents = rows.filter(p=> p.status==='A' || p.status==='absent' || p.status==='Absent')
+        .map(p=> (p.players && p.players.name) || p.player_name || '—');
+      return { date, present, total: rows.length, absents, items: rows };
+    };
+
+    // 5) Helpers
+    const esc = (s)=> String(s==null?'':s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const fdLong = (iso)=>{
+      if(!iso) return '';
+      try { return new Date(iso+'T00:00:00').toLocaleDateString('fr-BE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); }
+      catch(e){ return iso; }
+    };
+    const rpeN = (r)=>{
+      if(typeof r==='number') return r;
+      const s=(r||'').toString(); const m=s.match(/(\d+(?:\.\d+)?)/g);
+      if(!m||!m.length) return 0;
+      return m.map(Number).reduce((a,b)=>a+b,0)/m.length;
+    };
+
+    // 6) Cover data
+    const sessions = plan.sessions||[];
+    const loads = sessions.map(s=>({ n:s.dayName||s.label||s.type, rpe:rpeN(s.rpe_target), dur:s.duration||75 }));
+    const avgRpe = loads.length ? loads.reduce((a,l)=>a+l.rpe,0)/loads.length : 0;
+    const totalDur = loads.reduce((a,l)=>a+l.dur,0);
+    const totalLoad = loads.reduce((a,l)=>a+Math.round(l.rpe*l.dur),0);
+    const logoB64 = imgCache['assets/logo.png'] || '';
+    const matchLabel = match.is_home ? ('Vilvoorde vs '+(match.opponent||'?')) : ((match.opponent||'?')+' vs Vilvoorde');
+    const matchMeta = [
+      fdLong(match.match_date),
+      match.kickoff_time ? 'Coup d\u2019envoi '+match.kickoff_time : '',
+      match.is_home ? 'Domicile' : 'Extérieur',
+      match.journee ? 'Journée '+match.journee : ''
+    ].filter(Boolean).join(' · ');
+
+    // 7) Render helpers
+    const renderChip = (catKey)=>{
+      const label = catLabel(catKey);
+      return `<span class="chip chip-${esc(catKey)}">${esc(label)}</span>`;
+    };
+
+    const renderExercise = (exSess, idx)=>{
+      const full = exIdx[exSess.id] || {};
+      const title_fr = full.title_fr || exSess.name || '(sans titre)';
+      const title_nl = full.title_nl || '';
+      const cat = full.category || exSess.category || '';
+      const sub = full.subcategory || '';
+      const dur = exSess.duration || full.duration || '?';
+      const pmin = full.players_min || '';
+      const age = full.age_range || '';
+      const inten = full.intensity || '';
+      const objF = full.objective_fr || exSess.detail || '';
+      const objN = full.objective_nl || '';
+      const setF = full.setup_fr || '';
+      const setN = full.setup_nl || '';
+      const insF = full.instructions_fr || [];
+      const insN = full.instructions_nl || [];
+      const varF = full.variants_fr || [];
+      const varN = full.variants_nl || [];
+      const src  = full.source || '';
+      const imgUrl = full.image_url || exSess.image_url;
+      const thumb = imgUrl && imgCache[imgUrl] ? imgCache[imgUrl] : '';
+
+      const metaBits = [];
+      if(sub) metaBits.push('📂 '+esc(sub));
+      metaBits.push('⏱ '+esc(dur)+' min');
+      if(pmin) metaBits.push('👥 '+esc(pmin)+'+ joueurs');
+      if(age) metaBits.push('🎯 '+esc(age));
+      if(inten) metaBits.push('🔥 '+esc(inten));
+
+      return `<div class="exercise">
+        <div class="ex-head">
+          ${thumb ? `<img class="ex-thumb" src="${thumb}" alt="">` : '<div class="ex-thumb"></div>'}
+          <div class="ex-title">
+            <div><strong>${idx}. ${esc(title_fr)}</strong> ${cat ? renderChip(cat) : ''}</div>
+            ${title_nl ? `<div class="nl">${esc(title_nl)}</div>` : ''}
+            <div class="section-meta">${metaBits.join(' · ')}</div>
+          </div>
+        </div>
+        ${objF ? `<div class="ex-sec"><strong>Objectif :</strong> ${esc(objF)}${objN ? `<div class="nl">${esc(objN)}</div>`:''}</div>` : ''}
+        ${setF ? `<div class="ex-sec"><strong>Setup :</strong> ${esc(setF)}${setN ? `<div class="nl">${esc(setN)}</div>`:''}</div>` : ''}
+        ${insF.length ? `<div class="ex-sec"><strong>Instructions :</strong>
+          <ol class="instructions">${insF.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>
+          ${insN.length ? `<ol class="instructions nl">${insN.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>` : ''}
+        </div>` : ''}
+        ${varF.length ? `<div class="ex-sec"><strong>Variantes :</strong>
+          <ul class="variants">${varF.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>
+          ${varN.length ? `<ul class="variants nl">${varN.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>` : ''}
+        </div>` : ''}
+        ${src ? `<div class="src">📖 ${esc(src)}</div>` : ''}
+      </div>`;
+    };
+
+    const renderSession = (s, si)=>{
+      const sumEx = (s.exercises||[]).reduce((a,e)=>a+(parseInt(e.duration)||0),0);
+      const sessDur = parseInt(s.duration)||0;
+      const diff = sumEx - sessDur;
+      const warnMet = sessDur>0 && Math.abs(diff)>10;
+      const pres = presencesFor(s);
+      const focus = (s.focus||[]).filter(Boolean);
+      const dayDate = sessionDate(s.type);
+      return `<div class="session">
+        <h2>${esc(s.dayName||s.label||s.type)}${s.label && s.dayName && s.label!==s.dayName ? ' <span class="sub">'+esc(s.label)+'</span>' : ''}
+          <span class="chip chip-dur">${esc(sessDur||75)} min</span>
+          <span class="chip chip-rpe">RPE ${esc(s.rpe_target||'?')}</span>
+        </h2>
+        <div class="section-meta">${dayDate ? '📅 '+esc(fdLong(dayDate))+' · ' : ''}${focus.length ? 'Focus : '+focus.map(esc).join(', ') : ''}</div>
+        ${s.objectif ? `<div class="sess-obj"><strong>Objectif :</strong> ${esc(s.objectif)}</div>` : ''}
+        <div class="metrics">
+          <span class="metric-box">⏱ Exos : <strong>${sumEx}</strong> min</span>
+          <span class="metric-box">🗓 Séance : <strong>${sessDur||75}</strong> min</span>
+          ${warnMet ? `<span class="metric-box metric-warn">⚠ ${diff>0?'+':''}${diff} min</span>` : ''}
+          <span class="metric-box">Charge : <strong>${Math.round(rpeN(s.rpe_target)*(sessDur||75))}</strong> AU</span>
+        </div>
+        ${pres && pres.total>0 ? `<div class="pres">
+          👥 <strong>${pres.present}/${pres.total}</strong> présents (${esc(pres.date)})
+          ${pres.absents.length ? `<div class="pres-absent">Absents : ${pres.absents.map(esc).join(', ')}</div>` : ''}
+        </div>` : ''}
+        <h3>Exercices (${(s.exercises||[]).length})</h3>
+        ${(s.exercises||[]).length ? (s.exercises||[]).map((ex,i)=>renderExercise(ex,i+1)).join('') : '<div class="muted">Aucun exercice renseigné.</div>'}
+        ${s.notes ? `<div class="sess-notes"><strong>📝 Notes :</strong> ${esc(s.notes).replace(/\n/g,'<br>')}</div>` : ''}
+      </div>`;
+    };
+
+    // 8) Full HTML document
+    const appVer = (typeof APP_VERSION!=='undefined') ? APP_VERSION : 'v?';
+    const genDate = new Date().toLocaleString('fr-BE');
+    const docTitle = `Planning ${matchLabel} — ${match.match_date||''}`;
+
+    const html = `<!doctype html><html lang="fr"><head>
+<meta charset="utf-8">
+<title>${esc(docTitle)}</title>
+<style>
+@page { size: A4; margin: 15mm 14mm 18mm 14mm; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "Segoe UI", Arial, sans-serif; color: #0B1929; font-size: 10.5pt; line-height: 1.42; margin: 0; background: #fff; }
+h1 { color: #10B981; font-size: 22pt; margin: 0 0 4px; font-weight: 800; letter-spacing: -0.5px; }
+h2 { color: #0B1929; font-size: 14pt; margin: 14px 0 6px; border-bottom: 2px solid #10B981; padding-bottom: 4px; font-weight: 700; }
+h3 { color: #0B1929; font-size: 11.5pt; margin: 10px 0 4px; font-weight: 700; }
+.muted { color: #6B7280; }
+.small { font-size: 9pt; }
+.sub { font-size: 11pt; font-weight: 500; color: #6B7280; margin-left: 6px; }
+.nl { color: #6B7280; font-style: italic; font-size: 9pt; margin-top: 1px; }
+.cover { page-break-after: always; }
+.cover-head { display: flex; gap: 16px; align-items: center; padding-bottom: 10px; border-bottom: 3px solid #10B981; }
+.cover-logo { width: 68px; height: 68px; object-fit: contain; flex-shrink: 0; }
+.cover-title { flex: 1; }
+.cover-title .match { font-size: 14pt; color: #0B1929; font-weight: 700; margin-top: 2px; }
+.cover-title .meta { color: #6B7280; font-size: 10pt; margin-top: 2px; }
+.session { page-break-before: always; }
+.session:first-of-type { page-break-before: auto; }
+.exercise { page-break-inside: avoid; margin: 10px 0; padding: 9px 10px; border: 1px solid #E5E7EB; border-radius: 5px; background: #FAFBFC; }
+.ex-head { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
+.ex-thumb { width: 82px; height: 62px; object-fit: cover; border-radius: 4px; background: #F3F4F6; flex-shrink: 0; border: 1px solid #E5E7EB; }
+.ex-title { flex: 1; min-width: 0; }
+.ex-title strong { font-size: 11pt; }
+.ex-sec { margin-top: 5px; font-size: 10pt; }
+.ex-sec strong { color: #0B1929; }
+.chip { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 8.5pt; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+.chip-warmup { background: #FEF3C7; color: #92400E; }
+.chip-technique { background: #DBEAFE; color: #1E40AF; }
+.chip-tactique { background: #FEE2E2; color: #991B1B; }
+.chip-ssg { background: #D1FAE5; color: #065F46; }
+.chip-finition { background: #E9D5FF; color: #6B21A8; }
+.chip-setpieces { background: #FCE7F3; color: #9F1239; }
+.chip-defense { background: #DBEAFE; color: #1E3A8A; }
+.chip-gardien { background: #FEDCAF; color: #9A3412; }
+.chip-prevention { background: #CFFAFE; color: #155E75; }
+.chip-dur { background: #10B981; color: #fff; margin-left: 8px; }
+.chip-rpe { background: #F59E0B; color: #fff; }
+.section-meta { color: #6B7280; font-size: 9pt; margin: 3px 0 4px; }
+.sess-obj { margin: 6px 0; font-size: 10pt; }
+.metrics { margin: 4px 0 8px; }
+.metric-box { display: inline-block; padding: 3px 8px; background: #F3F4F6; border-radius: 3px; font-size: 9pt; margin-right: 5px; }
+.metric-box strong { color: #0B1929; }
+.metric-warn { background: #FEF3C7; color: #92400E; }
+ol.instructions { margin: 3px 0 3px 20px; padding: 0; }
+ol.instructions li { margin: 2px 0; font-size: 10pt; }
+ol.instructions.nl li { font-size: 9pt; color: #6B7280; font-style: italic; }
+ul.variants { margin: 3px 0 3px 20px; padding: 0; }
+ul.variants li { margin: 2px 0; font-size: 10pt; }
+ul.variants.nl li { font-size: 9pt; color: #6B7280; font-style: italic; }
+.src { color: #6B7280; font-style: italic; font-size: 8.5pt; margin-top: 5px; }
+.toc { background: #F9FAFB; padding: 12px 14px; border-radius: 5px; margin-top: 16px; border: 1px solid #E5E7EB; }
+.toc h3 { margin: 0 0 6px; color: #10B981; }
+.toc ol { margin: 0; padding-left: 20px; }
+.toc li { margin: 2px 0; font-size: 10pt; }
+.pres { padding: 6px 10px; background: #F0FDF4; border-left: 3px solid #10B981; border-radius: 3px; margin: 6px 0; font-size: 10pt; }
+.pres-absent { color: #991B1B; font-size: 9pt; margin-top: 2px; }
+.sess-notes { margin-top: 10px; padding: 8px 10px; background: #F9FAFB; border-left: 3px solid #6B7280; border-radius: 3px; font-style: italic; font-size: 10pt; }
+.load-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 4px; }
+.load-table th { background: #F3F4F6; padding: 5px 6px; text-align: left; font-size: 9.5pt; border-bottom: 1px solid #E5E7EB; }
+.load-table td { padding: 5px 6px; border-bottom: 1px solid #F3F4F6; }
+.load-table tr.total td { background: #ECFDF5; font-weight: 700; border-top: 2px solid #10B981; }
+.week-note { margin-top: 16px; padding: 10px 12px; background: #FEF3C7; border-radius: 4px; font-size: 10pt; border-left: 3px solid #F59E0B; }
+.signature { margin-top: 30px; text-align: center; padding-top: 12px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 9.5pt; }
+.signature strong { color: #10B981; font-weight: 800; letter-spacing: 0.3px; }
+.hint { text-align: center; padding: 8px; background: #F9FAFB; font-size: 9pt; color: #6B7280; border-radius: 4px; margin-bottom: 10px; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .hint { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="hint">💡 Utilise <strong>Fichier → Imprimer → Enregistrer au format PDF</strong> (ou ⌘P / Ctrl+P) pour sauvegarder le document.</div>
+
+<div class="cover">
+  <div class="cover-head">
+    ${logoB64 ? `<img class="cover-logo" src="${logoB64}" alt="RealDev Vilvoorde">` : ''}
+    <div class="cover-title">
+      <h1>Planning hebdo</h1>
+      <div class="match">${esc(matchLabel)}</div>
+      <div class="meta">${esc(matchMeta)}</div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h3>Sommaire</h3>
+    <ol>
+      ${sessions.map((s,i)=>`<li><strong>${esc(s.dayName||s.label||s.type)}</strong> — ${(s.exercises||[]).length} exo${(s.exercises||[]).length>1?'s':''} · ${esc(s.duration||75)} min · RPE ${esc(s.rpe_target||'?')}</li>`).join('')}
+    </ol>
+  </div>
+
+  <h3 style="margin-top:18px;">Résumé charge hebdomadaire</h3>
+  <table class="load-table">
+    <thead><tr>
+      <th>Séance</th>
+      <th style="text-align:center;">Durée</th>
+      <th style="text-align:center;">RPE cible</th>
+      <th style="text-align:center;">Charge (AU)</th>
+    </tr></thead>
+    <tbody>
+      ${sessions.map(s=>{
+        const r=rpeN(s.rpe_target), d=s.duration||75;
+        return `<tr>
+          <td>${esc(s.dayName||s.label||s.type)}</td>
+          <td style="text-align:center;">${esc(d)} min</td>
+          <td style="text-align:center;">${esc(s.rpe_target||'?')}</td>
+          <td style="text-align:center;">${Math.round(r*d)}</td>
+        </tr>`;
+      }).join('')}
+      <tr class="total">
+        <td>Total</td>
+        <td style="text-align:center;">${totalDur} min</td>
+        <td style="text-align:center;">${avgRpe.toFixed(1)} moy</td>
+        <td style="text-align:center;">${totalLoad} AU</td>
+      </tr>
+    </tbody>
+  </table>
+
+  ${plan.week_note ? `<div class="week-note"><strong>📝 Note de semaine :</strong><br>${esc(plan.week_note).replace(/\n/g,'<br>')}</div>` : ''}
+
+  <div class="signature">
+    <strong>RealDev Vilvoorde</strong><br>
+    Document généré le ${esc(genDate)} — App v${esc(appVer)}
+  </div>
+</div>
+
+${sessions.map((s,si)=>renderSession(s,si)).join('')}
+
+<div class="signature" style="margin-top:20px;">
+  <strong>RealDev Vilvoorde</strong> · Planning hebdomadaire<br>
+  <span class="muted">Généré le ${esc(genDate)} — App v${esc(appVer)}</span>
+</div>
+
+<script>window.onload=()=>setTimeout(()=>{try{window.print();}catch(e){}},600);<\/script>
+</body></html>`;
+
+    // 9) Write to the popup
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    toast('✓ Export PDF prêt — Ctrl+P ou ⌘P');
+  } catch(err) {
+    console.error('[exportPlanningPDF]', err);
+    try {
+      w.document.open();
+      w.document.write('<!doctype html><meta charset="utf-8"><body style="font-family:sans-serif;padding:40px;color:#991B1B;"><h2>Erreur lors de la génération</h2><pre style="white-space:pre-wrap;color:#6B7280;">'+String((err&&err.message)||err).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))+'</pre><button onclick="window.close()">Fermer</button></body>');
+      w.document.close();
+    } catch(e){}
+    toast('✗ Erreur export : '+((err&&err.message)||err));
+  }
 };
 
 /* ════════ MATCHS ════════ */

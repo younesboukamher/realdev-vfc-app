@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v18'; // bumped — Part 2: bottom sheet édition mobile-first
-const APP_VERSION = '1.12.4';
+const CACHE = 'rdv-v19'; // bumped — export PDF v2 (détails complets bilingue)
+const APP_VERSION = '1.12.5';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
