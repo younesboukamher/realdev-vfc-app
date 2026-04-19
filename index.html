@@ -743,6 +743,23 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* M1: tabs Matchs (A venir / Joues / Adversaires) */
+.opp-card{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:12px;margin:6px 18px;display:flex;flex-direction:column;gap:6px;}
+.opp-card-head{display:flex;align-items:center;gap:8px;}
+.opp-card-name{font:700 14px/1.2 var(--font);color:var(--tx1);flex:1;min-width:0;word-break:break-word;}
+.opp-card-record{display:flex;gap:5px;flex-wrap:wrap;}
+.opp-pill{padding:3px 8px;border-radius:999px;font:700 11px/1 var(--font);display:inline-flex;align-items:center;gap:3px;}
+.opp-pill.v{background:rgba(16,185,129,.18);color:var(--brand);}
+.opp-pill.n{background:rgba(107,114,128,.22);color:var(--tx2);}
+.opp-pill.d{background:rgba(239,68,68,.18);color:var(--danger);}
+.opp-pill.sc{background:var(--ink3);color:var(--tx2);}
+.opp-card-hist{display:flex;gap:3px;align-items:center;}
+.opp-hist-dot{width:12px;height:12px;border-radius:2px;}
+.opp-hist-dot.v{background:var(--brand);}
+.opp-hist-dot.n{background:var(--tx3);}
+.opp-hist-dot.d{background:var(--danger);}
+.opp-hist-dot.u{background:var(--ink3);border:1px dashed var(--sep2);}
+
 /* Med1: auto-mark blesse banner + auto-B indicator */
 .pres-inj-banner{margin:4px 18px 10px;padding:10px 12px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);border-radius:10px;display:flex;gap:10px;align-items:flex-start;}
 .pres-inj-banner-icon{font-size:18px;line-height:1.2;flex-shrink:0;}
@@ -2316,19 +2333,39 @@ function generateMicrocycle(scouting) {
     <!-- MATCHS -->
     <div class="pg" id="pg-matchs">
       <div class="tabs">
-        <button class="tab-btn on" onclick="window.stab(this,'tm-results')">Résultats</button>
+        <button class="tab-btn on" onclick="window.stab(this,'tm-upcoming')">À venir</button>
+        <button class="tab-btn" onclick="window.stab(this,'tm-played')">Joués</button>
+        <button class="tab-btn" onclick="window.stab(this,'tm-opps')">Adversaires</button>
         <button class="tab-btn" onclick="window.stab(this,'tm-add')">Encoder</button>
         <button class="tab-btn" onclick="window.stab(this,'tm-scout')">Scouting</button>
       </div>
 
-      <div id="tm-results" class="tab-pane on">
+      <div id="tm-upcoming" class="tab-pane on">
         <div style="padding:12px 18px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font:500 12px/1 var(--font);color:var(--tx3);">Saison 2025–26</span>
+          <span style="font:500 12px/1 var(--font);color:var(--tx3);">Saison 2025–26 · à venir</span>
           <button class="btn btn-sm btn-outline" onclick="window.syncACFF()" id="btn-sync">↻ Sync ACFF</button>
         </div>
         <div id="sync-status"></div>
-        <div id="matches-list" class="match-list"></div>
+        <div id="matches-upcoming" class="match-list"></div>
       </div>
+
+      <div id="tm-played" class="tab-pane">
+        <div style="padding:12px 18px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font:500 12px/1 var(--font);color:var(--tx3);">Saison 2025–26 · joués</span>
+          <span id="tm-played-count" class="chip chip-muted" style="font-size:10px;">0</span>
+        </div>
+        <div id="matches-played" class="match-list"></div>
+      </div>
+
+      <div id="tm-opps" class="tab-pane">
+        <div style="padding:12px 18px;">
+          <input type="search" class="fi" id="opp-search" placeholder="Rechercher une équipe..." oninput="window.renderOpponents()" style="width:100%;">
+        </div>
+        <div id="matches-opps" class="match-list"></div>
+      </div>
+
+      <!-- legacy single 'matches-list' kept hidden for back-compat (no longer rendered) -->
+      <div id="matches-list" class="match-list" hidden></div>
 
       <div id="tm-add" class="tab-pane">
         <div style="padding:16px 18px 0;">
@@ -4419,9 +4456,66 @@ window.exportPlanningPDF = async (mid) => {
 };
 
 function renderMatches(){
-  const el=$('matches-list');if(!el)return;
-  el.innerHTML=[...S.matches].reverse().map(m=>matchRow(m)).join('');
+  // M1 — Matchs eclates en 3 vues: A venir, Joues, Adversaires
+  const upEl=$('matches-upcoming'), pkEl=$('matches-played');
+  const all=[...(S.matches||[])];
+  const upcoming = all.filter(m=>!m.result).sort((a,b)=>new Date(a.match_date||0)-new Date(b.match_date||0));
+  const played   = all.filter(m=>m.result).sort((a,b)=>new Date(b.match_date||0)-new Date(a.match_date||0));
+  if(upEl) upEl.innerHTML = upcoming.length ? upcoming.map(m=>matchRow(m)).join('') : emptyState('⏳','Aucun match à venir');
+  if(pkEl) pkEl.innerHTML = played.length   ? played.map(m=>matchRow(m)).join('')   : emptyState('🏁','Aucun match joué');
+  const cntEl=$('tm-played-count'); if(cntEl) cntEl.textContent=String(played.length);
+  // Legacy single list kept hidden but rendered for back-compat (exports/screenshots)
+  const legacy=$('matches-list'); if(legacy) legacy.innerHTML=all.slice().reverse().map(m=>matchRow(m)).join('');
+  // Adversaires
+  try{ window.renderOpponents && window.renderOpponents(); }catch(_){}
 }
+
+window.renderOpponents = function(){
+  const el=$('matches-opps'); if(!el) return;
+  const q=(($('opp-search')?.value)||'').toLowerCase().trim();
+  const all=(S.matches||[]).filter(m=>m.opponent);
+  const groups=new Map();
+  all.forEach(m=>{
+    const key=(m.opponent||'').trim(); if(!key) return;
+    if(!groups.has(key)) groups.set(key,[]);
+    groups.get(key).push(m);
+  });
+  const rows=[];
+  for(const [opp, list] of groups){
+    if(q && !opp.toLowerCase().includes(q)) continue;
+    const played=list.filter(m=>m.result);
+    const upcoming=list.filter(m=>!m.result);
+    const v=played.filter(m=>m.result==='V').length;
+    const n=played.filter(m=>m.result==='N').length;
+    const d=played.filter(m=>m.result==='D').length;
+    const gf=played.reduce((s,m)=>s+((m.is_home?m.score_home:m.score_away)||0),0);
+    const ga=played.reduce((s,m)=>s+((m.is_home?m.score_away:m.score_home)||0),0);
+    const hist=played.slice().sort((a,b)=>new Date(b.match_date||0)-new Date(a.match_date||0)).slice(0,5);
+    rows.push({opp, played, upcoming, v, n, d, gf, ga, hist, lastDate: hist[0]?.match_date||''});
+  }
+  rows.sort((a,b)=>(b.played.length-a.played.length) || (new Date(b.lastDate||0)-new Date(a.lastDate||0)));
+  if(!rows.length){ el.innerHTML = emptyState('🔍','Aucun adversaire'); return; }
+  el.innerHTML = rows.map(r=>{
+    const hist = r.hist.length ? ('<div class="opp-card-hist" title="5 derniers résultats">'+ r.hist.map(m=>{
+      const cls=m.result==='V'?'v':m.result==='N'?'n':'d';
+      return '<span class="opp-hist-dot '+cls+'" title="'+(fd(m.match_date)||'')+' '+(m.result||'')+' '+(m.score_home||0)+'-'+(m.score_away||0)+'"></span>';
+    }).join('')+'</div>') : '<div class="opp-card-hist"><span class="opp-hist-dot u"></span></div>';
+    const next = r.upcoming.length ? '<span class="opp-pill sc">⏳ '+(fd(r.upcoming.sort((a,b)=>new Date(a.match_date||0)-new Date(b.match_date||0))[0].match_date)||'?')+'</span>' : '';
+    return '<div class="opp-card">'
+      + '<div class="opp-card-head">'
+        + '<span class="opp-card-name">'+r.opp+'</span>'
+        + hist
+      + '</div>'
+      + '<div class="opp-card-record">'
+        + '<span class="opp-pill v">'+r.v+'V</span>'
+        + '<span class="opp-pill n">'+r.n+'N</span>'
+        + '<span class="opp-pill d">'+r.d+'D</span>'
+        + '<span class="opp-pill sc">⚽ '+r.gf+'–'+r.ga+'</span>'
+        + next
+      + '</div>'
+    + '</div>';
+  }).join('');
+};
 function matchRow(m){
   if(!m.result)return`<div class="match-row">
     <div class="match-stripe n"></div>
