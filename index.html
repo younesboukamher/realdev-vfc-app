@@ -760,6 +760,24 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Pr2: auto-declaration dispo joueur */
+.pr2-avail-list{padding:4px 18px 8px;display:flex;flex-direction:column;gap:8px;}
+.pr2-avail-row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+.pr2-avail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.pr2-avail-date{font:800 11px/1 var(--font);color:var(--brand);text-transform:uppercase;letter-spacing:.5px;}
+.pr2-avail-kind{font:500 10px/1 var(--font);color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.4px;}
+.pr2-avail-title{font:700 13px/1.25 var(--font);color:var(--tx1);margin-top:3px;word-break:break-word;}
+.pr2-avail-btns{display:flex;gap:5px;flex-shrink:0;}
+.pr2-avail-btn{padding:6px 10px;border:1px solid var(--line);background:var(--bg);color:var(--tx2);border-radius:999px;font:700 10px/1 var(--font);cursor:pointer;text-transform:uppercase;letter-spacing:.4px;transition:all .15s;}
+.pr2-avail-btn:hover{border-color:var(--brand);color:var(--tx1);}
+.pr2-avail-btn.on.dispo{background:var(--brand);color:#fff;border-color:var(--brand);}
+.pr2-avail-btn.on.indispo{background:var(--danger);color:#fff;border-color:var(--danger);}
+.pr2-avail-btn.on.doute{background:#f59e0b;color:#fff;border-color:#f59e0b;}
+.pr2-avail-note{margin-top:6px;padding:6px 8px;width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;font:500 12px/1.4 var(--font);background:var(--bg);color:var(--tx1);resize:vertical;min-height:30px;max-height:80px;}
+.pr2-avail-note:focus{outline:none;border-color:var(--brand);}
+.pr2-avail-empty{padding:12px 14px;text-align:center;font:500 12px/1.4 var(--font);color:var(--tx3);}
+.pr2-avail-hint{padding:4px 18px 8px;font:500 11px/1.35 var(--font);color:var(--tx3);}
+
 /* H2: Action du jour banner */
 .h2-act{margin:12px 14px 0;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand-dark,#15803d));color:#fff;display:flex;gap:12px;align-items:center;box-shadow:0 4px 14px rgba(22,163,74,.25);cursor:pointer;}
 .h2-act.amber{background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 14px rgba(245,158,11,.25);}
@@ -3350,6 +3368,7 @@ async function boot_app(user) {
   } catch(e){ console.warn('user_profiles load failed:',e); }
   // FIX P0 #2 — fallback profile pour éviter crashes silencieux si row manquante
   S.profile=prof||{id:user.id,role:'player',full_name:user.email||'Utilisateur',players:null};
+  if(!Array.isArray(S.availability)) S.availability = [];
   S.role=(prof&&prof.role)||'player';
   // Ex2 - favoris exos (Supabase user_profiles.favorite_exercises; fallback localStorage)
   try {
@@ -7050,6 +7069,138 @@ window.renderSq2Podium = function(){
 };
 
 /* ════════ PROFIL ════════ */
+// Pr2 — Auto-declaration dispo joueur
+window.pr2LoadAvail = async function(playerId){
+  try{
+    if(!playerId) return;
+    const { data, error } = await sb.from('player_availability').select('*').eq('player_id', playerId);
+    if(error){ console.warn('pr2LoadAvail',error); return; }
+    S.availability = data || [];
+  }catch(e){
+    console.warn('pr2LoadAvail failed', e);
+    // Fallback: read from localStorage
+    try{
+      const raw = localStorage.getItem('rdv_avail_'+playerId);
+      if(raw) S.availability = JSON.parse(raw) || [];
+    }catch(_){}
+  }
+};
+
+window.pr2SetAvail = async function(mid, sidx, status){
+  try{
+    const player = S.profile && S.profile.player_id ? S.players.find(p=>p.id===S.profile.player_id) : null;
+    if(!player){ toast('Profil non lie'); return; }
+    const sidxVal = sidx === null || sidx === undefined || sidx === '' ? null : Number(sidx);
+    // Find existing entry
+    let existing = (S.availability||[]).find(a => a.player_id===player.id && a.match_id===mid && (a.session_idx??null) === sidxVal);
+    const payload = {
+      player_id: player.id,
+      match_id: mid,
+      session_idx: sidxVal,
+      status,
+      updated_at: new Date().toISOString(),
+    };
+    try{
+      const { data, error } = await sb.from('player_availability').upsert(payload, { onConflict: 'player_id,match_id,session_idx' }).select().maybeSingle();
+      if(error) throw error;
+      if(data){
+        if(existing){ Object.assign(existing, data); } else { S.availability.push(data); }
+      }
+    }catch(e){
+      console.warn('pr2SetAvail supabase failed, fallback localStorage', e);
+      if(existing){ Object.assign(existing, payload); } else { payload.id = 'local-'+Date.now(); S.availability.push(payload); }
+      try{ localStorage.setItem('rdv_avail_'+player.id, JSON.stringify(S.availability)); }catch(_){}
+    }
+    try{ renderProfile(); }catch(_){}
+    toast(status==='dispo'?'✓ Disponible':status==='indispo'?'✗ Indisponible':'? Doute');
+  }catch(e){
+    console.warn('pr2SetAvail', e);
+    toast('Erreur');
+  }
+};
+
+window.pr2SaveNote = async function(mid, sidx, textarea){
+  try{
+    const player = S.profile && S.profile.player_id ? S.players.find(p=>p.id===S.profile.player_id) : null;
+    if(!player) return;
+    const sidxVal = sidx === null || sidx === undefined || sidx === '' ? null : Number(sidx);
+    const existing = (S.availability||[]).find(a => a.player_id===player.id && a.match_id===mid && (a.session_idx??null) === sidxVal);
+    if(!existing){
+      toast('Choisis un statut d\'abord');
+      return;
+    }
+    const note = (textarea.value||'').slice(0,280);
+    try{
+      const { data, error } = await sb.from('player_availability').update({ note, updated_at: new Date().toISOString() }).eq('id', existing.id).select().maybeSingle();
+      if(error) throw error;
+      if(data){ Object.assign(existing, data); }
+    }catch(e){
+      existing.note = note;
+      try{ localStorage.setItem('rdv_avail_'+player.id, JSON.stringify(S.availability)); }catch(_){}
+    }
+  }catch(_){}
+};
+
+window.pr2RenderAvail = function(playerId){
+  const dayIdxOfType = { dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6 };
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in14 = new Date(today); in14.setDate(today.getDate()+14);
+  const items = []; // { date, kind, label, mid, sidx }
+  (S.matches||[]).forEach(m => {
+    if(!m.match_date || m.result) return;
+    const d = new Date(m.match_date+'T12:00:00'); d.setHours(0,0,0,0);
+    if(d < today || d > in14) return;
+    items.push({ date:d, kind:'match', label:'Match vs '+(m.opponent||'?'), mid:m.id, sidx:null });
+  });
+  Object.keys(S.plans||{}).forEach(mid => {
+    const plan = S.plans[mid];
+    const match = (S.matches||[]).find(m => m.id===mid);
+    if(!plan || !match || !match.match_date) return;
+    (plan.sessions||[]).forEach((s, si) => {
+      const matchD = new Date(match.match_date+'T12:00:00');
+      const matchDow = matchD.getDay();
+      const tp = (s.type||'').toLowerCase();
+      const trainDow = dayIdxOfType[tp];
+      if(trainDow == null) return;
+      let diff = matchDow - trainDow;
+      if(diff <= 0) diff += 7;
+      const d = new Date(matchD); d.setDate(d.getDate()-diff); d.setHours(0,0,0,0);
+      if(d < today || d > in14) return;
+      items.push({ date:d, kind:'seance', label:(s.label||s.type||'Seance')+' (vs '+(match.opponent||'?')+')', mid, sidx:si });
+    });
+  });
+  items.sort((a,b) => a.date - b.date);
+  if(!items.length){
+    return '<div class="sec"><div class="sec-title">Ma disponibilite</div></div><div class="pr2-avail-empty">Aucun match ou seance prevus dans les 14 prochains jours.</div>';
+  }
+  const fmtDate = (d) => {
+    const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const months = ['jan','fev','mar','avr','mai','jun','jul','aou','sep','oct','nov','dec'];
+    return days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()];
+  };
+  const esc = (x) => String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const rows = items.map(it => {
+    const sidxAttr = it.sidx==null ? '' : it.sidx;
+    const key = it.mid+'|'+(it.sidx==null?'null':it.sidx);
+    const existing = (S.availability||[]).find(a => a.player_id===playerId && a.match_id===it.mid && (a.session_idx??null) === (it.sidx??null));
+    const status = existing ? existing.status : null;
+    const note = existing ? (existing.note||'') : '';
+    const btn = (val, lbl) => '<button type="button" class="pr2-avail-btn '+val+' '+(status===val?'on':'')+'" onclick="window.pr2SetAvail(\''+esc(it.mid)+'\','+(it.sidx==null?'null':it.sidx)+',\''+val+'\')">'+lbl+'</button>';
+    return '<div class="pr2-avail-row">'
+      +'<div class="pr2-avail-head">'
+        +'<div><div class="pr2-avail-date">'+fmtDate(it.date)+'</div>'
+          +'<div class="pr2-avail-kind">'+(it.kind==='match'?'⚽ Match':'🏋 Seance')+'</div>'
+          +'<div class="pr2-avail-title">'+esc(it.label)+'</div></div>'
+        +'<div class="pr2-avail-btns">'+btn('dispo','Dispo')+btn('indispo','Non')+btn('doute','?')+'</div>'
+      +'</div>'
+      +(status ? '<textarea class="pr2-avail-note" placeholder="Note optionnelle (280 car.)" maxlength="280" onblur="window.pr2SaveNote(\''+esc(it.mid)+'\','+(it.sidx==null?'null':it.sidx)+',this)">'+esc(note)+'</textarea>' : '')
+    +'</div>';
+  }).join('');
+  return '<div class="sec"><div class="sec-title">Ma disponibilite</div></div>'
+    +'<div class="pr2-avail-hint">Declare ta disponibilite pour les 14 prochains jours — le staff s\'appuie dessus.</div>'
+    +'<div class="pr2-avail-list">'+rows+'</div>';
+};
+
 function renderProfile(){
   if(!S.profile)return;
   const el=$('profile-content');
@@ -7092,9 +7243,20 @@ function renderProfile(){
     ${myI.length?`<div class="sec"><div class="sec-title">Blessures</div></div>${myI.map(i=>`<div class="inj-card inj-stripe-${i.severity}" style="margin:0 18px 8px;" onclick="openInjDetail('${i.id}',${!i.is_active})">
       <div class="inj-card-inner"><div class="inj-player">${i.type}</div><div class="inj-dates"><span>${fd(i.injury_date)}</span><span>${i.severity}</span><span>${i.is_active?'En cours':'Guéri '+fd(i.healed_at)}</span></div></div>
     </div>`).join('')}`:''}
+    ${window.pr2RenderAvail(player.id)}
     ${window.renderPasswordFormHTML()}
     <div style="height:16px;"></div>
   `;
+  // Lazy load availability (once per session per player)
+  try{
+    window._pr2Loaded = window._pr2Loaded || {};
+    if(!window._pr2Loaded[player.id] && window.pr2LoadAvail){
+      window._pr2Loaded[player.id] = true;
+      window.pr2LoadAvail(player.id).then(() => {
+        try{ renderProfile(); }catch(_){}
+      });
+    }
+  }catch(_){}
 }
 
 // Pr6 — Formulaire changement mot de passe
