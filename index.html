@@ -760,6 +760,14 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .ln-slot.empty .ln-slot-name{color:var(--tx3);font-style:italic;}
 .ln-picker-dd{background:var(--ink2);border:1px solid var(--sep2);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 
+/* Pl5: commentaires seance visibles (read-only) sous session card */
+.pl-sess-comment{margin:8px 0 0;padding:10px 12px;background:var(--brand-dim);border-left:3px solid var(--brand);border-radius:6px;font:500 12px/1.55 var(--font);color:var(--tx1);white-space:pre-wrap;word-break:break-word;}
+.pl-sess-comment-icon{display:inline-block;margin-right:5px;color:var(--brand);font-weight:700;}
+.pl-sess-comment-toggle{display:inline-block;margin-left:6px;padding:2px 7px;background:var(--brand);color:#fff;border:none;border-radius:999px;font:700 10px/1 var(--font);cursor:pointer;text-transform:uppercase;letter-spacing:.4px;}
+.pl-sess-comment-toggle:hover{filter:brightness(1.1);}
+.pl-sess-comment.collapsed .pl-sess-comment-full{display:none;}
+.pl-sess-comment:not(.collapsed) .pl-sess-comment-preview{display:none;}
+
 /* An2: date range picker Analytics */
 .ana-daterange{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 18px 4px;background:linear-gradient(90deg,var(--brand-dim),transparent);border-bottom:1px solid var(--line);}
 .ana-dr-label{font:700 10px/1 var(--font);color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;}
@@ -5952,9 +5960,37 @@ function dayBlock(s,si,mid,absent){
         ${S.players.filter(p=>p.status==='Disponible').map(p=>`<span class="squad-chip">${p.name.split(' ')[1]||p.name} <span style="font-size:9px;color:${posColor(p.position)};">${p.position}</span></span>`).join('')}
         ${absent.map(n=>`<span class="squad-chip absent">${n.split(' ')[1]||n} 🩺</span>`).join('')}
       </div>
+      ${(function(){
+        const raw = (s.notes||'').trim();
+        if(!raw) return '';
+        const esc = (x)=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        const words = raw.split(/\s+/).filter(Boolean);
+        const long = words.length > 20;
+        if(!long){
+          return '<div class="pl-sess-comment"><span class="pl-sess-comment-icon">✍</span>'+esc(raw)+'</div>';
+        }
+        const previewTxt = words.slice(0,20).join(' ') + '…';
+        return '<div class="pl-sess-comment collapsed">'
+          +'<span class="pl-sess-comment-icon">✍</span>'
+          +'<span class="pl-sess-comment-preview">'+esc(previewTxt)+'</span>'
+          +'<span class="pl-sess-comment-full">'+esc(raw)+'</span>'
+          +'<button type="button" class="pl-sess-comment-toggle" onclick="event.stopPropagation();window.plToggleComment(this)">Voir plus</button>'
+          +'</div>';
+      })()}
     </div>`:''}
   </div>`;
 }
+
+// Pl5 — toggle read-only comment display
+window.plToggleComment = function(btn){
+  try{
+    const c = btn && btn.closest('.pl-sess-comment');
+    if(!c) return;
+    c.classList.toggle('collapsed');
+    const expanded = !c.classList.contains('collapsed');
+    btn.textContent = expanded ? 'Masquer' : 'Voir plus';
+  }catch(_){}
+};
 
 window.toggleDay=(mid,si)=>{const k=mid+'_'+si;S.expanded.has(k)?S.expanded.delete(k):S.expanded.add(k);renderPlanning();};
 window.setPlanIdx=idx=>{S.planIdx=idx;renderPlanning();};
