@@ -3532,33 +3532,94 @@ async function queueOfflineOp(op){
   }catch(e){ console.warn('queueOfflineOp failed:',e); return false; }
   finally{ try{ window.renderSyncBadge && window.renderSyncBadge(); }catch(_){} }
 }
+// Of1 — Detection erreur reseau
+window.isNetworkError = function(e){
+  try{
+    if(typeof navigator !== 'undefined' && navigator.onLine === false) return true;
+    if(!e) return false;
+    if(e instanceof TypeError) return true;
+    const m = String(e.message||e.error||e);
+    return /network|failed to fetch|load failed|timeout|offline|disconnect/i.test(m);
+  }catch(_){ return false; }
+};
+
+// Of1 — Dispatch table flushOfflineQueue (kind -> handler)
+window._FLUSH_HANDLERS = {
+  'presences.upsert': async (it) => {
+    const { error } = await sb.from('presences').upsert(it.rows, { onConflict: 'player_id,session_date,session_type' });
+    if(error) throw error;
+  },
+  'matches.insert': async (it) => {
+    const { error } = await sb.from('matches').insert(it.payload);
+    if(error) throw error;
+  },
+  'matches.update': async (it) => {
+    const { error } = await sb.from('matches').update(it.payload).eq('id', it.id);
+    if(error) throw error;
+  },
+  'injuries.insert': async (it) => {
+    const { error } = await sb.from('injuries').insert(it.payload);
+    if(error) throw error;
+  },
+  'injuries.update': async (it) => {
+    const { error } = await sb.from('injuries').update(it.payload).eq('id', it.id);
+    if(error) throw error;
+  },
+};
+
 async function flushOfflineQueue(){
   try{
-    const db=await _openIdb();
-    const items=await new Promise((res,rej)=>{
-      const tx=db.transaction(OFFLINE_STORE,'readonly');
-      const req=tx.objectStore(OFFLINE_STORE).getAll();
-      req.onsuccess=()=>res(req.result||[]); req.onerror=()=>rej(req.error);
+    const db = await _openIdb();
+    const items = await new Promise((res,rej)=>{
+      const tx = db.transaction(OFFLINE_STORE,'readonly');
+      const req = tx.objectStore(OFFLINE_STORE).getAll();
+      req.onsuccess = () => res(req.result||[]); req.onerror = () => rej(req.error);
     });
     if(!items.length) return;
     toast(`🔄 Sync ${items.length} action(s) en attente…`);
-    let ok=0;
+    let ok = 0;
+    const kindsPlayed = new Set();
     for(const it of items){
       try{
-        if(it.kind==='presences.upsert'){
-          const{error}=await sb.from('presences').upsert(it.rows,{onConflict:'player_id,session_date,session_type'});
-          if(error) throw error;
-        }
+        const handler = window._FLUSH_HANDLERS[it.kind];
+        if(!handler){ console.warn('flushOfflineQueue: unknown kind', it.kind); continue; }
+        await handler(it);
         // Delete from IDB
         await new Promise((res,rej)=>{
-          const tx=db.transaction(OFFLINE_STORE,'readwrite');
+          const tx = db.transaction(OFFLINE_STORE,'readwrite');
           tx.objectStore(OFFLINE_STORE).delete(it.id);
-          tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error);
+          tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error);
         });
+        kindsPlayed.add(it.kind);
         ok++;
-      }catch(e){ console.warn('flush item failed:',e); /* garde pour prochaine tentative */ }
+      }catch(e){ console.warn('flush item failed:', it.kind, e); /* retry next time */ }
     }
-    if(ok){ toast(`✓ ${ok} action(s) synchronisée(s)`); const{data}=await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300); S.presences=data||[]; renderPresences(); renderHome(); }
+    if(ok){
+      toast(`✓ ${ok} action(s) synchronisée(s)`);
+      // Refresh state selectively based on kinds played
+      try{
+        if(kindsPlayed.has('presences.upsert')){
+          const { data } = await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300);
+          S.presences = data || [];
+          try{ renderPresences(); }catch(_){}
+        }
+        if(kindsPlayed.has('matches.insert') || kindsPlayed.has('matches.update')){
+          const { data } = await sb.from('matches').select('*').order('match_date');
+          S.matches = data || [];
+          try{ renderMatches(); }catch(_){}
+        }
+        if(kindsPlayed.has('injuries.insert') || kindsPlayed.has('injuries.update')){
+          const [a,h] = await Promise.all([
+            sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
+            sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
+          ]);
+          S.injuries = a.data || [];
+          S.injHistory = h.data || [];
+          try{ renderMedical(); }catch(_){}
+        }
+        try{ renderHome(); }catch(_){}
+      }catch(e){ console.warn('flushOfflineQueue refresh', e); }
+    }
   }catch(e){ console.warn('flushOfflineQueue error:',e); }
   finally{ try{ window.renderSyncBadge && window.renderSyncBadge(); }catch(_){} }
 }
@@ -5670,7 +5731,21 @@ window.saveLineupModal = async function(){
     window.close_modal('modal-lineup');
     toast && toast('Lineup enregistré ✓');
     try{ renderMatches(); renderHome && renderHome(); }catch(_){}
-  }catch(e){ toast && toast('✗ '+(e.message||e)); }
+  }catch(e){
+    // Of1 — offline fallback
+    if(window.isNetworkError && window.isNetworkError(e)){
+      const queued = await queueOfflineOp({ kind:'matches.update', id: L.currentMatchId, payload: { lineup: payload } });
+      if(queued){
+        const m = (S.matches||[]).find(x=>x.id===L.currentMatchId);
+        if(m){ m.lineup = payload; }
+        window.close_modal('modal-lineup');
+        toast && toast('📡 Lineup enregistré hors-ligne, sync à la reconnexion');
+        try{ renderMatches(); renderHome && renderHome(); }catch(_){}
+        return;
+      }
+    }
+    toast && toast('✗ '+(e.message||e));
+  }
 };
 
 window.saveMatchForm=async()=>{
@@ -5696,7 +5771,24 @@ window.saveMatchForm=async()=>{
     renderMatches(); renderHome(); toast(msg('saved'));
     // M1 — redirige vers 'tm-played' (anciennement tm-results)
     stab(document.querySelector('#pg-matchs .tab-btn.on')||document.querySelector('#pg-matchs .tab-btn'),'tm-played');
-  }catch(e){toast('✗ '+e.message);}
+  }catch(e){
+    // Of1 — offline fallback
+    if(window.isNetworkError && window.isNetworkError(e)){
+      const queued = await queueOfflineOp({ kind:'matches.insert', payload: basePayload });
+      if(queued){
+        // Optimistic local insert (avec id local temporaire)
+        const local = { ...basePayload, id: 'local-'+Date.now(), _pendingSync: true };
+        S.matches = [...(S.matches||[]), local].sort((a,b) => new Date(a.match_date||0) - new Date(b.match_date||0));
+        ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
+        try { window.resetEncoderChips && window.resetEncoderChips(); } catch(_){}
+        renderMatches(); renderHome();
+        toast('📡 Match enregistré hors-ligne, sync à la reconnexion');
+        stab(document.querySelector('#pg-matchs .tab-btn.on')||document.querySelector('#pg-matchs .tab-btn'),'tm-played');
+        return;
+      }
+    }
+    toast('✗ '+e.message);
+  }
 };
 
 /* ════════ SCOUTING ════════ */
@@ -5934,8 +6026,38 @@ window.saveInj=async()=>{
     matches_missed:$('inj-matches').value,notes:$('inj-notes').value,is_active:true};
   const editId=$('inj-edit-id').value;
   try{
-    if(editId){const{error:e}=await sb.from('injuries').update(payload).eq('id',editId);if(e)throw e;toast(msg('updated'));}
-    else{const{error:e}=await sb.from('injuries').insert(payload);if(e)throw e;await sb.from('players').update({status:'Blessé'}).eq('id',pid);toast(msg('saved'));}
+    if(editId){const{error:e}=await sb.from('injuries').update(payload).eq('id',editId);if(e){
+      // Of1 — offline fallback
+      if(window.isNetworkError && window.isNetworkError(e)){
+        const queued = await queueOfflineOp({ kind:'injuries.update', id: editId, payload });
+        if(queued){
+          const existing = (S.injuries||[]).find(x=>x.id===editId) || (S.injHistory||[]).find(x=>x.id===editId);
+          if(existing){ Object.assign(existing, payload); existing._pendingSync = true; }
+          toast('📡 Modif blessure hors-ligne, sync à la reconnexion');
+          try{ window.close_modal && window.close_modal('modal-inj'); }catch(_){}
+          try{ renderMedical(); renderHome(); }catch(_){}
+          return;
+        }
+      }
+      throw e;
+    }toast(msg('updated'));}
+    else{const{error:e}=await sb.from('injuries').insert(payload);if(e){
+      // Of1 — offline fallback
+      if(window.isNetworkError && window.isNetworkError(e)){
+        const queued = await queueOfflineOp({ kind:'injuries.insert', payload });
+        if(queued){
+          const local = { ...payload, id: 'local-'+Date.now(), _pendingSync: true, players: { name: (S.players.find(pp=>pp.id===pid)||{}).name || '', position: (S.players.find(pp=>pp.id===pid)||{}).position || '' } };
+          S.injuries = [...(S.injuries||[]), local];
+          // Marquer joueur blesse localement
+          const pl = S.players.find(pp=>pp.id===pid); if(pl) pl.status = 'Blessé';
+          toast('📡 Blessure enregistrée hors-ligne, sync à la reconnexion');
+          try{ window.close_modal && window.close_modal('modal-inj'); }catch(_){}
+          try{ renderMedical(); renderHome(); }catch(_){}
+          return;
+        }
+      }
+      throw e;
+    }await sb.from('players').update({status:'Blessé'}).eq('id',pid);toast(msg('saved'));}
     const[a,h]=await Promise.all([
       sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
       sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
