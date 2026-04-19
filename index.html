@@ -743,6 +743,16 @@ textarea.fi { resize:vertical; min-height:72px; line-height:1.5; }
 .rpe-btn:hover { background:var(--ink4); }
 .rpe-btn:active { background:var(--ink4); transform:scale(.95); }
 
+/* Med1: auto-mark blesse banner + auto-B indicator */
+.pres-inj-banner{margin:4px 18px 10px;padding:10px 12px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);border-radius:10px;display:flex;gap:10px;align-items:flex-start;}
+.pres-inj-banner-icon{font-size:18px;line-height:1.2;flex-shrink:0;}
+.pres-inj-banner-body{flex:1;min-width:0;font:500 12px/1.4 var(--font);color:var(--tx2);}
+.pres-inj-banner-title{font:700 13px/1.3 var(--font);color:var(--warn);margin-bottom:3px;}
+.pres-inj-banner-names{font-style:italic;color:var(--tx3);}
+.pres-inj-banner-act{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.roster-line.auto-B{position:relative;}
+.roster-line.auto-B::before{content:"AUTO";position:absolute;top:3px;right:3px;font:700 8px/1 var(--font);letter-spacing:.5px;padding:2px 4px;background:rgba(245,158,11,.22);color:var(--warn);border-radius:3px;}
+
 /* Sq1: Fiche joueur 360 */
 .sheet.sheet-full{max-width:720px;width:100%;max-height:calc(100dvh - 20px);}
 .p360-hero{display:flex;gap:14px;align-items:center;padding:6px 4px 16px;border-bottom:1px solid var(--sep2);margin-bottom:14px;}
@@ -2286,6 +2296,7 @@ function generateMicrocycle(scouting) {
           <button class="btn btn-outline btn-sm" onclick="window.exportPresencesCSV()" aria-label="Exporter les présences en CSV" style="flex:1">📥 CSV</button>
         </div>
         <div class="div" style="margin-top:8px;"></div>
+        <div id="pres-inj-banner" hidden></div>
         <div id="roster-list"></div>
         <div style="padding:14px 18px 0;">
           <button class="btn btn-green btn-block" onclick="window.savePresences()">Enregistrer la session</button>
@@ -3448,13 +3459,19 @@ function renderPresences() {
   /* Pointer */
   const listEl=$('roster-list');
   if (listEl&&S.players.length) {
-    // FIX BUG #22 — Init statuts avec is_active (source de vérité dans la DB)
-    if (!Object.keys(S.presStatus).length) {
+    // Med1 + FIX BUG #22 — Auto-mark blesse: init ou refresh quand la session change
+    const sessKey = ($('pres-date')?.value||'') + '|' + ($('pres-type')?.value||'');
+    if (!Object.keys(S.presStatus).length || S._presSessKey !== sessKey) {
+      S.presStatus = {};
       S.players.forEach(p=>{
         const injured=S.injuries.some(i=>i.player_id===p.id&&(i.is_active===true||i.status==='active'));
         S.presStatus[p.id]=injured?'B':'P';
       });
+      S._presSessKey = sessKey;
     }
+    const injSet = new Set(S.injuries.filter(i=>i.is_active===true||i.status==='active').map(i=>i.player_id));
+    const injList = S.players.filter(p=>injSet.has(p.id));
+    window._med1RenderBanner(injList);
     listEl.innerHTML=S.players.map(p=>{
       const cur=S.presStatus[p.id]||'P';
       const rpe=S.presRpe[p.id]||0;
@@ -3466,7 +3483,8 @@ function renderPresences() {
         `<button class="status-btn ${cur===s?'s-'+s:''}" data-status="${s}" onclick="setStatus('${p.id}','${s}')">${statusIcons[s]} ${statusLabels[s]}</button>`
       ).join('');
       // FIX UI #1 — helper unifié playerAvatar (photo ou initiales) utilisé partout
-      return `<div class="roster-line" data-player-id="${p.id}">
+      const _wasAutoB = S.injuries.some(i=>i.player_id===p.id&&(i.is_active===true||i.status==='active'));
+      return `<div class="roster-line ${_wasAutoB&&cur==='B'?'auto-B':''}" data-player-id="${p.id}">
         ${playerAvatar(p,'sm')}
         <div class="roster-info">
           <div class="roster-name">${p.name}</div>
@@ -3520,6 +3538,39 @@ function renderPresences() {
     </div>`).join('');
   }
 }
+
+// Med1 — Banner d'info pour les joueurs pre-marques blesses
+window._med1RenderBanner = function(injList){
+  const el = $('pres-inj-banner'); if(!el) return;
+  if(!injList || !injList.length){ el.hidden = true; el.innerHTML=''; return; }
+  const names = injList.map(p=>p.name).join(', ');
+  el.hidden = false;
+  el.className = 'pres-inj-banner';
+  el.innerHTML = '<div class="pres-inj-banner-icon">🩹</div>'
+    + '<div class="pres-inj-banner-body">'
+      + '<div class="pres-inj-banner-title">'+injList.length+' joueur(s) pré-marqué(s) Blessé</div>'
+      + '<div>Ces joueurs ont une blessure active. Ajuste manuellement si besoin avant d’enregistrer.</div>'
+      + '<div class="pres-inj-banner-names">• '+names+'</div>'
+    + '</div>'
+    + '<div class="pres-inj-banner-act">'
+      + '<button type="button" class="btn btn-sm btn-outline" onclick="window.med1ForceBRefresh()" aria-label="Ré-appliquer le pré-marquage Blessé">Ré-appliquer</button>'
+    + '</div>';
+};
+window.med1ForceBRefresh = function(){
+  S.players.forEach(p=>{
+    const injured=S.injuries.some(i=>i.player_id===p.id&&(i.is_active===true||i.status==='active'));
+    if(injured) S.presStatus[p.id]='B';
+  });
+  renderPresences();
+  if(typeof toast==='function') toast('Blessés re-pré-marqués');
+};
+// Med1 — Hook onchange sur la date/type pour re-preselect quand la session change
+document.addEventListener('DOMContentLoaded', ()=>{
+  const dd = $('pres-date'), tt = $('pres-type');
+  const rerun = ()=>{ S._presSessKey = null; try{ renderPresences(); }catch(_){} };
+  if(dd) dd.addEventListener('change', rerun);
+  if(tt) tt.addEventListener('change', rerun);
+});
 
 // FIX BUG #1+#2 — mise à jour visuelle des boutons statut
 // Le bouton actif reçoit la classe s-<status> (s-P, s-B, s-R) ; les autres la perdent.
