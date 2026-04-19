@@ -2017,6 +2017,9 @@ function generateMicrocycle(scouting) {
       <label class="field-label" id="lbl-pwd">Mot de passe</label>
       <input class="field-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
       <div id="login-err" class="login-err"></div>
+      <div style="text-align:right;margin:-4px 0 2px;">
+        <a href="#" id="link-forgot-pwd" onclick="event.preventDefault();window.openForgotPassword();" style="font:600 12px/1 var(--font);color:rgba(255,255,255,.75);text-decoration:none;">Mot de passe oublié&nbsp;?</a>
+      </div>
       <div style="margin:8px 0 4px">
         <label style="font:600 11px/1 var(--font);color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">Saison</label>
         <select id="login-season" style="width:100%;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 14px;font:600 14px/1 sans-serif">
@@ -2419,6 +2422,24 @@ function generateMicrocycle(scouting) {
   </div>
 </div>
 
+<!-- L1 — Mot de passe oublié -->
+<div class="overlay" id="modal-forgot-pwd" onclick="if(event.target===this)close_modal('modal-forgot-pwd')">
+  <div class="sheet" style="max-width:440px;">
+    <button class="sheet-close" onclick="window.close_modal('modal-forgot-pwd')">✕</button>
+    <div class="sheet-title">Mot de passe oublié</div>
+    <div style="padding:8px 4px 12px;font:500 14px/1.5 var(--font);color:var(--tx2);">
+      Saisissez votre email. Vous recevrez un lien pour définir un nouveau mot de passe.
+    </div>
+    <label class="field-label" for="forgot-email" style="display:block;margin-bottom:6px;font:600 12px/1 var(--font);color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;">Email</label>
+    <input class="field-input" type="email" id="forgot-email" placeholder="coach@realdev-vfc.be" autocomplete="email" style="width:100%;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 14px;font:600 14px/1 sans-serif;margin-bottom:10px;">
+    <div id="forgot-err" class="login-err" style="min-height:18px;margin:4px 0 8px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+      <button class="btn btn-outline" onclick="window.close_modal('modal-forgot-pwd')">Annuler</button>
+      <button class="btn btn-main" id="btn-forgot-submit" onclick="window.submitForgotPassword()" style="min-width:120px;">Envoyer</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ════════ LOOKER_DATA — Analytics Dataset (global) ════════ */
 var LOOKER_DATA = {
@@ -2723,6 +2744,42 @@ window.doLogin = async () => {
     console.error(e);
     errEl.textContent = 'Erreur: '+(e?.message||'inconnue');
     btn.disabled=false; btn.textContent='Se connecter';
+  }
+};
+
+// L1 — Mot de passe oublié
+window.openForgotPassword = () => {
+  const el = $('forgot-email');
+  if (el) el.value = ($('login-email')?.value || '').trim();
+  const errEl = $('forgot-err');
+  if (errEl) errEl.textContent = '';
+  const btn = $('btn-forgot-submit');
+  if (btn){ btn.disabled = false; btn.textContent = 'Envoyer'; }
+  window.open_modal('modal-forgot-pwd');
+};
+window.submitForgotPassword = async () => {
+  const emailEl = $('forgot-email');
+  const errEl = $('forgot-err');
+  const btn = $('btn-forgot-submit');
+  const email = (emailEl?.value || '').trim();
+  errEl.textContent = '';
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errEl.textContent = 'Email invalide';
+    emailEl?.focus();
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Envoi…';
+  try {
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname
+    });
+    if (error) throw error;
+    window.close_modal('modal-forgot-pwd');
+    toast('Email de réinitialisation envoyé. Consultez votre boîte mail.', 4000);
+  } catch (e) {
+    console.error('[forgot-pwd]', e);
+    errEl.textContent = 'Erreur : ' + (e?.message || 'envoi impossible');
+    btn.disabled = false; btn.textContent = 'Envoyer';
   }
 };
 
