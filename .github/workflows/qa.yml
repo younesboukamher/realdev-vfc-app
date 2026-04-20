@@ -1,0 +1,36 @@
+name: QA safety net
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  static:
+    name: Static tests (CSS orphan linter + generateMicrocycle contract)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run tests/run-all.mjs
+        run: node tests/run-all.mjs
+
+  push-e2e:
+    name: Push notifications E2E (unit + simulation, offline)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: push-e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Unit + simulation tests (35 assertions)
+        env:
+          REPO_ROOT: ${{ github.workspace }}
+        run: npm test
