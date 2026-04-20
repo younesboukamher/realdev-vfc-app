@@ -1,0 +1,13 @@
+{
+  "name": "rdv-vfc-push-e2e",
+  "version": "1.0.0",
+  "description": "Tests end-to-end pour l'Edge Function send-pre-session-notifications (date derivation + live invocation)",
+  "type": "module",
+  "scripts": {
+    "test": "node test-date-derivation.mjs && node test-local-simulation.mjs",
+    "test:unit": "node test-date-derivation.mjs",
+    "test:sim": "node test-local-simulation.mjs",
+    "test:live": "node test-live-invocation.mjs",
+    "test:all": "npm test && npm run test:live"
+  }
+}

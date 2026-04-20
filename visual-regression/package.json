@@ -1,0 +1,15 @@
+{
+  "name": "rdv-vfc-visual-regression",
+  "version": "1.0.0",
+  "description": "Playwright visual regression tests pour RealDev VFC (Home / Planning / Presences)",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:update": "playwright test --update-snapshots",
+    "test:ui": "playwright test --ui",
+    "serve": "node serve.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
+  }
+}

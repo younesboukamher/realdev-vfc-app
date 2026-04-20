@@ -1,0 +1,4 @@
+node_modules/
+playwright-report/
+test-results/
+# Ne PAS gitignorer tests/__screenshots__/ — c'est le baseline qu'on veut versionner

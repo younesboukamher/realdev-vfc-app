@@ -1,2 +1,6 @@
 scripts/__pycache__/
 scripts/*.pyc
+push-e2e/node_modules/
+visual-regression/node_modules/
+visual-regression/test-results/
+visual-regression/playwright-report/
