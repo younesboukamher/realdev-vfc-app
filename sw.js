@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v27'; // bumped — feat(sprint5): St4+N5+N4+Sq10+H6+An8+Pl9+P8+Of7+Sq6+H9+Pd7+Pl2+P3
-const APP_VERSION = '1.17.0';
+const CACHE = 'rdv-v28'; // bump QA 2026-04-20: modal CSS + nextMatch filter + pl2 session date + roster-name overflow
+const APP_VERSION = '1.17.1';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
