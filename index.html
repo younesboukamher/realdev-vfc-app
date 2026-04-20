@@ -8703,7 +8703,7 @@ window.computeAn8MVP = function(){
   // Presences 30j
   (S.presences||[]).forEach(pr => {
     if(!pr) return;
-    const d = pr.date ? new Date(pr.date) : null;
+    const d = pr.session_date ? new Date(pr.session_date) : null;
     if(!d || d < since || d > now) return;
     if(playersById[pr.player_id] && (pr.status||'P') === 'P') playersById[pr.player_id].pres += 1;
   });
@@ -9760,7 +9760,7 @@ function renderCoachDefence() {
     const interceptions = MATCH_DATA.reduce((s,m) => {
       // Estimé: joueurs défensifs (Hachem, El Bouhadifi, Boullermaun) ont plus d'interceptions
       const base = (p.pos==='FIXO') ? 1.2 : 0.7;
-      return s + (m.minutes?.[key] ? base + Math.random()*0.5 : 0);
+      return s + (m.minutes?.[key] ? base : 0);
     }, 0);
     const tacles = Math.round(interceptions * 0.6);
     const blocked = Math.round(interceptions * 0.3);
