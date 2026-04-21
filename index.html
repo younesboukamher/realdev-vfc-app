@@ -2720,12 +2720,14 @@ function generateMicrocycle(scouting) {
         <div id="home-timeline"></div>
       </section>
 
-      <!-- APERCU : priorite tertiaire (KPIs + alertes + historique) -->
+      <!-- APERCU : priorite tertiaire (alertes + KPIs + historique) -->
       <section class="home-lean-sec home-lean-sec--overview">
         <h2 class="home-lean-sec-title" data-t="overview_section">Aper&ccedil;u</h2>
-        <div id="home-kpis" style="padding:6px 18px 0;"></div>
-        <div class="sec" style="padding-top:16px;"><div class="sec-title" data-t="alerts">Alertes</div></div>
+        <!-- 1. Alertes d abord (actionnable en priorite) -->
         <div id="home-alerts"></div>
+        <!-- 2. KPIs ensuite (info de contexte) -->
+        <div id="home-kpis" style="padding:6px 18px 0;"></div>
+        <!-- 3. Resultats recents en dernier (historique) -->
         <div class="sec">
           <div class="sec-title" data-t="recent_results">R&eacute;sultats r&eacute;cents</div>
           <button class="sec-action" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" data-t="see_all">Tout voir</button>
@@ -4492,7 +4494,7 @@ function renderHome() {
   }
 
   /* Résultats */
-  const recent=[...S.matches].filter(m=>m.result).reverse().slice(0,5);
+  const recent=[...S.matches].filter(m=>m.result).reverse().slice(0,3);
   $('home-results').innerHTML=recent.map(m=>{
     const c=m.result==='V'?'w':m.result==='N'?'d':'l';
     return `<div class="result-item">
