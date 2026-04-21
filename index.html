@@ -2705,7 +2705,7 @@ function generateMicrocycle(scouting) {
     <!-- PRÉSENCES -->
     <div class="pg" id="pg-presences">
       <div class="tabs">
-        <button class="tab-btn on" onclick="window.stab(this,'tp-pointer')">Pointer</button>
+        <button class="tab-btn on" onclick="window.stab(this,'tp-pointer')">Faire l&rsquo;appel</button>
         <button class="tab-btn" onclick="window.stab(this,'tp-history')">Historique</button>
         <button class="tab-btn" onclick="window.stab(this,'tp-stats')">Stats</button>
       </div>
@@ -2760,8 +2760,8 @@ function generateMicrocycle(scouting) {
         <button class="tab-btn on" onclick="window.stab(this,'tm-upcoming')">À venir</button>
         <button class="tab-btn" onclick="window.stab(this,'tm-played')">Joués</button>
         <button class="tab-btn" onclick="window.stab(this,'tm-opps')">Adversaires</button>
-        <button class="tab-btn" onclick="window.stab(this,'tm-add')">Encoder</button>
-        <button class="tab-btn" onclick="window.stab(this,'tm-scout')">Scouting</button>
+        <button class="tab-btn" onclick="window.stab(this,'tm-add')">Ajouter</button>
+        <button class="tab-btn" onclick="window.stab(this,'tm-scout')">Analyses</button>
       </div>
 
       <div id="tm-upcoming" class="tab-pane on">
@@ -2857,7 +2857,7 @@ function generateMicrocycle(scouting) {
           </div>
           <div class="fg"><label class="fl">Rapport</label><textarea class="fi" id="m-notes" placeholder="Notes tactiques..."></textarea></div>
           <div style="padding:10px 0 4px;font:500 12px/1.5 var(--font);color:var(--tx3);font-style:italic;">
-            ℹ️ Le <strong>Lineup 5v5</strong> se compose après enregistrement du match, via le bouton 🎯 sur la fiche du match.
+            ℹ️ La <strong>composition d&rsquo;équipe</strong> se définit après enregistrement du match, via le bouton 🎯 sur la fiche du match.
           </div>
           <button class="btn btn-green btn-block" onclick="window.saveMatchForm()">Enregistrer</button>
           <div style="height:14px;"></div>
@@ -2873,7 +2873,7 @@ function generateMicrocycle(scouting) {
     <div class="pg" id="pg-medical">
       <div class="tabs">
         <button class="tab-btn on" onclick="window.stab(this,'ti-active')">Actives</button>
-        <button class="tab-btn" onclick="window.stab(this,'ti-declare')">Déclarer</button>
+        <button class="tab-btn" onclick="window.stab(this,'ti-declare')">Ajouter</button>
         <button class="tab-btn" onclick="window.stab(this,'ti-history')">Historique</button>
       </div>
 
@@ -2882,7 +2882,7 @@ function generateMicrocycle(scouting) {
       <div id="ti-declare" class="tab-pane">
         <div style="padding:16px 18px 0;">
           <input type="hidden" id="inj-edit-id">
-          <div class="fg"><label class="fl" id="inj-form-title">Déclarer une blessure</label></div>
+          <div class="fg"><label class="fl" id="inj-form-title">Ajouter un blessé</label></div>
           <div class="fg"><label class="fl">Joueur</label><select class="fs" id="inj-player"></select></div>
           <div class="fg"><label class="fl">Diagnostic</label><input class="fi" id="inj-type" placeholder="Ex: Entorse cheville droite"></div>
           <div class="fg2">
@@ -3237,7 +3237,7 @@ window.saveInj()">Enregistrer</button>
 <div class="overlay" id="modal-lineup" onclick="if(event.target===this)close_modal('modal-lineup')">
   <div class="sheet sheet-full" role="document" aria-labelledby="modal-lineup-title">
     <button class="sheet-close" onclick="window.close_modal('modal-lineup')" aria-label="Fermer">✕</button>
-    <div class="sheet-title" id="modal-lineup-title">Lineup 5v5</div>
+    <div class="sheet-title" id="modal-lineup-title">Composition</div>
     <div id="modal-lineup-body" style="padding:4px 2px 18px;"></div>
   </div>
 </div>
@@ -4136,14 +4136,14 @@ window.renderHomeAction = function(){
       return String(pd).slice(0,10) === todayISO;
     });
     if(todaySess && !pointedToday){
-      el.innerHTML = '<div class="h2-act" onclick="window.nav(\'presences\',document.querySelector(\'[data-p=presences]\'))" role="button" tabindex="0" aria-label="Pointer la seance du jour">'
+      el.innerHTML = '<div class="h2-act" onclick="window.nav(\'presences\',document.querySelector(\'[data-p=presences]\'))" role="button" tabindex="0" aria-label="Faire l\'appel de la seance du jour">'
         +'<div class="h2-act-icon">✔️</div>'
         +'<div class="h2-act-body">'
           +'<div class="h2-act-tag">Action du jour</div>'
-          +'<div class="h2-act-title">Pointer la seance</div>'
+          +'<div class="h2-act-title">Faire l\'appel</div>'
           +'<div class="h2-act-sub">'+(todaySess.sess.label || todaySess.sess.dayName || 'Seance du jour')+' — encore aucun pointage enregistre</div>'
         +'</div>'
-        +'<button class="h2-act-cta">Pointer</button>'
+        +'<button class="h2-act-cta">Ouvrir</button>'
       +'</div>';
       return;
     }
@@ -4383,7 +4383,7 @@ function renderHome() {
       ${absents ? `<div class="match-absents"><div class="match-absents-title" data-t="absent">Absents</div>${absents}</div>` : ''}
       ${canConvoc ? `<div class="match-cta-row">
         <button class="btn btn-green" onclick="window.nav('planning',document.querySelector('[data-p=planning]'));window.setPlanIdx(${S.matches.indexOf(nxt)});" aria-label="Préparer la convocation pour ce match">Préparer la convocation</button>
-        <button class="btn btn-outline match-hero-cta-lineup" onclick="window.openLineupModal('${nxt.id}')" aria-label="Composer le lineup 5v5 du prochain match">🎯 Lineup 5v5</button>
+        <button class="btn btn-outline match-hero-cta-lineup" onclick="window.openLineupModal('${nxt.id}')" aria-label="Composer l'équipe du prochain match">🎯 Composition</button>
         <button class="btn btn-outline" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" aria-label="Voir les détails du match">Détails</button>
       </div>` : ''}
     </div>`;
@@ -5771,7 +5771,7 @@ window.renderOpponents = function(){
 };
 function matchRow(m){
   const hasLineup = !!(m.lineup && m.lineup.starters && m.lineup.starters.some && m.lineup.starters.some(s=>s.player_id));
-  const lnCta = `<button class="match-row-cta-lineup ${hasLineup?'has-lineup':''}" onclick="event.stopPropagation();window.openLineupModal('${m.id}')" aria-label="Composer le lineup 5v5">🎯 ${hasLineup?'Lineup ✓':'Lineup'}</button>`;
+  const lnCta = `<button class="match-row-cta-lineup ${hasLineup?'has-lineup':''}" onclick="event.stopPropagation();window.openLineupModal('${m.id}')" aria-label="Composer l'équipe">🎯 ${hasLineup?'Compo ✓':'Compo'}</button>`;
   if(!m.result)return`<div class="match-row">
     <div class="match-stripe n"></div>
     <div class="match-row-body">
@@ -6084,7 +6084,7 @@ window.openLineupModal = function(matchId){
   const vs = m.is_home ? ('VFC vs '+(m.opponent||'?')) : ((m.opponent||'?')+' vs VFC');
   const dateStr = m.match_date ? (fd(m.match_date)) : '';
   const jr = m.journee ? (m.journee+' · ') : '';
-  if(title) title.textContent = 'Lineup 5v5 — '+vs;
+  if(title) title.textContent = 'Composition — '+vs;
   body.innerHTML = '<div class="ln-modal-header">'
       + '<div class="ln-modal-meta"><strong>'+vs+'</strong><br>'+jr+dateStr+(m.result?' · '+m.result+' '+(m.score_home||0)+'–'+(m.score_away||0):' · À venir')+'</div>'
     + '</div>'
@@ -6389,7 +6389,7 @@ function renderProtoUI(){
 
 function clearInjForm(){
   ['inj-type','inj-mech','inj-zone','inj-exam','inj-treat','inj-matches','inj-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
-  $('inj-edit-id').value=''; $('inj-form-title').textContent='Déclarer une blessure';
+  $('inj-edit-id').value=''; $('inj-form-title').textContent='Ajouter un blessé';
   $('inj-save-btn').textContent='Enregistrer';
   $('inj-date').value=new Date().toISOString().split('T')[0]; $('inj-retour').value='';
   _ps=[]; renderProtoUI();
@@ -9974,11 +9974,11 @@ window.renderH9Fab = function(){
           +'<span class="h9-fab-item-icon">⚽</span>'
         +'</button>'
         +'<button type="button" class="h9-fab-item" data-act="injury">'
-          +'<span class="h9-fab-item-lbl">Declarer blessure</span>'
+          +'<span class="h9-fab-item-lbl">Ajouter un blessé</span>'
           +'<span class="h9-fab-item-icon">🏥</span>'
         +'</button>'
         +'<button type="button" class="h9-fab-item" data-act="presence">'
-          +'<span class="h9-fab-item-lbl">Pointer seance</span>'
+          +'<span class="h9-fab-item-lbl">Faire l\'appel</span>'
           +'<span class="h9-fab-item-icon">✅</span>'
         +'</button>'
         +'<button type="button" class="h9-fab-item" data-act="squad">'
