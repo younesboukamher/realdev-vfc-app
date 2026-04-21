@@ -427,6 +427,15 @@ body.offline #offline-bar { display:block; }
   background:none; border:none; cursor:pointer; padding:4px 0;
 }
 
+/* UX Lean Sprint 2 : sections hierarchiques Home */
+.home-lean-sec{display:block;margin-top:2px;}
+.home-lean-sec:first-of-type{margin-top:0;}
+.home-lean-sec-title{font:700 11px/1 var(--font);text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);padding:20px 18px 6px;margin:0;}
+.home-lean-sec.empty{display:none;}
+.home-lean-sec--today{/* marqueur : priorite primaire (action du jour) */}
+.home-lean-sec--week{/* marqueur : priorite secondaire (semaine) */}
+.home-lean-sec--overview > .sec:first-of-type{padding-top:10px;}
+
 /* Divider */
 .div { height:1px; background:var(--sep); margin:0 18px; }
 
@@ -2682,23 +2691,39 @@ function generateMicrocycle(scouting) {
 
   <div class="main">
 
-    <!-- ACCUEIL -->
+    <!-- ACCUEIL (UX Lean Sprint 2 : 3 sections hierarchiques) -->
     <div class="pg on" id="pg-home">
-      <!-- H2: Action du jour -->
-      <div id="home-action"></div>
-      <!-- H1 — Hero 'Prochain match' XL en premier -->
-      <div id="home-match"></div>
-      <div id="home-kpis" style="padding:6px 18px 0;"></div>
-      <!-- H3: timeline 7j -->
-      <div id="home-timeline"></div>
-      <div class="sec" style="padding-top:16px;"><div class="sec-title" data-t="alerts">Alertes</div></div>
-      <div id="home-alerts"></div>
-      <div class="sec">
-        <div class="sec-title" data-t="recent_results">Résultats récents</div>
-        <button class="sec-action" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" data-t="see_all">Tout voir</button>
-      </div>
-      <div id="home-results" class="result-list"></div>
-      <div style="height:12px;"></div>
+      <!-- AUJOURD’HUI : priorite primaire (1 CTA max) -->
+      <section class="home-lean-sec home-lean-sec--today">
+        <h2 class="home-lean-sec-title" data-t="today_section">Aujourd&rsquo;hui</h2>
+        <!-- H2: Action du jour -->
+        <div id="home-action"></div>
+        <!-- H6: Notes seance du jour -->
+        <div id="h6-notes-ctn"></div>
+      </section>
+
+      <!-- CETTE SEMAINE : priorite secondaire -->
+      <section class="home-lean-sec home-lean-sec--week">
+        <h2 class="home-lean-sec-title" data-t="this_week_section">Cette semaine</h2>
+        <!-- H1: Hero Prochain match XL -->
+        <div id="home-match"></div>
+        <!-- H3: Timeline 7j -->
+        <div id="home-timeline"></div>
+      </section>
+
+      <!-- APERCU : priorite tertiaire (KPIs + alertes + historique) -->
+      <section class="home-lean-sec home-lean-sec--overview">
+        <h2 class="home-lean-sec-title" data-t="overview_section">Aper&ccedil;u</h2>
+        <div id="home-kpis" style="padding:6px 18px 0;"></div>
+        <div class="sec" style="padding-top:16px;"><div class="sec-title" data-t="alerts">Alertes</div></div>
+        <div id="home-alerts"></div>
+        <div class="sec">
+          <div class="sec-title" data-t="recent_results">R&eacute;sultats r&eacute;cents</div>
+          <button class="sec-action" onclick="window.nav('matchs',document.querySelector('[data-p=matchs]'))" data-t="see_all">Tout voir</button>
+        </div>
+        <div id="home-results" class="result-list"></div>
+        <div style="height:12px;"></div>
+      </section>
     </div>
 
     <!-- PRÉSENCES -->
@@ -3377,6 +3402,7 @@ const MSGS = {
     home:'Accueil', presences:'Présences', matchs:'Matchs', medical:'Medical Room', planning:'Planning', squad:'Squad', profile:'Mon profil',
     next_match:'Prochain match', today:"Aujourd'hui", tomorrow:'Demain', absent:'Absents', alerts:'Alertes',
     recent_results:'Résultats récents', see_all:'Tout voir',
+    today_section:"Aujourd'hui", this_week_section:'Cette semaine', overview_section:'Aperçu',
     available:'Dispos', injured_count:'Blessés', home_venue:'🏠 Domicile', away_venue:'✈️ Extérieur', injured:'Blessé', suspended:'Suspendu', uncertain:'Incertain',
     save_session:'Enregistrer la session', goals:'Buts', assists:'Assists', attendance:'Présence', cards:'Cartons',
   },
@@ -3384,6 +3410,7 @@ const MSGS = {
     home:'Startpagina', presences:'Aanwezigheid', matchs:'Wedstrijden', medical:'Medisch', planning:'Planning', squad:'Ploeg', profile:'Mijn profiel',
     next_match:'Volgende wedstrijd', today:'Vandaag', tomorrow:'Morgen', absent:'Afwezig', alerts:'Meldingen',
     recent_results:'Recente resultaten', see_all:'Alles zien',
+    today_section:'Vandaag', this_week_section:'Deze week', overview_section:'Overzicht',
     available:'Beschikbaar', injured_count:'Geblesseerd', home_venue:'🏠 Thuis', away_venue:'✈️ Uit',
     injured:'Geblesseerd', suspended:'Geschorst', uncertain:'Onzeker',
     stats:'Statistieken', evolution:'Evolutie', attack:'Aanval', defense:'Verdediging',
@@ -4276,6 +4303,20 @@ window.renderHomeTimeline = function(){
     +'</div>';
 };
 
+// UX Lean Sprint 2 : helper auto-hide sections Home vides
+function __leanHideEmptySections(){
+  try{
+    document.querySelectorAll('.home-lean-sec').forEach(function(sec){
+      var title = sec.querySelector('.home-lean-sec-title');
+      var children = Array.from(sec.children).filter(function(c){ return c !== title; });
+      var hasContent = children.some(function(c){
+        return c.textContent.trim().length > 0 || c.querySelector('img,svg,canvas,.card,.match-card,.hero-match');
+      });
+      sec.classList.toggle('empty', !hasContent);
+    });
+  }catch(e){}
+}
+
 function renderHome() {
   /* H5 — KPIs différenciés coach/joueur */
   const isStaff = ['admin','coach','assistant','physio','gk'].includes(S.role);
@@ -4431,7 +4472,10 @@ function renderHome() {
       <div class="result-score ${c}">${m.score_home}–${m.score_away}</div>
     </div>`;
   }).join('')||`<div class="empty" style="padding:20px 18px;"><div class="empty-icon">⚽</div><div class="empty-sub">Aucun résultat</div></div>`;
-}
+
+    // UX Lean Sprint 2 : auto-hide sections vides
+    try{ __leanHideEmptySections(); }catch(_e){}
+  }
 
 /* ════════ PRÉSENCES ════════ */
 // FIX P2 #7 - Attendance heatmap : matrice joueur x date (20 dernieres sessions)
