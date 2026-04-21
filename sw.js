@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v28'; // bump QA 2026-04-20: modal CSS + nextMatch filter + pl2 session date + roster-name overflow
-const APP_VERSION = '1.17.1';
+const CACHE = 'rdv-v29'; // bump lean sprint 2 2026-04-21: Home 3 sections + alertes collapsed
+const APP_VERSION = '1.18.0';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
