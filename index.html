@@ -435,6 +435,15 @@ body.offline #offline-bar { display:block; }
 .home-lean-sec--today{/* marqueur : priorite primaire (action du jour) */}
 .home-lean-sec--week{/* marqueur : priorite secondaire (semaine) */}
 .home-lean-sec--overview > .sec:first-of-type{padding-top:10px;}
+/* UX Lean Sprint 2 : alertes collapsed (1 ligne + expand) */
+.alerts-collapsed{display:flex;align-items:center;gap:10px;width:calc(100% - 36px);margin:4px 18px 0;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);font:600 14px/1.2 var(--font);color:var(--tx1);cursor:pointer;text-align:left;transition:background .15s;}
+.alerts-collapsed:hover{background:var(--bg3);}
+.alerts-collapsed-icon{font-size:16px;line-height:1;}
+.alerts-collapsed-txt{flex:1;}
+.alerts-collapsed-chev{font-size:12px;color:var(--tx3);transition:transform .15s;}
+.alerts-collapsed.open .alerts-collapsed-chev{transform:rotate(180deg);}
+.alerts-expanded{margin-top:8px;}
+.alerts-expanded[hidden]{display:none;}
 
 /* Divider */
 .div { height:1px; background:var(--sep); margin:0 18px; }
@@ -3403,6 +3412,7 @@ const MSGS = {
     next_match:'Prochain match', today:"Aujourd'hui", tomorrow:'Demain', absent:'Absents', alerts:'Alertes',
     recent_results:'Résultats récents', see_all:'Tout voir',
     today_section:"Aujourd'hui", this_week_section:'Cette semaine', overview_section:'Aperçu',
+    alert_summary_one:'1 chose à regarder', alert_summary_n:'{n} choses à regarder',
     available:'Dispos', injured_count:'Blessés', home_venue:'🏠 Domicile', away_venue:'✈️ Extérieur', injured:'Blessé', suspended:'Suspendu', uncertain:'Incertain',
     save_session:'Enregistrer la session', goals:'Buts', assists:'Assists', attendance:'Présence', cards:'Cartons',
   },
@@ -3411,6 +3421,7 @@ const MSGS = {
     next_match:'Volgende wedstrijd', today:'Vandaag', tomorrow:'Morgen', absent:'Afwezig', alerts:'Meldingen',
     recent_results:'Recente resultaten', see_all:'Alles zien',
     today_section:'Vandaag', this_week_section:'Deze week', overview_section:'Overzicht',
+    alert_summary_one:'1 ding om te bekijken', alert_summary_n:'{n} dingen om te bekijken',
     available:'Beschikbaar', injured_count:'Geblesseerd', home_venue:'🏠 Thuis', away_venue:'✈️ Uit',
     injured:'Geblesseerd', suspended:'Geschorst', uncertain:'Onzeker',
     stats:'Statistieken', evolution:'Evolutie', attack:'Aanval', defense:'Verdediging',
@@ -4304,6 +4315,17 @@ window.renderHomeTimeline = function(){
 };
 
 // UX Lean Sprint 2 : helper auto-hide sections Home vides
+// UX Lean Sprint 2 : toggle expand/collapse des alertes Home
+window.toggleHomeAlerts = function(btn){
+  try{
+    var ctn = document.getElementById('alerts-expanded');
+    if(!ctn) return;
+    var isOpen = !ctn.hasAttribute('hidden');
+    if(isOpen){ ctn.setAttribute('hidden',''); btn.setAttribute('aria-expanded','false'); btn.classList.remove('open'); }
+    else { ctn.removeAttribute('hidden'); btn.setAttribute('aria-expanded','true'); btn.classList.add('open'); }
+  }catch(e){}
+};
+
 function __leanHideEmptySections(){
   try{
     document.querySelectorAll('.home-lean-sec').forEach(function(sec){
@@ -4454,9 +4476,20 @@ function renderHome() {
       <div class="alert-card-detail">${st.reason}</div>
     </div>`);
   });
-  $('home-alerts').innerHTML=cards.length
-    ?`<div class="alert-scroll">${cards.join('')}</div>`
-    :`<div class="empty" style="padding:20px 18px;"><div class="empty-icon">✅</div><div class="empty-sub">Aucune alerte — tout va bien !</div></div>`;
+  if(cards.length){
+    var redCount = cards.filter(function(c){ return c.indexOf('a-red')>-1; }).length;
+    var amberCount = cards.length - redCount;
+    var sevIcon = redCount>0 ? '🔴' : '🟡';
+    var sumTxt = cards.length===1 ? (msg('alert_summary_one')||'1 chose à regarder') : ((msg('alert_summary_n')||'{n} choses à regarder').replace('{n}', cards.length));
+    $('home-alerts').innerHTML = '<button class="alerts-collapsed" type="button" onclick="window.toggleHomeAlerts(this)" aria-expanded="false" aria-controls="alerts-expanded">'+
+      '<span class="alerts-collapsed-icon">'+sevIcon+'</span>'+
+      '<span class="alerts-collapsed-txt">'+sumTxt+'</span>'+
+      '<span class="alerts-collapsed-chev" aria-hidden="true">▾</span>'+
+    '</button>'+
+    '<div id="alerts-expanded" class="alerts-expanded" hidden><div class="alert-scroll">'+cards.join('')+'</div></div>';
+  } else {
+    $('home-alerts').innerHTML = '<div class="empty" style="padding:20px 18px;"><div class="empty-icon">✅</div><div class="empty-sub">Aucune alerte — tout va bien'+'!'+'</div></div>';
+  }
 
   /* Résultats */
   const recent=[...S.matches].filter(m=>m.result).reverse().slice(0,5);
