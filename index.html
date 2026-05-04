@@ -2400,8 +2400,8 @@ object.ex-detail-img{object-fit:initial;padding:0;}
 }
 </style>
 <script>
-window.APP_VERSION = '1.17.1';
-window.SW_CACHE = 'rdv-v27';
+window.APP_VERSION = '1.19.0';
+window.SW_CACHE = 'rdv-v30';
 window.BUILD_DATE = '2026-04-19';
 window.WORKSHOP_ITEMS = 44;
 window.WORKSHOP_SPRINTS = 5;
@@ -2526,7 +2526,7 @@ window.duplicatePrevWeek = async (mid) => {
   let prevPlan = S.plans[prev.id];
   if (!prevPlan) {
     try {
-      const r = await sb.from('training_plans').select('*').eq('match_id', prev.id).maybeSingle();
+      const r = await window.teamScope(sb.from('training_plans').select('*').eq('match_id', prev.id)).maybeSingle();
       prevPlan = r?.data || null;
     } catch(e) { console.warn('[duplicatePrevWeek] load prev plan failed:', e); }
   }
@@ -2681,7 +2681,12 @@ function generateMicrocycle(scouting) {
         <span class="sp-ic">🔄</span><span class="sp-count" id="sync-pending-count">0</span>
       </button>
       <span class="top-badge" id="role-pill"></span>
-      <span class="version-badge" id="version-badge">v1.15.0</span>
+      <span class="top-badge" id="team-pill" style="display:none;background:rgba(184,204,46,.12);color:var(--tx1);border:1px solid var(--team-color, rgba(255,255,255,.18));"></span>
+      <span class="version-badge" id="version-badge">v1.19.0</span>
+      <!-- Multi-team (Sprint multi-team 2026-05) — Selecteur d'equipe (staff multi-equipes) -->
+      <select id="team-selector" onchange="window.setActiveTeam(this.value)" aria-label="Équipe" style="display:none;background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid var(--team-color, rgba(255,255,255,.12));border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
+        <!-- options peuplées dynamiquement par renderTeamSelector() -->
+      </select>
       <!-- FIX P2 #8 - Selecteur saison archive (view-only) -->
       <select id="season-selector" onchange="window.setArchiveSeason(this.value)" aria-label="Saison" style="background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
         <option value="">Saison 2025-26</option>
@@ -3400,12 +3405,26 @@ const sb = createClient(
 const S = {
   user:null, role:null, profile:null, lang:'fr', season:'2025-26',
   archiveMode:false, archiveSeason:null, // FIX P2 #8 - Season archive view-only
+  // Multi-team (Sprint multi-team 2026-05) — see supabase/migrations/20260504000000_multi_team.sql
+  teams:[],            // [{id,display_name,short_label,color,...}] - équipes accessibles à l'user
+  userTeams:[],        // rows user_teams pour cet user (avec rôle par équipe)
+  activeTeam:null,     // slug de l'équipe courante ('a-team', 'u17', ...)
   players:[], matches:[], injuries:[], injHistory:[], favExercises:[],
   presences:[], scouting:[], plans:{},
   planIdx:null, expanded:new Set(),
   presStatus:{}, presRpe:{},
   protoSteps:[],
 };
+
+/* ── Multi-team — helper de scoping (Sprint multi-team 2026-05) ──
+   Wrap toute requête Supabase qui doit être filtrée par équipe.
+   Usage : await teamScope(sb.from('players').select('*'))
+   Si S.activeTeam est null (avant boot), retourne la query telle quelle. */
+const teamScope = (q) => S.activeTeam ? q.eq('team_id', S.activeTeam) : q;
+window.teamScope = teamScope;
+/* Helper inverse : retourne le team_id à insérer dans un payload (fallback 'a-team' pour ne jamais NULLer la colonne). */
+const teamId = () => S.activeTeam || 'a-team';
+window.teamId = teamId;
 
 /* ── i18n ── */
 const MSGS = {
@@ -3492,6 +3511,77 @@ window.setLang = (lang, btn) => {
   document.querySelectorAll(`[data-lang="${lang}"]`).forEach(b => b.classList.add('on'));
   if (typeof applyTranslations === 'function') applyTranslations();
   if (typeof renderAll === 'function') renderAll();
+};
+
+// ── Multi-team (Sprint multi-team 2026-05) ──────────────────────────
+window.renderTeamSelector = () => {
+  const sel = document.getElementById('team-selector');
+  const pill = document.getElementById('team-pill');
+  if (!sel) return;
+  const isStaffMulti = ['admin','coach','assistant','physio','gk'].includes(S.role);
+  if (!S.teams || S.teams.length === 0) { sel.style.display='none'; if(pill) pill.style.display='none'; return; }
+  sel.innerHTML = S.teams.map(t =>
+    `<option value="${t.id}"${t.id===S.activeTeam?' selected':''}>${t.display_name}</option>`
+  ).join('');
+  if (!isStaffMulti) { sel.style.display = 'none'; }
+  else if (S.teams.length <= 1) {
+    sel.disabled = true; sel.style.display = ''; sel.style.opacity = '0.5'; sel.style.cursor = 'not-allowed';
+  } else {
+    sel.disabled = false; sel.style.display = ''; sel.style.opacity = ''; sel.style.cursor = 'pointer';
+  }
+  if (pill && S.activeTeam) {
+    const t = S.teams.find(x => x.id === S.activeTeam);
+    if (t) {
+      pill.textContent = (t.short_label || t.display_name);
+      pill.style.background = (t.color || '#888') + '22';
+      pill.style.borderColor = (t.color || '#888') + '88';
+      pill.style.color = '#fff';
+      pill.style.display = '';
+    } else { pill.style.display = 'none'; }
+  }
+  const t = S.teams.find(x => x.id === S.activeTeam);
+  if (t && t.color) document.body.style.setProperty('--team-color', t.color);
+};
+
+window.setActiveTeam = async (teamId) => {
+  if (!teamId) return;
+  if (!S.teams.some(t => t.id === teamId)) {
+    if (typeof toast === 'function') toast('Équipe inaccessible');
+    const sel = document.getElementById('team-selector');
+    if (sel) sel.value = S.activeTeam || '';
+    return;
+  }
+  if (teamId === S.activeTeam) return;
+  S.activeTeam = teamId;
+  try { localStorage.setItem('rdv_active_team', teamId); } catch(_) {}
+  const profileRole = (S.profile && S.profile.role) || 'player';
+  if (profileRole !== 'admin') {
+    const ut = S.userTeams.find(r => r.team_id === teamId);
+    if (ut && ut.role) S.role = ut.role;
+  }
+  try {
+    const _roleIcons = {admin:'👑', coach:'🧢', assistant:'🧢', physio:'🏥', gk:'🧤', player:'🎽'};
+    const _ri = _roleIcons[S.role] || '👤';
+    const rp = document.getElementById('role-pill');
+    if (rp) rp.textContent = _ri + ' ' + (S.role||'').toUpperCase();
+    const isStaff = ['admin','coach','assistant','physio','gk'].includes(S.role);
+    const _ns = document.getElementById('nav-staff'), _np = document.getElementById('nav-player');
+    if (_ns) _ns.style.display = isStaff ? 'flex' : 'none';
+    if (_np) _np.style.display = !isStaff ? 'flex' : 'none';
+  } catch(_) {}
+  try { window.renderTeamSelector(); } catch(_) {}
+  try { if (typeof window._rtTeardown === 'function') window._rtTeardown(); } catch(_) {}
+  try { if (typeof rt === 'function') { window.__rt = false; rt(); window.__rt = true; } } catch(e){ console.warn('rt resubscribe failed', e); }
+  try {
+    if (typeof splash_on === 'function') splash_on();
+    await loadAll();
+    if (typeof renderAll === 'function') renderAll();
+  } catch(e){ console.error('setActiveTeam reload failed', e); }
+  finally { try { if (typeof splash_off === 'function') splash_off(); } catch(_) {} }
+  if (typeof toast === 'function') {
+    const t = S.teams.find(x => x.id === teamId);
+    toast('🏆 Équipe : ' + (t ? t.display_name : teamId));
+  }
 };
 
 // FIX P2 #8 - Season archive (view-only) : bascule en mode lecture seule
@@ -3666,6 +3756,39 @@ async function boot_app(user) {
   S.profile=prof||{id:user.id,role:'player',full_name:user.email||'Utilisateur',players:null};
   if(!Array.isArray(S.availability)) S.availability = [];
   S.role=(prof&&prof.role)||'player';
+
+  // ── Multi-team (Sprint multi-team 2026-05) ──
+  // Charge les équipes accessibles + détermine l'équipe active.
+  try {
+    const ut = await sb.from('user_teams')
+      .select('team_id,role,is_default,teams(id,display_name,short_label,color,age_category,display_order,active)')
+      .eq('user_id', user.id);
+    S.userTeams = ut?.data || [];
+    if (!S.userTeams.length) {
+      console.warn('[multi-team] user_teams empty — falling back to a-team');
+      const fallback = await sb.from('teams').select('*').eq('id','a-team').maybeSingle();
+      S.userTeams = [{ team_id:'a-team', role:S.role, is_default:true, teams: fallback?.data||{id:'a-team',display_name:'A Team',color:'#B8CC2E',short_label:'A',display_order:1} }];
+    }
+    S.teams = S.userTeams.map(r => r.teams).filter(Boolean).filter(t => t.active !== false)
+      .sort((a,b)=> (a.display_order||999) - (b.display_order||999));
+    let chosen = null;
+    try {
+      const saved = localStorage.getItem('rdv_active_team');
+      if (saved && S.teams.some(t => t.id === saved)) chosen = saved;
+    } catch(_) {}
+    if (!chosen) {
+      const def = S.userTeams.find(r => r.is_default);
+      chosen = (def && def.team_id) || (S.teams[0] && S.teams[0].id) || 'a-team';
+    }
+    S.activeTeam = chosen;
+    if (S.role !== 'admin') {
+      const ut_active = S.userTeams.find(r => r.team_id === chosen);
+      if (ut_active && ut_active.role) S.role = ut_active.role;
+    }
+  } catch(e) {
+    console.error('[multi-team] failed to load user_teams:', e);
+    S.userTeams = []; S.teams = []; S.activeTeam = 'a-team';
+  }
   // Ex2 - favoris exos (Supabase user_profiles.favorite_exercises; fallback localStorage)
   try {
     if (prof && Array.isArray(prof.favorite_exercises)) {
@@ -3688,19 +3811,21 @@ async function boot_app(user) {
   const _roleIcons = {admin:'👑', coach:'🧢', assistant:'🧢', physio:'🏥', gk:'🧤', player:'🎽'};
   const _ri = _roleIcons[S.role] || '👤';
   $('role-pill').textContent = _ri + ' ' + S.role.toUpperCase();
+  try { window.renderTeamSelector && window.renderTeamSelector(); } catch(e){ console.warn('renderTeamSelector error:', e); }
   try { renderAll(); } catch(e){ console.error('renderAll error:', e); toast('Erreur chargement: '+e.message); }
   if (!window.__rt) { window.__rt=true; try { rt(); } catch(e){ console.error('rt error:', e); } }
 }
 
 /* ── Data ── */
 async function loadAll() {
+  // Multi-team : toutes les requêtes business sont scopées via teamScope() (team_id = S.activeTeam).
   const [p,m,inj,injH,pres,sc]=await Promise.all([
-    sb.from('players').select('*').order('number'),
-    sb.from('matches').select('*').order('match_date'),
-    sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
-    sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
-    sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300),
-    sb.from('scouting').select('*').order('rank'),
+    teamScope(sb.from('players').select('*')).order('number'),
+    teamScope(sb.from('matches').select('*')).order('match_date'),
+    teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',true)).order('injury_date',{ascending:false}),
+    teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',false)).order('healed_at',{ascending:false}),
+    teamScope(sb.from('presences').select('*,players(name,position)')).order('session_date',{ascending:false}).limit(300),
+    teamScope(sb.from('scouting').select('*')).order('rank'),
   ]);
   S.players=p.data||[]; S.matches=m.data||[];
   S.injuries=inj.data||[]; S.injHistory=injH.data||[];
@@ -3708,11 +3833,15 @@ async function loadAll() {
 }
 
 function rt() {
-  sb.channel('rdv-rt')
-    .on('postgres_changes',{event:'*',schema:'public',table:'injuries'},async()=>{
+  // Multi-team : filtrer le channel par team_id, et resubscribe à chaque switch.
+  // window._rtChannel = handle pour teardown ; window._rtTeardown() défait avant resubscribe.
+  const tid = S.activeTeam || 'a-team';
+  const filter = 'team_id=eq.' + tid;
+  const ch = sb.channel('rdv-rt-' + tid)
+    .on('postgres_changes',{event:'*',schema:'public',table:'injuries',filter:filter},async()=>{
       const [a,h]=await Promise.all([
-        sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
-        sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
+        teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',true)).order('injury_date',{ascending:false}),
+        teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',false)).order('healed_at',{ascending:false}),
       ]);
       S.injuries=a.data||[]; S.injHistory=h.data||[];
       // FIX P0 #5 (rt) — propager aux autres onglets
@@ -3720,15 +3849,20 @@ function rt() {
       try{ renderSquad(); }catch(_){}
       try{ if(typeof renderPlanning==='function') renderPlanning(); }catch(_){}
     })
-    .on('postgres_changes',{event:'*',schema:'public',table:'matches'},async()=>{
-      const {data}=await sb.from('matches').select('*').order('match_date');
+    .on('postgres_changes',{event:'*',schema:'public',table:'matches',filter:filter},async()=>{
+      const {data}=await teamScope(sb.from('matches').select('*')).order('match_date');
       S.matches=data||[]; renderMatches(); renderHome();
     })
-    .on('postgres_changes',{event:'*',schema:'public',table:'presences'},async()=>{
-      const {data}=await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300);
+    .on('postgres_changes',{event:'*',schema:'public',table:'presences',filter:filter},async()=>{
+      const {data}=await teamScope(sb.from('presences').select('*,players(name,position)')).order('session_date',{ascending:false}).limit(300);
       S.presences=data||[]; renderPresences();
     })
     .subscribe();
+  window._rtChannel = ch;
+  window._rtTeardown = () => {
+    try { if (window._rtChannel) sb.removeChannel(window._rtChannel); } catch(e){ console.warn('rt teardown', e); }
+    window._rtChannel = null;
+  };
 }
 
 window.addEventListener('online', ()=>{ document.body.classList.remove('offline'); flushOfflineQueue(); });
@@ -3822,19 +3956,19 @@ async function flushOfflineQueue(){
       // Refresh state selectively based on kinds played
       try{
         if(kindsPlayed.has('presences.upsert')){
-          const { data } = await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300);
+          const { data } = await teamScope(sb.from('presences').select('*,players(name,position)')).order('session_date',{ascending:false}).limit(300);
           S.presences = data || [];
           try{ renderPresences(); }catch(_){}
         }
         if(kindsPlayed.has('matches.insert') || kindsPlayed.has('matches.update')){
-          const { data } = await sb.from('matches').select('*').order('match_date');
+          const { data } = await teamScope(sb.from('matches').select('*')).order('match_date');
           S.matches = data || [];
           try{ renderMatches(); }catch(_){}
         }
         if(kindsPlayed.has('injuries.insert') || kindsPlayed.has('injuries.update')){
           const [a,h] = await Promise.all([
-            sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
-            sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
+            teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',true)).order('injury_date',{ascending:false}),
+            teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',false)).order('healed_at',{ascending:false}),
           ]);
           S.injuries = a.data || [];
           S.injHistory = h.data || [];
@@ -4721,6 +4855,7 @@ window.savePresences=async()=>{
   const rows=S.players.map(p=>({
     player_id:p.id, session_date:date, session_type:type,
     status:S.presStatus[p.id]||'P', rpe:S.presRpe[p.id]||null,
+    team_id: teamId(), // Multi-team scoping
   }));
   // FIX P2 #5 — si offline, file d'attente
   if(!navigator.onLine){
@@ -4733,7 +4868,7 @@ window.savePresences=async()=>{
     const{error}=await sb.from('presences').upsert(rows,{onConflict:'player_id,session_date,session_type'});
     if(error)throw error;
     S.presStatus={}; S.presRpe={}; S.presUndo=[]; S.presRedo=[];
-    const{data}=await sb.from('presences').select('*,players(name,position)').order('session_date',{ascending:false}).limit(300);
+    const{data}=await teamScope(sb.from('presences').select('*,players(name,position)')).order('session_date',{ascending:false}).limit(300);
     S.presences=data||[];
     renderPresences(); renderHome();
     toast(msg('saved'));
@@ -6249,12 +6384,13 @@ window.saveMatchForm=async()=>{
       score_home:played?sn:null, score_away:played?se:null,
       result:played?(sn>se?'V':sn<se?'D':'N'):null,
       scorers:$('m-scorers').value, cards:$('m-cards').value, notes:$('m-notes').value,
+      team_id: teamId(), // Multi-team scoping
     };
     let {error} = await sb.from('matches').insert(basePayload);
     if(error)throw error;
     ['m-journee','m-opp','m-sn','m-se','m-scorers','m-cards','m-notes'].forEach(id=>{const e=$(id);if(e)e.value='';});
     try { window.resetEncoderChips && window.resetEncoderChips(); } catch(_){}
-    const{data}=await sb.from('matches').select('*').order('match_date');
+    const{data}=await teamScope(sb.from('matches').select('*')).order('match_date');
     S.matches=data||[];
     renderMatches(); renderHome(); toast(msg('saved'));
     // M1 — redirige vers 'tm-played' (anciennement tm-results)
@@ -6437,11 +6573,11 @@ async function doHeal(id,pid){
   await sb.from('injuries').update({is_active:false,healed_at:new Date().toISOString().split('T')[0]}).eq('id',id);
   await sb.from('players').update({status:'Disponible'}).eq('id',pid);
   const[a,h]=await Promise.all([
-    sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
-    sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
+    teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',true)).order('injury_date',{ascending:false}),
+    teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',false)).order('healed_at',{ascending:false}),
   ]);
   S.injuries=a.data||[]; S.injHistory=h.data||[];
-  const{data}=await sb.from('players').select('*').order('number'); S.players=data||[];
+  const{data}=await teamScope(sb.from('players').select('*')).order('number'); S.players=data||[];
   // FIX P0 #5 — cohérence cross-tab lors d'une guérison
   renderMedical(); renderHome(); renderSquad();
   try{ if(typeof renderPlanning==='function') renderPlanning(); }catch(_){}
@@ -6511,7 +6647,8 @@ window.saveInj=async()=>{
     injury_date:$('inj-date').value,return_date:$('inj-retour').value||null,
     mechanism:$('inj-mech').value,anatomy_zone:$('inj-zone').value,exam:$('inj-exam').value,
     treatment:$('inj-treat').value,protocol:_ps.filter(s=>s.phase||s.desc),
-    matches_missed:$('inj-matches').value,notes:$('inj-notes').value,is_active:true};
+    matches_missed:$('inj-matches').value,notes:$('inj-notes').value,is_active:true,
+    team_id: teamId()}; // Multi-team scoping
   const editId=$('inj-edit-id').value;
   try{
     if(editId){const{error:e}=await sb.from('injuries').update(payload).eq('id',editId);if(e){
@@ -6547,11 +6684,11 @@ window.saveInj=async()=>{
       throw e;
     }await sb.from('players').update({status:'Blessé'}).eq('id',pid);toast(msg('saved'));}
     const[a,h]=await Promise.all([
-      sb.from('injuries').select('*,players(name,position)').eq('is_active',true).order('injury_date',{ascending:false}),
-      sb.from('injuries').select('*,players(name,position)').eq('is_active',false).order('healed_at',{ascending:false}),
+      teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',true)).order('injury_date',{ascending:false}),
+      teamScope(sb.from('injuries').select('*,players(name,position)').eq('is_active',false)).order('healed_at',{ascending:false}),
     ]);
     S.injuries=a.data||[]; S.injHistory=h.data||[];
-    const{data}=await sb.from('players').select('*').order('number');S.players=data||[];
+    const{data}=await teamScope(sb.from('players').select('*')).order('number');S.players=data||[];
     // FIX P0 #5 — cohérence cross-tab : refresh planning + présences + analytics
     clearInjForm();renderMedical();renderHome();renderSquad();
     try{ if(typeof renderPlanning==='function') renderPlanning(); }catch(_){}
@@ -6875,7 +7012,7 @@ async function renderPlanning(){
   if(!plan){
     let data=null;
     try{
-      const resp=await sb.from('training_plans').select('*').eq('match_id',match.id).maybeSingle();
+      const resp=await teamScope(sb.from('training_plans').select('*').eq('match_id',match.id)).maybeSingle();
       data = resp && resp.data;
     }catch(e){ console.warn('training_plans load failed, trying local cache', e); }
     // Pl1 — fallback local cache if Supabase absent or erroring
@@ -7359,7 +7496,7 @@ window.plLocalFlushQueue = async function(){
       const cached = window.plLocalLoad(mid);
       if(!cached || !cached.pending_sync) continue;
       try{
-        const { data, error } = await sb.from('training_plans').upsert({ match_id: mid, sessions: cached.sessions, week_note: cached.week_note }, { onConflict:'match_id' }).select().single();
+        const { data, error } = await sb.from('training_plans').upsert({ match_id: mid, sessions: cached.sessions, week_note: cached.week_note, team_id: (cached.team_id||teamId()) }, { onConflict:'match_id' }).select().single();
         if(!error && data){
           const c = { ...cached, pending_sync: false };
           localStorage.setItem(k, JSON.stringify(c));
@@ -7378,7 +7515,7 @@ window.addEventListener('load', ()=>{ if(navigator.onLine) setTimeout(()=>window
 window.savePlan=async mid=>{
   const plan=S.plans[mid];
   if(!plan){ console.warn('savePlan: no plan for', mid); return; }
-  const payload={match_id:mid,sessions:plan.sessions||[],week_note:plan.week_note||''};
+  const payload={match_id:mid,sessions:plan.sessions||[],week_note:plan.week_note||'',team_id: teamId()}; // Multi-team scoping
   try{
     let resp;
     if(plan.id){
@@ -8309,7 +8446,8 @@ window.renderSettings = function(){
 window.pr2LoadAvail = async function(playerId){
   try{
     if(!playerId) return;
-    const { data, error } = await sb.from('player_availability').select('*').eq('player_id', playerId);
+    // Multi-team : RLS filtre déjà ; on ajoute teamScope par défense
+    const { data, error } = await teamScope(sb.from('player_availability').select('*').eq('player_id', playerId));
     if(error){ console.warn('pr2LoadAvail',error); return; }
     S.availability = data || [];
   }catch(e){
@@ -8335,6 +8473,7 @@ window.pr2SetAvail = async function(mid, sidx, status){
       session_idx: sidxVal,
       status,
       updated_at: new Date().toISOString(),
+      team_id: teamId(), // Multi-team scoping
     };
     try{
       const { data, error } = await sb.from('player_availability').upsert(payload, { onConflict: 'player_id,match_id,session_idx' }).select().maybeSingle();
@@ -9498,7 +9637,7 @@ window.syncStats = async () => {
         updated++;
       }
     }
-    const {data} = await sb.from('players').select('*').order('number');
+    const {data} = await teamScope(sb.from('players').select('*')).order('number');
     S.players = data || [];
     const info = $('stats-sync-info');
     if (info) info.textContent = `Sync ${new Date().toLocaleDateString('fr-BE')} · ${updated} joueurs`;
