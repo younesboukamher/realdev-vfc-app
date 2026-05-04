@@ -134,6 +134,46 @@ Ne jamais faire `ALTER TABLE` directement en production. Toujours :
 
 ---
 
+## Multi-team (v1.19+)
+
+L'app supporte plusieurs équipes : **A Team**, **U21**, **U17**, **U15**, **Women**.
+Chaque équipe a ses données indépendantes (joueurs, matchs, séances, blessures, etc.).
+
+### Architecture
+
+- Table `teams` (5 lignes seed)
+- Colonne `team_id` sur toutes les tables métier (`players`, `matches`, `injuries`, `presences`, `training_plans`, `scouting`, `player_availability`)
+- Table de jointure `user_teams (user_id, team_id, role, is_default)` — un user peut appartenir à plusieurs équipes avec un rôle par-équipe
+- RLS policies : `team_id = ANY(get_my_team_ids())` (admin global = override)
+- UI : sélecteur d'équipe topbar + pill colorée + persistance `localStorage.rdv_active_team`
+- Realtime : channel filtré par `team_id`, resubscribe au switch
+- Edge Function `send-pre-session-notifications` : push aux users via `user_teams`
+
+### Ajouter un user à une équipe (SQL)
+
+```sql
+INSERT INTO user_teams (user_id, team_id, role, is_default)
+VALUES ('uuid-user', 'u17', 'coach', false);
+
+UPDATE user_teams SET is_default = (team_id = 'a-team') WHERE user_id = 'uuid-user';
+```
+
+### Ajouter une nouvelle équipe (ex. U13)
+
+```sql
+INSERT INTO teams (id, display_name, short_label, color, age_category, display_order)
+VALUES ('u13', 'U13', 'U13', '#26C6DA', 'u13', 6);
+```
+
+### Mutation joueur (U17 → U15)
+
+```sql
+UPDATE players SET team_id = 'u15' WHERE id = 'uuid-joueur';
+-- L'historique (matches, présences, blessures) reste rattaché à U17 (team_id figé).
+```
+
+---
+
 ## Modules de l'application
 
 | Module | Rôles | Fonctionnalités |
