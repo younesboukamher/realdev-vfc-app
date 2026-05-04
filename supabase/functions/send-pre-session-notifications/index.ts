@@ -47,9 +47,6 @@ Deno.serve(async (_req) => {
     const iso    = `${target.getFullYear()}-${pad2(target.getMonth() + 1)}-${pad2(target.getDate())}`;
 
     // --- 2) Lire training_plans + matches (avec team_id) puis extraire les séances du J+1
-    //
-    // Multi-team : training_plans et matches portent maintenant team_id.
-    // On lit les deux dans toutes les équipes (service-role) et on dérive la date séance.
     const { data: plans, error: planErr } = await sb
       .from("training_plans")
       .select("match_id, sessions, team_id");
@@ -65,7 +62,6 @@ Deno.serve(async (_req) => {
       if (m && m.id && m.match_date) matchDateById[m.id] = String(m.match_date).slice(0, 10);
     });
 
-    // lundi=1 ... dimanche=0 (JS getDay())
     const dayIdxOfType: Record<string, number> = {
       dimanche: 0, lundi: 1, mardi: 2, mercredi: 3, jeudi: 4, vendredi: 5, samedi: 6,
     };
@@ -82,13 +78,11 @@ Deno.serve(async (_req) => {
 
       (pl.sessions || []).forEach((s: any) => {
         if (!s) return;
-        // 1) date explicite ?
         const explicit = s.date || s.session_date;
         if (explicit && String(explicit).slice(0, 10) === iso) {
           sessionsOfDay.push({ match_id: pl.match_id, team_id: tid, session: s });
           return;
         }
-        // 2) calcul depuis match_date + type
         const tp = String(s.type || "").toLowerCase();
         const trainDow = dayIdxOfType[tp];
         if (trainDow == null) return;
@@ -110,15 +104,12 @@ Deno.serve(async (_req) => {
       );
     }
 
-    // Multi-team : groupé par team_id, on ne garde qu'UNE séance représentative
-    // (la première rencontrée) par équipe pour le push du jour.
     const sessionByTeam: Record<string, any> = {};
     for (const s of sessionsOfDay) {
       if (!sessionByTeam[s.team_id]) sessionByTeam[s.team_id] = s.session;
     }
     const teamIds = Object.keys(sessionByTeam);
 
-    // --- 3) Charger metadata teams (display_name pour body push)
     const { data: teamsRows } = await sb
       .from("teams")
       .select("id, display_name, short_label")
@@ -126,8 +117,6 @@ Deno.serve(async (_req) => {
     const teamLabel: Record<string, string> = {};
     (teamsRows || []).forEach((t: any) => { teamLabel[t.id] = t.display_name || t.short_label || t.id; });
 
-    // --- 4) Pour chaque team_id, récupérer les user_ids via user_teams
-    //        puis leurs push_subscriptions.
     let totalSent = 0;
     let totalCleaned = 0;
     const perTeamStats: Record<string, { sent: number; cleaned: number; subs: number }> = {};
@@ -135,7 +124,6 @@ Deno.serve(async (_req) => {
     for (const tid of teamIds) {
       const sess: any = sessionByTeam[tid];
 
-      // 4.a — user_ids de cette équipe
       const { data: ut, error: utErr } = await sb
         .from("user_teams")
         .select("user_id")
@@ -147,7 +135,6 @@ Deno.serve(async (_req) => {
         continue;
       }
 
-      // 4.b — push_subscriptions de ces users
       const { data: subs, error: subErr } = await sb
         .from("push_subscriptions")
         .select("*")
@@ -158,7 +145,6 @@ Deno.serve(async (_req) => {
         continue;
       }
 
-      // 4.c — Construire le payload pour cette équipe
       const teamName = teamLabel[tid] || tid;
       const title = "Rappel seance demain";
       const bodyParts: string[] = [];
@@ -176,4 +162,46 @@ Deno.serve(async (_req) => {
       });
 
       let sent = 0;
-      let cleaned
+      let cleanedUp = 0;
+      await Promise.all((subs as any[]).map(async (row) => {
+        try {
+          await webpush.sendNotification(
+            { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth } },
+            payload,
+          );
+          sent += 1;
+        } catch (e: any) {
+          const sc = e?.statusCode;
+          if (sc === 404 || sc === 410) {
+            await sb.from("push_subscriptions").delete().eq("endpoint", row.endpoint);
+            cleanedUp += 1;
+          } else {
+            console.error("webpush send failed", tid, sc, e?.body || e?.message);
+          }
+        }
+      }));
+      totalSent += sent;
+      totalCleaned += cleanedUp;
+      perTeamStats[tid] = { sent, cleaned: cleanedUp, subs: subs.length };
+    }
+
+    return new Response(
+      JSON.stringify({
+        ok:         true,
+        date:       iso,
+        teams:      teamIds,
+        sessions:   sessionsOfDay.length,
+        sent:       totalSent,
+        cleanedUp:  totalCleaned,
+        perTeam:    perTeamStats,
+      }),
+      { headers: { "content-type": "application/json" } },
+    );
+  } catch (e: any) {
+    console.error("send-pre-session-notifications failed", e);
+    return new Response(
+      JSON.stringify({ ok: false, error: e?.message || String(e) }),
+      { status: 500, headers: { "content-type": "application/json" } },
+    );
+  }
+});
