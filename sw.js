@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v30'; // bump multi-team 2026-05-04: team selector + team_id scoping
-const APP_VERSION = '1.19.0';
+const CACHE = 'rdv-v31'; // bump multi-team 2026-05-04: team selector + team_id scoping
+const APP_VERSION = '1.20.0';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {

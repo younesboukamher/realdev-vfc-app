@@ -2338,6 +2338,30 @@ object.ex-detail-img{object-fit:initial;padding:0;}
 
 /* Responsive */
 /* FIX responsive topbar iOS — guarantee FR/NL/Exit always tappable on iPhone portrait */
+/* Admin team-access matrix (Sprint multi-team 2026-05) */
+.aam-table { width:100%; border-collapse:separate; border-spacing:2px; font:500 11px/1.2 var(--font); }
+.aam-table th, .aam-table td { padding:6px 8px; vertical-align:middle; text-align:center; background:var(--ink2); border-radius:6px; }
+.aam-table th { font:700 10px/1 var(--font); text-transform:uppercase; letter-spacing:.5px; color:var(--tx2); }
+.aam-table th.aam-user-col { text-align:left; min-width:140px; }
+.aam-table td.aam-user-cell { text-align:left; font:600 12px/1.2 var(--font); color:var(--tx1); }
+.aam-table td.aam-user-cell .aam-user-meta { font:400 10px/1.2 var(--font); color:var(--tx3); margin-top:1px; }
+.aam-cell { display:flex; align-items:center; justify-content:center; gap:5px; min-width:100px; }
+.aam-check { background:transparent; border:1px solid var(--sep2); color:var(--tx2); width:22px; height:22px; border-radius:5px; cursor:pointer; padding:0; font-size:13px; line-height:1; display:inline-flex; align-items:center; justify-content:center; }
+.aam-check.on { background:var(--brand); border-color:var(--brand); color:#0a0a0a; font-weight:800; }
+.aam-role { background:var(--ink3); border:1px solid var(--sep); color:var(--tx2); padding:2px 6px; border-radius:4px; font:600 10px/1 var(--font); cursor:pointer; }
+.aam-role:hover { color:var(--tx1); border-color:var(--brand); }
+.aam-default { background:transparent; border:none; cursor:pointer; color:var(--tx3); font-size:14px; padding:0 2px; }
+.aam-default.on { color:var(--warn); }
+.aam-default:hover { color:var(--warn); }
+.aam-loading { padding:12px; color:var(--tx3); font:500 11px var(--font); text-align:center; }
+.aam-scroller { overflow-x:auto; max-width:100%; padding-bottom:6px; }
+.st-row-block { flex-direction:column; align-items:stretch; }
+@media (max-width:768px){
+  .aam-table th, .aam-table td { padding:4px 5px; }
+  .aam-table th.aam-user-col { min-width:100px; }
+  .aam-cell { min-width:80px; gap:3px; }
+}
+
 /* Strategy: on ≤768px, hide non-critical items (season-selector, version-badge, role-pill ≤480) */
 /* Critical kept: FR, NL, Exit. Archive mode still accessible via desktop or archive banner button. */
 @media (max-width:768px) {
@@ -2400,8 +2424,8 @@ object.ex-detail-img{object-fit:initial;padding:0;}
 }
 </style>
 <script>
-window.APP_VERSION = '1.19.0';
-window.SW_CACHE = 'rdv-v30';
+window.APP_VERSION = '1.20.0';
+window.SW_CACHE = 'rdv-v31';
 window.BUILD_DATE = '2026-04-19';
 window.WORKSHOP_ITEMS = 44;
 window.WORKSHOP_SPRINTS = 5;
@@ -2682,7 +2706,7 @@ function generateMicrocycle(scouting) {
       </button>
       <span class="top-badge" id="role-pill"></span>
       <span class="top-badge" id="team-pill" style="display:none;background:rgba(184,204,46,.12);color:var(--tx1);border:1px solid var(--team-color, rgba(255,255,255,.18));"></span>
-      <span class="version-badge" id="version-badge">v1.19.0</span>
+      <span class="version-badge" id="version-badge">v1.20.0</span>
       <!-- Multi-team (Sprint multi-team 2026-05) — Selecteur d'equipe (staff multi-equipes) -->
       <select id="team-selector" onchange="window.setActiveTeam(this.value)" aria-label="Équipe" style="display:none;background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid var(--team-color, rgba(255,255,255,.12));border-radius:8px;padding:4px 8px;font:600 11px/1 var(--font);cursor:pointer;">
         <!-- options peuplées dynamiquement par renderTeamSelector() -->
@@ -8424,6 +8448,21 @@ window.renderSettings = function(){
         +'<button type="button" class="st-btn danger" onclick="window.stPurgeCache()">Purger</button>'
       +'</div>'
     +'</div>'
+    +(
+      // Multi-team admin matrix (admin only)
+      ((S.profile && S.profile.role === 'admin') || S.role === 'admin')
+        ? ('<div class="st-group">'
+            +'<div class="st-group-title">Accès équipes</div>'
+            +'<div class="st-row st-row-block">'
+              +'<div class="st-row-body" style="flex:1;">'
+                +'<div class="st-row-label">Matrice user × équipe</div>'
+                +'<div class="st-row-hint">Coche/décoche pour donner ou retirer l\'accès. Clic sur le rôle pour le changer. Clic sur l\'étoile pour définir l\'équipe par défaut.</div>'
+                +'<div id="admin-access-matrix" style="margin-top:12px;">'+(window.renderAdminAccessMatrix?window.renderAdminAccessMatrix():'<div class="aam-loading">Chargement…</div>')+'</div>'
+              +'</div>'
+            +'</div>'
+          +'</div>')
+        : ''
+    )
     +'<div class="st-group">'
       +'<div class="st-group-title">A propos</div>'
       +'<div class="st-row">'
@@ -8439,6 +8478,166 @@ window.renderSettings = function(){
         +'<div class="st-row-body"><div class="st-row-label">Workshop</div><div class="st-row-hint">'+(window.WORKSHOP_ITEMS||30)+' items livres en '+(window.WORKSHOP_SPRINTS||4)+' sprints</div></div>'
       +'</div>'
     +'</div>';
+};
+
+// ══════════ Admin team-access matrix (Sprint multi-team 2026-05) ══════════
+window._adminMatrixCache = { users: null, userTeams: null, teams: null, loadedAt: 0 };
+
+window.adminLoadMatrix = async function(force){
+  const isAdmin = (S.profile && S.profile.role === 'admin') || S.role === 'admin';
+  if (!isAdmin) return null;
+  const c = window._adminMatrixCache;
+  if (!force && c.users && (Date.now() - c.loadedAt < 30000)) return c;
+  try {
+    // 1) liste des users via RPC SECURITY DEFINER
+    const { data: users, error: ue } = await sb.rpc('admin_list_users');
+    if (ue) throw ue;
+    // 2) toutes les memberships (admin RLS read autorise)
+    const { data: ut, error: ue2 } = await sb.from('user_teams').select('user_id,team_id,role,is_default');
+    if (ue2) throw ue2;
+    // 3) toutes les teams (autoritatif, indépendant de S.teams qui ne contient que celles de l'user courant)
+    const { data: teams, error: te } = await sb.from('teams').select('*').order('display_order');
+    if (te) throw te;
+    c.users = users || [];
+    c.userTeams = ut || [];
+    c.teams = teams || [];
+    c.loadedAt = Date.now();
+    return c;
+  } catch(e){
+    console.error('adminLoadMatrix failed', e);
+    if (typeof toast === 'function') toast('Chargement matrice impossible : ' + (e.message || e));
+    return null;
+  }
+};
+
+window.renderAdminAccessMatrix = function(){
+  const isAdmin = (S.profile && S.profile.role === 'admin') || S.role === 'admin';
+  if (!isAdmin) return '';
+  const c = window._adminMatrixCache;
+  if (!c.users) {
+    // schedule async load and re-render
+    queueMicrotask(async () => {
+      await window.adminLoadMatrix(true);
+      const host = document.getElementById('admin-access-matrix');
+      if (host) host.innerHTML = window.renderAdminAccessMatrix();
+    });
+    return '<div class="aam-loading">Chargement…</div>';
+  }
+  const teams = c.teams || [];
+  const users = c.users || [];
+  const userTeams = c.userTeams || [];
+  const roleIcon = { admin:'👑', coach:'🧢', assistant:'🧢', physio:'🏥', gk:'🧤', player:'🎽' };
+  const escId = (s) => String(s).replace(/'/g, "\\'");
+
+  let html = '<div class="aam-scroller"><table class="aam-table">';
+  html += '<thead><tr><th class="aam-user-col">Utilisateur</th>';
+  for (const t of teams) {
+    const c1 = t.color || '#888';
+    html += `<th style="background:${c1}22;color:${c1}">${(t.short_label || t.display_name || t.id)}</th>`;
+  }
+  html += '</tr></thead><tbody>';
+
+  for (const u of users) {
+    const profileRole = u.profile_role || 'player';
+    const ic = roleIcon[profileRole] || '👤';
+    const label = u.display_name || (u.email || '').split('@')[0] || '—';
+    html += `<tr><td class="aam-user-cell">${ic} ${label}<div class="aam-user-meta">${profileRole}</div></td>`;
+    for (const t of teams) {
+      const ut = userTeams.find(r => r.user_id === u.user_id && r.team_id === t.id);
+      const active = !!ut;
+      const role = ut ? ut.role : null;
+      const isDef = ut ? !!ut.is_default : false;
+      html += '<td><div class="aam-cell">';
+      html += `<button class="aam-check ${active?'on':''}" title="${active?'Retirer l\'accès':'Donner l\'accès'}" onclick="window.adminToggleAccess('${escId(u.user_id)}','${escId(t.id)}')">${active?'✓':''}</button>`;
+      if (active) {
+        html += `<button class="aam-role" title="Cliquer pour changer le rôle (cycle)" onclick="window.adminCycleRole('${escId(u.user_id)}','${escId(t.id)}')">${role||'—'}</button>`;
+        html += `<button class="aam-default ${isDef?'on':''}" title="${isDef?'Équipe par défaut':'Définir comme défaut'}" onclick="window.adminSetDefault('${escId(u.user_id)}','${escId(t.id)}')">${isDef?'★':'☆'}</button>`;
+      }
+      html += '</div></td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table></div>';
+  return html;
+};
+
+window.adminToggleAccess = async function(userId, teamId){
+  const isAdmin = (S.profile && S.profile.role === 'admin') || S.role === 'admin';
+  if (!isAdmin) return;
+  const c = window._adminMatrixCache;
+  const ut = (c.userTeams || []).find(r => r.user_id === userId && r.team_id === teamId);
+  try {
+    if (ut) {
+      // Removal — confirmations
+      if (userId === (S.user && S.user.id) && ut.role === 'admin') {
+        if (!confirm('⚠️ Tu retires ton propre accès admin sur ' + teamId + '. Tu pourrais te lock-out. Confirmer ?')) return;
+      }
+      // Last admin guard for this team
+      const teamAdmins = (c.userTeams || []).filter(r => r.team_id === teamId && r.role === 'admin');
+      if (teamAdmins.length === 1 && teamAdmins[0].user_id === userId) {
+        if (!confirm('⚠️ ' + (c.users.find(u=>u.user_id===userId)?.display_name||userId) + ' est le dernier admin de cette équipe. Confirmer le retrait ?')) return;
+      }
+      const { error } = await sb.from('user_teams').delete().eq('user_id', userId).eq('team_id', teamId);
+      if (error) throw error;
+      if (typeof toast === 'function') toast('✓ Accès retiré');
+    } else {
+      // Add with default role 'coach'
+      const { error } = await sb.from('user_teams').insert({ user_id: userId, team_id: teamId, role: 'coach', is_default: false });
+      if (error) throw error;
+      if (typeof toast === 'function') toast('✓ Accès ajouté (rôle: coach)');
+    }
+    await window.adminLoadMatrix(true);
+    const host = document.getElementById('admin-access-matrix');
+    if (host) host.innerHTML = window.renderAdminAccessMatrix();
+  } catch(e){
+    console.error('adminToggleAccess', e);
+    if (typeof toast === 'function') toast('✗ ' + (e.message || e));
+  }
+};
+
+window.adminCycleRole = async function(userId, teamId){
+  const isAdmin = (S.profile && S.profile.role === 'admin') || S.role === 'admin';
+  if (!isAdmin) return;
+  const c = window._adminMatrixCache;
+  const ut = (c.userTeams || []).find(r => r.user_id === userId && r.team_id === teamId);
+  if (!ut) return;
+  const ROLES = ['coach','admin','assistant','physio','gk','player'];
+  const idx = ROLES.indexOf(ut.role);
+  const next = ROLES[(idx + 1) % ROLES.length];
+  // Self-demotion guard
+  if (userId === (S.user && S.user.id) && ut.role === 'admin' && next !== 'admin') {
+    if (!confirm('⚠️ Tu te retires le rôle admin sur ' + teamId + ' (passage à ' + next + '). Confirmer ?')) return;
+  }
+  try {
+    const { error } = await sb.from('user_teams').update({ role: next }).eq('user_id', userId).eq('team_id', teamId);
+    if (error) throw error;
+    if (typeof toast === 'function') toast('✓ Rôle: ' + next);
+    await window.adminLoadMatrix(true);
+    const host = document.getElementById('admin-access-matrix');
+    if (host) host.innerHTML = window.renderAdminAccessMatrix();
+  } catch(e){
+    console.error('adminCycleRole', e);
+    if (typeof toast === 'function') toast('✗ ' + (e.message || e));
+  }
+};
+
+window.adminSetDefault = async function(userId, teamId){
+  const isAdmin = (S.profile && S.profile.role === 'admin') || S.role === 'admin';
+  if (!isAdmin) return;
+  try {
+    // First unset is_default for all this user's teams, then set the chosen one
+    const { error: e1 } = await sb.from('user_teams').update({ is_default: false }).eq('user_id', userId);
+    if (e1) throw e1;
+    const { error: e2 } = await sb.from('user_teams').update({ is_default: true }).eq('user_id', userId).eq('team_id', teamId);
+    if (e2) throw e2;
+    if (typeof toast === 'function') toast('✓ Équipe par défaut: ' + teamId);
+    await window.adminLoadMatrix(true);
+    const host = document.getElementById('admin-access-matrix');
+    if (host) host.innerHTML = window.renderAdminAccessMatrix();
+  } catch(e){
+    console.error('adminSetDefault', e);
+    if (typeof toast === 'function') toast('✗ ' + (e.message || e));
+  }
 };
 
 /* ════════ PROFIL ════════ */
