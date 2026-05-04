@@ -249,8 +249,12 @@ CREATE POLICY presences_write ON public.presences FOR ALL
 DROP POLICY IF EXISTS "plans_staff"  ON public.training_plans;
 DROP POLICY IF EXISTS "plans_player" ON public.training_plans;
 DROP POLICY IF EXISTS "plans_write"  ON public.training_plans;
--- (la 2026-04-20 fix migration référence "plans" — DROP IF EXISTS au cas où)
-DROP POLICY IF EXISTS plans_player ON public.plans;
+-- (la 2026-04-20 fix migration référence "plans" — DROP IF EXISTS au cas où, gardé seulement si la table existe)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='plans') THEN
+    EXECUTE 'DROP POLICY IF EXISTS plans_player ON public.plans';
+  END IF;
+END $$;
 
 CREATE POLICY plans_staff ON public.training_plans FOR SELECT
   USING (
