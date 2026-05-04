@@ -1,6 +1,7 @@
 // =====================================================================
 // Supabase Edge Function (Deno) — send-pre-session-notifications
 // Sprint 5 / P3 — RealDev VFC
+// Multi-team patch (Sprint multi-team 2026-05) — scope par team_id
 //
 // Déploiement :
 //   supabase functions deploy send-pre-session-notifications
@@ -14,9 +15,9 @@
 //   VAPID_PRIVATE_KEY   — à NE JAMAIS committer, généré via `npx web-push generate-vapid-keys`
 //   VAPID_SUBJECT       — ex: "mailto:admin@realdev-vfc.be"
 //
-// Variables auto-injectées par Supabase (pas besoin de les set) :
+// Variables auto-injectées par Supabase :
 //   SUPABASE_URL
-//   SUPABASE_SERVICE_ROLE_KEY (bypass RLS)
+//   SUPABASE_SERVICE_ROLE_KEY (bypass RLS — nécessaire pour lire user_teams + push_subscriptions)
 // =====================================================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -45,21 +46,18 @@ Deno.serve(async (_req) => {
     const target = new Date(now.getTime() + 24 * 3600 * 1000);
     const iso    = `${target.getFullYear()}-${pad2(target.getMonth() + 1)}-${pad2(target.getDate())}`;
 
-    // --- 2) Lire training_plans + matches puis extraire les séances du jour J+1
+    // --- 2) Lire training_plans + matches (avec team_id) puis extraire les séances du J+1
     //
-    // Les sessions dans training_plans.sessions n'ont PAS de champ `date` explicite.
-    // Elles ont un `type` (lundi/mardi/mercredi/...) et appartiennent à un match via match_id.
-    // La date de chaque séance est DÉRIVÉE côté app depuis match_date en reculant du bon
-    // nombre de jours selon le day-of-week du type vs celui du match (cf. index.html L4081).
-    // On reproduit ici cette logique pour rester cohérent.
+    // Multi-team : training_plans et matches portent maintenant team_id.
+    // On lit les deux dans toutes les équipes (service-role) et on dérive la date séance.
     const { data: plans, error: planErr } = await sb
       .from("training_plans")
-      .select("match_id, sessions");
+      .select("match_id, sessions, team_id");
     if (planErr) throw planErr;
 
     const { data: matches, error: matchErr } = await sb
       .from("matches")
-      .select("id, match_date");
+      .select("id, match_date, team_id");
     if (matchErr) throw matchErr;
 
     const matchDateById: Record<string, string> = {};
@@ -72,39 +70,35 @@ Deno.serve(async (_req) => {
       dimanche: 0, lundi: 1, mardi: 2, mercredi: 3, jeudi: 4, vendredi: 5, samedi: 6,
     };
 
-    type SessionRow = { match_id: string; session: Record<string, unknown> };
+    type SessionRow = { match_id: string; team_id: string; session: Record<string, unknown> };
     const sessionsOfDay: SessionRow[] = [];
 
-    (plans || []).forEach((pl: { match_id: string; sessions: unknown[] }) => {
+    (plans || []).forEach((pl: { match_id: string; sessions: unknown[]; team_id: string }) => {
       const mdate = matchDateById[pl.match_id];
       if (!mdate) return;
-      // Utiliser midi UTC pour éviter les effets de bord DST/timezone
+      const tid = pl.team_id || "a-team";
       const matchD = new Date(mdate + "T12:00:00Z");
       const matchDow = matchD.getUTCDay();
 
       (pl.sessions || []).forEach((s: any) => {
         if (!s) return;
-
-        // 1) Priorité au champ date explicite s'il existe (compat future)
+        // 1) date explicite ?
         const explicit = s.date || s.session_date;
         if (explicit && String(explicit).slice(0, 10) === iso) {
-          sessionsOfDay.push({ match_id: pl.match_id, session: s });
+          sessionsOfDay.push({ match_id: pl.match_id, team_id: tid, session: s });
           return;
         }
-
-        // 2) Sinon, calculer depuis match_date + type
+        // 2) calcul depuis match_date + type
         const tp = String(s.type || "").toLowerCase();
         const trainDow = dayIdxOfType[tp];
         if (trainDow == null) return;
-
         let diff = matchDow - trainDow;
-        if (diff <= 0) diff += 7; // séance toujours AVANT le match
+        if (diff <= 0) diff += 7;
         const sessD = new Date(matchD);
         sessD.setUTCDate(sessD.getUTCDate() - diff);
         const sIso = `${sessD.getUTCFullYear()}-${pad2(sessD.getUTCMonth() + 1)}-${pad2(sessD.getUTCDate())}`;
-
         if (sIso === iso) {
-          sessionsOfDay.push({ match_id: pl.match_id, session: s });
+          sessionsOfDay.push({ match_id: pl.match_id, team_id: tid, session: s });
         }
       });
     });
@@ -116,82 +110,70 @@ Deno.serve(async (_req) => {
       );
     }
 
-    // --- 3) Lire toutes les subscriptions (service_role bypass RLS)
-    const { data: subs, error: subErr } = await sb
-      .from("push_subscriptions")
-      .select("*");
-    if (subErr) throw subErr;
-    if (!subs || !subs.length) {
-      return new Response(
-        JSON.stringify({ ok: true, date: iso, sent: 0, reason: "no subscribers" }),
-        { headers: { "content-type": "application/json" } },
-      );
+    // Multi-team : groupé par team_id, on ne garde qu'UNE séance représentative
+    // (la première rencontrée) par équipe pour le push du jour.
+    const sessionByTeam: Record<string, any> = {};
+    for (const s of sessionsOfDay) {
+      if (!sessionByTeam[s.team_id]) sessionByTeam[s.team_id] = s.session;
     }
+    const teamIds = Object.keys(sessionByTeam);
 
-    // --- 4) Construire le payload (1 push par subscriber, 1ère séance du jour)
-    const s0: any = sessionsOfDay[0].session;
-    const title = "Rappel seance demain";
-    const bodyParts: string[] = [];
-    bodyParts.push(String(s0.title || s0.type || "Seance"));
-    if (s0.time)     bodyParts.push("a " + s0.time);
-    if (s0.location) bodyParts.push("\u00b7 " + s0.location);
-    const body = bodyParts.join(" ").trim();
+    // --- 3) Charger metadata teams (display_name pour body push)
+    const { data: teamsRows } = await sb
+      .from("teams")
+      .select("id, display_name, short_label")
+      .in("id", teamIds);
+    const teamLabel: Record<string, string> = {};
+    (teamsRows || []).forEach((t: any) => { teamLabel[t.id] = t.display_name || t.short_label || t.id; });
 
-    const payload = JSON.stringify({
-      title,
-      body,
-      url: "/realdev-vfc-app/?page=planning",
-      tag: `rdv-session-${iso}`,
-    });
+    // --- 4) Pour chaque team_id, récupérer les user_ids via user_teams
+    //        puis leurs push_subscriptions.
+    let totalSent = 0;
+    let totalCleaned = 0;
+    const perTeamStats: Record<string, { sent: number; cleaned: number; subs: number }> = {};
 
-    // --- 5) Envoyer en parallele + cleanup des endpoints expires
-    let sent      = 0;
-    let cleanedUp = 0;
+    for (const tid of teamIds) {
+      const sess: any = sessionByTeam[tid];
 
-    await Promise.all(
-      (subs as any[]).map(async (row) => {
-        try {
-          await webpush.sendNotification(
-            {
-              endpoint: row.endpoint,
-              keys: { p256dh: row.p256dh, auth: row.auth },
-            },
-            payload,
-          );
-          sent += 1;
-        } catch (e: any) {
-          const sc = e?.statusCode;
-          if (sc === 404 || sc === 410) {
-            // Subscription expiree : supprimer la ligne
-            await sb
-              .from("push_subscriptions")
-              .delete()
-              .eq("endpoint", row.endpoint);
-            cleanedUp += 1;
-          } else {
-            console.error("webpush send failed", sc, e?.body || e?.message);
-          }
-        }
-      }),
-    );
+      // 4.a — user_ids de cette équipe
+      const { data: ut, error: utErr } = await sb
+        .from("user_teams")
+        .select("user_id")
+        .eq("team_id", tid);
+      if (utErr) { console.error("[multi-team] user_teams read failed", tid, utErr); continue; }
+      const userIds = (ut || []).map((r: any) => r.user_id).filter(Boolean);
+      if (!userIds.length) {
+        perTeamStats[tid] = { sent: 0, cleaned: 0, subs: 0 };
+        continue;
+      }
 
-    return new Response(
-      JSON.stringify({
-        ok:         true,
-        date:       iso,
-        sessions:   sessionsOfDay.length,
-        subs:       subs.length,
-        sent,
-        cleanedUp,
-      }),
-      { headers: { "content-type": "application/json" } },
-    );
-  } catch (e: any) {
-    console.error("send-pre-session-notifications failed", e);
-    return new Response(
-      JSON.stringify({ ok: false, error: e?.message || String(e) }),
-      { status: 500, headers: { "content-type": "application/json" } },
-    );
-  }
-});
+      // 4.b — push_subscriptions de ces users
+      const { data: subs, error: subErr } = await sb
+        .from("push_subscriptions")
+        .select("*")
+        .in("user_id", userIds);
+      if (subErr) { console.error("[multi-team] push_subs read failed", tid, subErr); continue; }
+      if (!subs || !subs.length) {
+        perTeamStats[tid] = { sent: 0, cleaned: 0, subs: 0 };
+        continue;
+      }
 
+      // 4.c — Construire le payload pour cette équipe
+      const teamName = teamLabel[tid] || tid;
+      const title = "Rappel seance demain";
+      const bodyParts: string[] = [];
+      bodyParts.push(`[${teamName}]`);
+      bodyParts.push(String(sess.title || sess.type || "Seance"));
+      if (sess.time)     bodyParts.push("a " + sess.time);
+      if (sess.location) bodyParts.push("· " + sess.location);
+      const body = bodyParts.join(" ").trim();
+
+      const payload = JSON.stringify({
+        title,
+        body,
+        url: "/realdev-vfc-app/?page=planning",
+        tag: `rdv-session-${tid}-${iso}`,
+      });
+
+      let sent = 0;
+      let cleaned

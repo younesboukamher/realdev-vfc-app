@@ -1,5 +1,5 @@
-const CACHE = 'rdv-v29'; // bump lean sprint 2 2026-04-21: Home 3 sections + alertes collapsed
-const APP_VERSION = '1.18.0';
+const CACHE = 'rdv-v30'; // bump multi-team 2026-05-04: team selector + team_id scoping
+const APP_VERSION = '1.19.0';
 const STATIC = ['/realdev-vfc-app/', '/realdev-vfc-app/index.html'];
 
 self.addEventListener('install', e => {
